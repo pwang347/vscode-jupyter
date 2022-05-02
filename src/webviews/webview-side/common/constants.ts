@@ -516,7 +516,10 @@ export enum Telemetry {
     InteractiveWindowDebugSetupCodeFailure = 'DATASCIENCE.INTERACTIVE_WINDOW_DEBUG_SETUP_CODE_FAILURE',
     KernelCrash = 'DATASCIENCE.KERNEL_CRASH',
     RunTest = 'DS_INTERNAL.RUNTEST',
-    PreferredKernelExactMatch = 'DS_INTERNAL.PREFERRED_KERNEL_EXACT_MATCH'
+    PreferredKernelExactMatch = 'DS_INTERNAL.PREFERRED_KERNEL_EXACT_MATCH',
+    TerminalShellIdentification = 'TERMINAL_SHELL_IDENTIFICATION',
+    TerminalEnvVariableExtraction = 'TERMINAL_ENV_VAR_EXTRACTION',
+    JupyterInstalled = 'JUPYTER_IS_INSTALLED',
 }
 
 export enum NativeKeyboardCommandTelemetry {

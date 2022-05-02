@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-import { IExtensionSingleActivationService } from '../../platform/activation/types';
+import { NotebookCellBangInstallDiagnosticsProvider } from '../../intellisense/diagnosticsProvider';
+import { IExtensionSingleActivationService, IExtensionSyncActivationService } from '../../platform/activation/types';
 import { IServiceManager } from '../../platform/ioc/types';
 import { IRemoteKernelFinder } from '../raw/types';
 import { INotebookProvider } from '../types';
@@ -147,4 +148,8 @@ export function registerTypes(serviceManager: IServiceManager, _isDevMode: boole
     serviceManager.addSingleton<ServerConnectionType>(ServerConnectionType, ServerConnectionType);
     serviceManager.addSingleton<JupyterConnection>(JupyterConnection, JupyterConnection);
     serviceManager.addBinding(JupyterConnection, IExtensionSingleActivationService);
+    serviceManager.addSingleton<IExtensionSyncActivationService>(
+        IExtensionSyncActivationService,
+        NotebookCellBangInstallDiagnosticsProvider
+    );
 }
