@@ -3,9 +3,8 @@
 
 'use strict';
 
-import { unmanaged } from 'inversify';
 import { Terminal } from 'vscode';
-import { traceVerbose } from '../../../logging';
+import { traceVerbose } from '../../logging';
 import { IShellDetector, ShellIdentificationTelemetry, TerminalShellType } from '../types';
 
 /*
@@ -50,7 +49,7 @@ export abstract class BaseShellDetector implements IShellDetector {
     constructor(public readonly priority: number) {}
     public abstract identify(
         telemetryProperties: ShellIdentificationTelemetry,
-        terminal?: Terminal,
+        terminal?: Terminal
     ): TerminalShellType | undefined;
     public identifyShellFromShellPath(shellPath: string): TerminalShellType {
         // Remove .exe extension so shells can be more consistently detected

@@ -41,7 +41,7 @@ export class ShellDetector {
         let shell: TerminalShellType | undefined;
         const telemetryProperties: ShellIdentificationTelemetry = {
             failed: false,
-            failureCategory: undefined,
+            reason: undefined,
             shellIdentificationSource: 'default',
             terminalProvided: !!terminal,
             hasCustomShell: undefined,
@@ -58,7 +58,7 @@ export class ShellDetector {
             );
             if (shell && shell !== TerminalShellType.other) {
                 telemetryProperties.failed = false;
-                telemetryProperties.failureCategory = 'unknownShell';
+                telemetryProperties.reason = 'unknownShell';
                 break;
             }
         }

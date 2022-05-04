@@ -5,10 +5,9 @@
 
 import { inject, injectable } from 'inversify';
 import { Terminal } from 'vscode';
-import { traceVerbose } from '../../../logging';
-import { IPlatformService } from '../../platform/types';
-import { ICurrentProcess } from '../../types';
-import { OSType } from '../../utils/platform';
+import { IPlatformService } from '../../common/platform/types';
+import { OSType } from '../../common/utils/platform';
+import { traceVerbose } from '../../logging';
 import { ShellIdentificationTelemetry, TerminalShellType } from '../types';
 import { BaseShellDetector } from './baseShellDetector.node';
 
@@ -22,13 +21,12 @@ import { BaseShellDetector } from './baseShellDetector.node';
 @injectable()
 export class UserEnvironmentShellDetector extends BaseShellDetector {
     constructor(
-        @inject(ICurrentProcess) private readonly currentProcess: ICurrentProcess,
         @inject(IPlatformService) private readonly platform: IPlatformService,
     ) {
         super(1);
     }
     public getDefaultPlatformShell(): string {
-        return getDefaultShell(this.platform, this.currentProcess);
+        return getDefaultShell(this.platform);
     }
     public identify(
         telemetryProperties: ShellIdentificationTelemetry,
@@ -52,24 +50,24 @@ export class UserEnvironmentShellDetector extends BaseShellDetector {
  On Windows, determine the default shell.
  On others, default to bash.
 */
-function getDefaultShell(platform: IPlatformService, currentProcess: ICurrentProcess): string {
+function getDefaultShell(platform: IPlatformService): string {
     if (platform.osType === OSType.Windows) {
-        return getTerminalDefaultShellWindows(platform, currentProcess);
+        return getTerminalDefaultShellWindows(platform);
     }
 
-    return currentProcess.env.SHELL && currentProcess.env.SHELL !== '/bin/false'
-        ? currentProcess.env.SHELL
+    return process.env.SHELL && process.env.SHELL !== '/bin/false'
+        ? process.env.SHELL
         : '/bin/bash';
 }
-function getTerminalDefaultShellWindows(platform: IPlatformService, currentProcess: ICurrentProcess): string {
+function getTerminalDefaultShellWindows(platform: IPlatformService): string {
     const isAtLeastWindows10 = parseFloat(platform.osRelease) >= 10;
-    const is32ProcessOn64Windows = currentProcess.env.hasOwnProperty('PROCESSOR_ARCHITEW6432');
-    const powerShellPath = `${currentProcess.env.windir}\\${
+    const is32ProcessOn64Windows = process.env.hasOwnProperty('PROCESSOR_ARCHITEW6432');
+    const powerShellPath = `${process.env.windir}\\${
         is32ProcessOn64Windows ? 'Sysnative' : 'System32'
     }\\WindowsPowerShell\\v1.0\\powershell.exe`;
-    return isAtLeastWindows10 ? powerShellPath : getWindowsShell(currentProcess);
+    return isAtLeastWindows10 ? powerShellPath : getWindowsShell();
 }
 
-function getWindowsShell(currentProcess: ICurrentProcess): string {
-    return currentProcess.env.comspec || 'cmd.exe';
+function getWindowsShell(): string {
+    return process.env.comspec || 'cmd.exe';
 }
