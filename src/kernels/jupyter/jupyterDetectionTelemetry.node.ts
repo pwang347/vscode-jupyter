@@ -73,7 +73,7 @@ export class JupyterDetectionTelemetry implements IExtensionSyncActivationServic
         try {
             const processService = await this.processFactory.create(undefined);
             const output = await processService.exec('jupyter', [frontEnd, '--version'], {
-                env: env || process.env,
+                env,
                 throwOnStdErr: false,
                 mergeStdOutErr: true
             });
