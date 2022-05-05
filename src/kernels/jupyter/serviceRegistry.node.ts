@@ -25,6 +25,7 @@ import { NbConvertExportToPythonService } from './interpreter/nbconvertExportToP
 import { NbConvertInterpreterDependencyChecker } from './interpreter/nbconvertInterpreterDependencyChecker.node';
 import { CellOutputMimeTypeTracker } from './jupyterCellOutputMimeTypeTracker.node';
 import { JupyterConnection } from './jupyterConnection';
+import { JupyterDetectionTelemetry } from './jupyterDetectionTelemetry.node';
 import { JupyterKernelService } from './jupyterKernelService.node';
 import { JupyterUriProviderRegistration } from './jupyterUriProviderRegistration';
 import { JupyterCommandLineSelector } from './launcher/commandLineSelector';
@@ -152,4 +153,5 @@ export function registerTypes(serviceManager: IServiceManager, _isDevMode: boole
         IExtensionSyncActivationService,
         NotebookCellBangInstallDiagnosticsProvider
     );
+    serviceManager.addSingleton<JupyterDetectionTelemetry>(IExtensionSyncActivationService, JupyterDetectionTelemetry);
 }

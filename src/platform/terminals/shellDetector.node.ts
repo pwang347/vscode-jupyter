@@ -3,7 +3,6 @@
 
 'use strict';
 
-import { inject, injectable, multiInject } from 'inversify';
 import { Terminal } from 'vscode';
 import { sendTelemetryEvent } from '../../telemetry';
 import { Telemetry } from '../common/constants';
@@ -19,12 +18,8 @@ const defaultOSShells = {
     [OSType.Unknown]: TerminalShellType.other
 };
 
-@injectable()
 export class ShellDetector {
-    constructor(
-        @inject(IPlatformService) private readonly platform: IPlatformService,
-        @multiInject(IShellDetector) private readonly shellDetectors: IShellDetector[]
-    ) {}
+    constructor(private readonly platform: IPlatformService, private readonly shellDetectors: IShellDetector[]) {}
     /**
      * Logic is as follows:
      * 1. Try to identify the type of the shell based on the name of the terminal.

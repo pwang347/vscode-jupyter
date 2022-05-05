@@ -20,9 +20,7 @@ import { BaseShellDetector } from './baseShellDetector.node';
  */
 @injectable()
 export class UserEnvironmentShellDetector extends BaseShellDetector {
-    constructor(
-        @inject(IPlatformService) private readonly platform: IPlatformService,
-    ) {
+    constructor(@inject(IPlatformService) private readonly platform: IPlatformService) {
         super(1);
     }
     public getDefaultPlatformShell(): string {
@@ -30,7 +28,7 @@ export class UserEnvironmentShellDetector extends BaseShellDetector {
     }
     public identify(
         telemetryProperties: ShellIdentificationTelemetry,
-        _terminal?: Terminal,
+        _terminal?: Terminal
     ): TerminalShellType | undefined {
         const shellPath = this.getDefaultPlatformShell();
         telemetryProperties.hasShellInEnv = !!shellPath;
@@ -55,9 +53,7 @@ function getDefaultShell(platform: IPlatformService): string {
         return getTerminalDefaultShellWindows(platform);
     }
 
-    return process.env.SHELL && process.env.SHELL !== '/bin/false'
-        ? process.env.SHELL
-        : '/bin/bash';
+    return process.env.SHELL && process.env.SHELL !== '/bin/false' ? process.env.SHELL : '/bin/bash';
 }
 function getTerminalDefaultShellWindows(platform: IPlatformService): string {
     const isAtLeastWindows10 = parseFloat(platform.osRelease) >= 10;

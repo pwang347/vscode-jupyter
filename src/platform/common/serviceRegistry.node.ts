@@ -53,6 +53,7 @@ import { registerTypes as registerPlatformTypes } from './platform/serviceRegist
 import { registerTypes as processRegisterTypes } from './process/serviceRegistry.node';
 import { registerTypes as variableRegisterTypes } from './variables/serviceRegistry.node';
 import { RunInDedicatedExtensionHostCommandHandler } from './application/commands/runInDedicatedExtensionHost.node';
+import { TerminalManager } from './application/terminalManager.node';
 
 // eslint-disable-next-line
 export function registerTypes(serviceManager: IServiceManager) {
@@ -74,6 +75,7 @@ export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IFileDownloader>(IFileDownloader, FileDownloader);
     serviceManager.addSingleton<ICryptoUtils>(ICryptoUtils, CryptoUtils);
     serviceManager.addSingleton<IExperimentService>(IExperimentService, ExperimentService);
+    serviceManager.addSingleton<TerminalManager>(TerminalManager, TerminalManager);
 
     serviceManager.addSingleton<IFeatureDeprecationManager>(IFeatureDeprecationManager, FeatureDeprecationManager);
 

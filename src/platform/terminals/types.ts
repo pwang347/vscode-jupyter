@@ -40,9 +40,8 @@ export enum TerminalShellType {
 export const ITerminalHelper = Symbol('ITerminalHelper');
 
 export interface ITerminalHelper {
-    getEnvironmentVariables(resource: Resource): Promise<{env?: NodeJS.ProcessEnv, shell: TerminalShellType}>;
+    getEnvironmentVariables(resource: Resource): Promise<{ env?: NodeJS.ProcessEnv; shell: TerminalShellType }>;
 }
-
 
 export type ShellIdentificationTelemetry = IEventNamePropertyMapping['TERMINAL_SHELL_IDENTIFICATION'];
 

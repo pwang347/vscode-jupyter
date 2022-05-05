@@ -23,7 +23,7 @@ export class VSCEnvironmentShellDetector extends BaseShellDetector {
     }
     public identify(
         telemetryProperties: ShellIdentificationTelemetry,
-        terminal?: Terminal,
+        terminal?: Terminal
     ): TerminalShellType | undefined {
         const shellPath =
             terminal?.creationOptions && 'shellPath' in terminal.creationOptions && terminal.creationOptions.shellPath
