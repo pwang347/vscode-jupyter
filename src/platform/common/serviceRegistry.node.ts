@@ -24,6 +24,7 @@ import {
     IDocumentManager,
     IEncryptedStorage,
     ILanguageService,
+    ITerminalManager,
     IVSCodeNotebook
 } from './application/types';
 import { AsyncDisposableRegistry } from './asyncDisposableRegistry';
@@ -75,7 +76,7 @@ export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IFileDownloader>(IFileDownloader, FileDownloader);
     serviceManager.addSingleton<ICryptoUtils>(ICryptoUtils, CryptoUtils);
     serviceManager.addSingleton<IExperimentService>(IExperimentService, ExperimentService);
-    serviceManager.addSingleton<TerminalManager>(TerminalManager, TerminalManager);
+    serviceManager.addSingleton<ITerminalManager>(ITerminalManager, TerminalManager);
 
     serviceManager.addSingleton<IFeatureDeprecationManager>(IFeatureDeprecationManager, FeatureDeprecationManager);
 

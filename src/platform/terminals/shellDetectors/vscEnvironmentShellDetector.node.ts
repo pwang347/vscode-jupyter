@@ -3,7 +3,7 @@
 
 'use strict';
 
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { Terminal } from 'vscode';
 import { IApplicationEnvironment } from '../../common/application/types';
 import { traceVerbose } from '../../logging';
@@ -17,6 +17,7 @@ import { BaseShellDetector } from './baseShellDetector.node';
  * @class VSCEnvironmentShellDetector
  * @extends {BaseShellDetector}
  */
+@injectable()
 export class VSCEnvironmentShellDetector extends BaseShellDetector {
     constructor(@inject(IApplicationEnvironment) private readonly appEnv: IApplicationEnvironment) {
         super(3);
