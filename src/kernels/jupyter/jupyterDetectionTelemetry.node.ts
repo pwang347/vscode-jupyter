@@ -100,7 +100,11 @@ export class JupyterDetectionTelemetry implements IExtensionSyncActivationServic
                     });
                 }
             }
-            throw new Error('Not installed');
+            sendTelemetryEvent(Telemetry.JupyterInstalled, undefined, {
+                failed: true,
+                reason: 'notInstalled',
+                frontEnd
+            });
         } catch (ex) {
             sendTelemetryEvent(Telemetry.JupyterInstalled, undefined, {
                 failed: true,
