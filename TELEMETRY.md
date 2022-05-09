@@ -1185,7 +1185,7 @@ No properties for event
 
 ## Locations Used
 
-[src/notebooks/controllers/notebookControllerManager.ts#L826](https://github.com/microsoft/vscode-jupyter/tree/main/src/notebooks/controllers/notebookControllerManager.ts#L826)
+[src/notebooks/controllers/notebookControllerManager.ts#L854](https://github.com/microsoft/vscode-jupyter/tree/main/src/notebooks/controllers/notebookControllerManager.ts#L854)
 ```typescript
         } catch (ex) {
             // We know that this fails when we have xeus kernels installed (untill that's resolved thats one instance when we can have duplicates).
@@ -1236,7 +1236,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/kernelFinder.base.ts#L219](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/kernelFinder.base.ts#L219)
+[src/kernels/kernelFinder.base.ts#L245](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/kernelFinder.base.ts#L245)
 ```typescript
         const key = `${kind}:${useCache}`;
         if (this.startTimeForFetching && !this.fetchingTelemetrySent.has(key)) {
@@ -3969,6 +3969,18 @@ No properties for event
 
 ## Locations Used
 
+[src/kernels/jupyter/serverSelector.ts#L69](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L69)
+```typescript
+        @inject(JupyterConnection) private readonly jupyterConnection: JupyterConnection
+    ) {}
+
+    @captureTelemetry(Telemetry.SelectJupyterURI)
+    @traceDecoratorError('Failed to select Jupyter Uri')
+    public selectJupyterURI(
+        allowLocal: boolean,
+```
+
+
 [src/kernels/jupyter/launcher/commandLineSelector.ts#L36](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/commandLineSelector.ts#L36)
 ```typescript
         workspaceService.onDidChangeConfiguration(this.onDidChangeConfiguration.bind(this));
@@ -3978,18 +3990,6 @@ No properties for event
     public selectJupyterCommandLine(file: Uri): Promise<void> {
         const multiStep = this.multiStepFactory.create<{}>();
         return multiStep.run(this.startSelectingCommandLine.bind(this, file), {});
-```
-
-
-[src/kernels/jupyter/serverSelector.ts#L65](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L65)
-```typescript
-        @inject(JupyterConnection) private readonly jupyterConnection: JupyterConnection
-    ) {}
-
-    @captureTelemetry(Telemetry.SelectJupyterURI)
-    @traceDecoratorError('Failed to select Jupyter Uri')
-    public selectJupyterURI(
-        allowLocal: boolean,
 ```
 
 </details>
@@ -4065,9 +4065,9 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/jupyterUtils.ts#L62](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/jupyterUtils.ts#L62)
+[src/kernels/jupyter/jupyterUtils.ts#L63](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/jupyterUtils.ts#L63)
 ```typescript
-        void config.updateSetting('allowUnauthorizedRemoteConnection', true, undefined, ConfigurationTarget.Workspace);
+        await config.updateSetting('allowUnauthorizedRemoteConnection', true, undefined, ConfigurationTarget.Workspace);
         return true;
     } else if (value === closeOption) {
         sendTelemetryEvent(Telemetry.SelfCertsMessageClose);
@@ -4077,7 +4077,19 @@ No properties for event
 ```
 
 
-[src/platform/errors/errorHandler.ts#L193](https://github.com/microsoft/vscode-jupyter/tree/main/src/platform/errors/errorHandler.ts#L193)
+[src/kernels/jupyter/jupyterUtils.ts#L87](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/jupyterUtils.ts#L87)
+```typescript
+        await config.updateSetting('allowUnauthorizedRemoteConnection', true, undefined, ConfigurationTarget.Workspace);
+        return true;
+    } else if (value === closeOption) {
+        sendTelemetryEvent(Telemetry.SelfCertsMessageClose);
+    }
+    return false;
+}
+```
+
+
+[src/platform/errors/errorHandler.ts#L239](https://github.com/microsoft/vscode-jupyter/tree/main/src/platform/errors/errorHandler.ts#L239)
 ```typescript
                             ConfigurationTarget.Workspace
                         );
@@ -4117,19 +4129,31 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/jupyterUtils.ts#L58](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/jupyterUtils.ts#L58)
+[src/kernels/jupyter/jupyterUtils.ts#L59](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/jupyterUtils.ts#L59)
 ```typescript
         closeOption
     );
     if (value === enableOption) {
         sendTelemetryEvent(Telemetry.SelfCertsMessageEnabled);
-        void config.updateSetting('allowUnauthorizedRemoteConnection', true, undefined, ConfigurationTarget.Workspace);
+        await config.updateSetting('allowUnauthorizedRemoteConnection', true, undefined, ConfigurationTarget.Workspace);
         return true;
     } else if (value === closeOption) {
 ```
 
 
-[src/platform/errors/errorHandler.ts#L185](https://github.com/microsoft/vscode-jupyter/tree/main/src/platform/errors/errorHandler.ts#L185)
+[src/kernels/jupyter/jupyterUtils.ts#L83](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/jupyterUtils.ts#L83)
+```typescript
+        closeOption
+    );
+    if (value === enableOption) {
+        sendTelemetryEvent(Telemetry.SelfCertsMessageEnabled);
+        await config.updateSetting('allowUnauthorizedRemoteConnection', true, undefined, ConfigurationTarget.Workspace);
+        return true;
+    } else if (value === closeOption) {
+```
+
+
+[src/platform/errors/errorHandler.ts#L231](https://github.com/microsoft/vscode-jupyter/tree/main/src/platform/errors/errorHandler.ts#L231)
 ```typescript
                 .showErrorMessage(DataScience.jupyterSelfCertFail().format(err.message), enableOption, closeOption)
                 .then((value) => {
@@ -4169,7 +4193,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/serverSelector.ts#L77](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L77)
+[src/kernels/jupyter/serverSelector.ts#L81](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L81)
 ```typescript
         const multiStep = this.multiStepFactory.create<{}>();
         return multiStep.run(this.startSelectingURI.bind(this, allowLocal), {});
@@ -4199,7 +4223,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/serverSelector.ts#L71](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L71)
+[src/kernels/jupyter/serverSelector.ts#L75](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L75)
 ```typescript
         allowLocal: boolean,
         commandSource: SelectJupyterUriCommandSource = 'nonUser'
@@ -4226,7 +4250,7 @@ No description provided
 
 ## Locations Used
 
-[src/kernels/jupyter/serverSelector.ts#L106](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L106)
+[src/kernels/jupyter/serverSelector.ts#L118](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L118)
 ```typescript
         await this.serverUriStorage.addToUriList(userURI, Date.now(), userURI);
 
@@ -4864,15 +4888,15 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/launcher/jupyterExecution.ts#L165](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L165)
+[src/kernels/jupyter/launcher/jupyterExecution.ts#L167](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L167)
 ```typescript
-                                );
+                                throw new RemoteJupyterServerConnectionError(connection.baseUrl, options.serverId, err);
                             }
                         } else {
                             sendTelemetryEvent(Telemetry.ConnectFailedJupyter, undefined, undefined, err, true);
-                            throw WrappedError.from(
-                                DataScience.jupyterNotebookConnectFailed().format(connection.baseUrl, err),
-                                err
+                            throw new LocalJupyterServerConnectionError(err);
+                        }
+                    } else {
 ```
 
 </details>
@@ -4892,7 +4916,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/launcher/jupyterExecution.ts#L126](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L126)
+[src/kernels/jupyter/launcher/jupyterExecution.ts#L128](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L128)
 ```typescript
                     traceInfo(`Connection complete server`);
 
@@ -4901,6 +4925,36 @@ No properties for event
                     );
                     return result;
                 } catch (err) {
+```
+
+</details>
+<details>
+  <summary>DS_INTERNAL.CONNECTREMOTEEXPIREDCERTFAILEDJUPYTER</summary>
+
+## Description
+
+
+
+
+ Jupyter server's certificate has expired.
+
+## Properties
+
+
+No properties for event
+
+
+## Locations Used
+
+[src/kernels/jupyter/launcher/jupyterExecution.ts#L161](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L161)
+```typescript
+                                sendTelemetryEvent(Telemetry.ConnectRemoteSelfCertFailedJupyter);
+                                throw new JupyterSelfCertsError(connection.baseUrl);
+                            } else if (JupyterSelfCertsExpiredError.isSelfCertsExpiredError(err)) {
+                                sendTelemetryEvent(Telemetry.ConnectRemoteExpiredCertFailedJupyter);
+                                throw new JupyterSelfCertsExpiredError(connection.baseUrl);
+                            } else {
+                                throw new RemoteJupyterServerConnectionError(connection.baseUrl, options.serverId, err);
 ```
 
 </details>
@@ -4920,7 +4974,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/launcher/jupyterExecution.ts#L152](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L152)
+[src/kernels/jupyter/launcher/jupyterExecution.ts#L154](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L154)
 ```typescript
 
                         // Something else went wrong
@@ -4928,7 +4982,7 @@ No properties for event
                             sendTelemetryEvent(Telemetry.ConnectRemoteFailedJupyter, undefined, undefined, err, true);
 
                             // Check for the self signed certs error specifically
-                            if (err.message.indexOf('reason: self signed certificate') >= 0) {
+                            if (JupyterSelfCertsError.isSelfCertsError(err)) {
 ```
 
 </details>
@@ -4948,7 +5002,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/launcher/jupyterExecution.ts#L126](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L126)
+[src/kernels/jupyter/launcher/jupyterExecution.ts#L128](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L128)
 ```typescript
                     traceInfo(`Connection complete server`);
 
@@ -4978,7 +5032,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/launcher/jupyterExecution.ts#L116](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L116)
+[src/kernels/jupyter/launcher/jupyterExecution.ts#L118](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L118)
 ```typescript
                     connection = await this.startOrConnect(options, cancelToken);
 
@@ -4996,7 +5050,9 @@ No properties for event
 ## Description
 
 
-No description provided
+
+
+ Jupyter server's certificate is not from a trusted authority.
 
 ## Properties
 
@@ -5006,27 +5062,63 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/serverSelector.ts#L88](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L88)
+[src/kernels/jupyter/serverSelector.ts#L94](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L94)
 ```typescript
-            await this.jupyterConnection.validateRemoteUri(userURI);
+            }
         } catch (err) {
-            if (err.message.indexOf('reason: self signed certificate') >= 0) {
+            if (JupyterSelfCertsError.isSelfCertsError(err)) {
                 sendTelemetryEvent(Telemetry.ConnectRemoteSelfCertFailedJupyter);
-                const handled = await handleCertsError(this.applicationShell, this.configService, err.message);
+                const handled = await handleSelfCertsError(this.applicationShell, this.configService, err.message);
                 if (!handled) {
                     return;
 ```
 
 
-[src/kernels/jupyter/launcher/jupyterExecution.ts#L156](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L156)
+[src/kernels/jupyter/serverSelector.ts#L100](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L100)
+```typescript
+                    return;
+                }
+            } else if (JupyterSelfCertsExpiredError.isSelfCertsExpiredError(err)) {
+                sendTelemetryEvent(Telemetry.ConnectRemoteSelfCertFailedJupyter);
+                const handled = await handleExpiredCertsError(this.applicationShell, this.configService, err.message);
+                if (!handled) {
+                    return;
+```
+
+
+[src/kernels/jupyter/serverSelector.ts#L249](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L249)
+```typescript
+        } catch (err) {
+            traceWarning('Uri verification error', err);
+            if (JupyterSelfCertsError.isSelfCertsError(err)) {
+                sendTelemetryEvent(Telemetry.ConnectRemoteSelfCertFailedJupyter);
+                const handled = await handleSelfCertsError(this.applicationShell, this.configService, err.message);
+                if (!handled) {
+                    return DataScience.jupyterSelfCertFailErrorMessageOnly();
+```
+
+
+[src/kernels/jupyter/serverSelector.ts#L255](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/serverSelector.ts#L255)
+```typescript
+                    return DataScience.jupyterSelfCertFailErrorMessageOnly();
+                }
+            } else if (JupyterSelfCertsExpiredError.isSelfCertsExpiredError(err)) {
+                sendTelemetryEvent(Telemetry.ConnectRemoteSelfCertFailedJupyter);
+                const handled = await handleExpiredCertsError(this.applicationShell, this.configService, err.message);
+                if (!handled) {
+                    return DataScience.jupyterSelfCertExpiredErrorMessageOnly();
+```
+
+
+[src/kernels/jupyter/launcher/jupyterExecution.ts#L158](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L158)
 ```typescript
 
                             // Check for the self signed certs error specifically
-                            if (err.message.indexOf('reason: self signed certificate') >= 0) {
+                            if (JupyterSelfCertsError.isSelfCertsError(err)) {
                                 sendTelemetryEvent(Telemetry.ConnectRemoteSelfCertFailedJupyter);
                                 throw new JupyterSelfCertsError(connection.baseUrl);
-                            } else {
-                                throw WrappedError.from(
+                            } else if (JupyterSelfCertsExpiredError.isSelfCertsExpiredError(err)) {
+                                sendTelemetryEvent(Telemetry.ConnectRemoteExpiredCertFailedJupyter);
 ```
 
 </details>
@@ -6099,7 +6191,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/launcher/liveshare/hostJupyterServer.ts#L167](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/liveshare/hostJupyterServer.ts#L167)
+[src/kernels/jupyter/launcher/liveshare/hostJupyterServer.ts#L184](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/liveshare/hostJupyterServer.ts#L184)
 ```typescript
             this.throwIfDisposedOrCancelled(cancelToken);
             const baseUrl = this.connection?.baseUrl || '';
@@ -6111,7 +6203,7 @@ No properties for event
 ```
 
 
-[src/kernels/jupyter/launcher/liveshare/hostJupyterServer.ts#L172](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/liveshare/hostJupyterServer.ts#L172)
+[src/kernels/jupyter/launcher/liveshare/hostJupyterServer.ts#L189](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/liveshare/hostJupyterServer.ts#L189)
 ```typescript
         } catch (ex) {
             sendKernelTelemetryEvent(
@@ -6307,7 +6399,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/jupyter/launcher/jupyterExecution.ts#L222](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L222)
+[src/kernels/jupyter/launcher/jupyterExecution.ts#L218](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/jupyter/launcher/jupyterExecution.ts#L218)
 ```typescript
     }
 
@@ -6787,15 +6879,15 @@ Event can be removed. Not referenced anywhere
 
 ## Locations Used
 
-[src/kernels/raw/finder/preferredRemoteKernelIdProvider.ts#L59](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/raw/finder/preferredRemoteKernelIdProvider.ts#L59)
+[src/kernels/raw/finder/preferredRemoteKernelIdProvider.ts#L69](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/raw/finder/preferredRemoteKernelIdProvider.ts#L69)
 ```typescript
         }
 
         // Prune list if too big
         sendTelemetryEvent(Telemetry.NumberOfSavedRemoteKernelIds, undefined, { count: list.length });
         while (list.length > MaximumKernelIdListSize) {
+            requiresUpdate = true;
             list.shift();
-        }
 ```
 
 </details>
@@ -6859,7 +6951,7 @@ No properties for event
 
 ## Locations Used
 
-[src/notebooks/controllers/notebookControllerManager.ts#L695](https://github.com/microsoft/vscode-jupyter/tree/main/src/notebooks/controllers/notebookControllerManager.ts#L695)
+[src/notebooks/controllers/notebookControllerManager.ts#L723](https://github.com/microsoft/vscode-jupyter/tree/main/src/notebooks/controllers/notebookControllerManager.ts#L723)
 ```typescript
                 ? PYTHON_LANGUAGE
                 : getTelemetrySafeLanguage(getLanguageInNotebookMetadata(notebookMetadata) || '');
@@ -6886,7 +6978,7 @@ No description provided
 
 ## Locations Used
 
-[src/notebooks/controllers/notebookControllerManager.ts#L675](https://github.com/microsoft/vscode-jupyter/tree/main/src/notebooks/controllers/notebookControllerManager.ts#L675)
+[src/notebooks/controllers/notebookControllerManager.ts#L703](https://github.com/microsoft/vscode-jupyter/tree/main/src/notebooks/controllers/notebookControllerManager.ts#L703)
 ```typescript
             onlyConnection && (matchReason |= PreferredKernelExactMatchReason.OnlyKernel);
             topMatchIsPreferredInterpreter && (matchReason |= PreferredKernelExactMatchReason.WasPreferredInterpreter);
@@ -7295,7 +7387,7 @@ No properties for event
 
 ## Locations Used
 
-[src/kernels/kernelFinder.base.ts#L49](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/kernelFinder.base.ts#L49)
+[src/kernels/kernelFinder.base.ts#L50](https://github.com/microsoft/vscode-jupyter/tree/main/src/kernels/kernelFinder.base.ts#L50)
 ```typescript
     ) {}
 
