@@ -99,12 +99,13 @@ export class JupyterDetectionTelemetry implements IExtensionSyncActivationServic
                         detection: 'process'
                     });
                 }
+            } else {
+                sendTelemetryEvent(Telemetry.JupyterInstalled, undefined, {
+                    failed: true,
+                    reason: 'notInstalled',
+                    frontEnd
+                });
             }
-            sendTelemetryEvent(Telemetry.JupyterInstalled, undefined, {
-                failed: true,
-                reason: 'notInstalled',
-                frontEnd
-            });
         } catch (ex) {
             sendTelemetryEvent(Telemetry.JupyterInstalled, undefined, {
                 failed: true,
