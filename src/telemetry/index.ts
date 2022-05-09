@@ -1594,7 +1594,7 @@ export interface IEventNamePropertyMapping {
      * hasShellInEnv - If undefined (not set), we didn't check.
      *                 If true, user has a shell in their environment.
      *                 If false, user does not have a shell in their environment.
-    */
+     */
     [Telemetry.TerminalShellIdentification]: {
         failed: boolean;
         reason: 'unknownShell' | undefined;
