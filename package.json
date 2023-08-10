@@ -2032,6 +2032,11 @@
         "webpack-analyze:web": "npx webpack --json --config build/webpack/webpack.extension.web.config.js > out/stats-web.json && yarn webpack-bundle-analyzer out/stats-web.json"
     },
     "dependencies": {
+        "@dw/components": "0.0.1-alpha.4",
+        "@dw/engines": "0.0.1-alpha.4",
+        "@dw/messaging": "0.0.1-alpha.4",
+        "@dw/orchestrator": "0.0.1-alpha.4",
+        "@dw/visualization-recharts": "0.0.1-alpha.4",
         "@enonic/fnv-plus": "^1.3.0",
         "@fluentui/react": "^7.160.1",
         "@jupyter-widgets/base": "4.0.0",

@@ -1,0 +1,55 @@
+.wrangler-preview-main-container {
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-flow: column nowrap;
+    overflow-y: scroll;
+    padding: 16px 12px;
+    gap: 12px;
+}
+
+.wrangler-preview-operation-title {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+    padding-left: 12px;
+}
+
+.wrangler-preview-operation-label {
+    font-style: italic;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.wrangler-preview-operation-index {
+    padding-right: 8px;
+}
+
+.wrangler-preview-editor-container {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+
+    flex-grow: 1;
+
+    border: 1px solid rgba(white, 0.5);
+    border-radius: 2px;
+}
+
+.wrangler-preview-editor-wrapper {
+    overflow: hidden auto;
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+.wrangler-preview-status-bar {
+    padding: 4px 16px;
+}
+
+.wrangler-preview-actions-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 8px;
+}

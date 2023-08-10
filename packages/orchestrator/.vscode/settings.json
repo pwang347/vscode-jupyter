@@ -1,0 +1,13 @@
+{
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.python"
+    },
+    "mochaExplorer.files": "src/**/*.unit.test.ts",
+    "mochaExplorer.require": "ts-node/register",
+    "search.exclude": {
+        "**/lib": true
+    }
+}

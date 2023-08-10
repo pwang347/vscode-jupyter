@@ -1,0 +1,75 @@
+.wrangler-operations-panel-operation-title {
+    font-size: 13px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
+.wrangler-operations-panel-operation-description {
+    margin-top: 0px;
+    margin-bottom: 14px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+}
+
+.wrangler-operations-panel-button-area {
+    padding-bottom: 20px;
+}
+
+.operation-panel-search-container {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.operation-panel-list-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .wrangler-secondary-text {
+        color: var(--vscode-foreground);
+        font-weight: 500;
+    }
+}
+
+.operation-panel-operation-list-container {
+    padding-top: 3px;
+    overflow-y: auto;
+}
+
+.wrangler-operations-panel-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.operations-panel-form-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.operation-panel-form-view {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.wrangler-operations-panel-scrollable-form-container {
+    margin-right: -20px;
+    overflow-y: auto;
+}
+
+.wrangler-operations-panel-form-content-region {
+    margin-right: 20px;
+}
+
+.wrangler-operations-panel-top-button-tray {
+    align-self: flex-start;
+}
+
+.wrangler-operations-panel-operation-non-editable-message {
+    font: italic 13px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    padding-top: 10px;
+}

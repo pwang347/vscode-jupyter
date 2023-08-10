@@ -1,0 +1,8 @@
+black
+ipython
+ipykernel
+markupsafe # needed for jupyter_server
+jupyter_server
+pandas>=0.25.2
+regex>=2020.11.13
+pyarrow

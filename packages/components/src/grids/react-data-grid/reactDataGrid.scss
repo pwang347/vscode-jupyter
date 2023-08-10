@@ -1,0 +1,618 @@
+@import "./defaultTheme.scss";
+@import "react-data-grid/lib/styles.css";
+
+// Grid container
+.wrangler-grid-container {
+    height: 100%;
+    width: 100%;
+}
+
+// Cell content
+.wrangler-grid-cell-view-content {
+    width: 100%;
+    height: 100%;
+
+    user-select: none;
+    font-size: 12px;
+    text-align: left;
+    justify-content: flex-start;
+    padding-right: 0px;
+    padding-left: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+
+    &.wrangler-grid-right-aligned {
+        text-align: right;
+        justify-content: flex-end;
+        padding-right: 8px;
+        padding-left: 0px;
+    }
+
+    &.wrangler-grid-center-aligned {
+        text-align: center;
+        justify-content: center;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
+    &.wrangler-na-value {
+        font-style: italic;
+        opacity: 0.9;
+    }
+}
+
+// Editable content
+.wrangler-grid-cell-editor-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    padding-left: 8px;
+}
+
+// Suggestion
+.wrangler-grid-cell-auto-filled {
+    font-style: italic;
+}
+
+// Quick Insights
+.wrangler-insights-wrapper {
+    line-height: 15px;
+    font-size: 12px;
+    height: 100%;
+    padding: 4px;
+    display: flex;
+    flex-flow: column nowrap;
+    flex-grow: 1;
+
+    // Color is always the default.
+    color: var(--theme-wrangler-grid-cell-column-added-fg);
+    background-color: var(--theme-wrangler-grid-cell-default-bg);
+}
+
+.wrangler-insights-visualization {
+    height: 74px;
+    margin-top: auto;
+
+    // When the header context menu is visible, don't allow pointer events on visualizations.
+    // This is to prevent the visualization taking focus away from the context menu.
+    .wrangler-grid-header-context-menu-visible & {
+        pointer-events: none;
+    }
+}
+
+.wrangler-insights-visualization-min-max {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    font-size: 10px;
+    gap: 10px;
+    opacity: 0.8;
+
+    span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.wrangler-insights-stats-row {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row nowrap;
+    gap: 10px;
+    opacity: 0.8;
+
+    span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .noshrink {
+        flex-shrink: 0;
+    }
+}
+
+.wrangler-insights-default-visualization {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    height: 100%;
+
+    &-value {
+        font-size: 32px;
+        line-height: 1em;
+    }
+}
+
+.wrangler-grid-cell-edited-success.wrangler-grid-cell.wrangler-grid-column-added {
+    color: var(--theme-wrangler-grid-cell-column-added-fg);
+    background-color: var(--theme-wrangler-grid-cell-column-added-hover-bg);
+}
+
+.wrangler-grid-cell.wrangler-grid-cell-edited-failure.wrangler-grid-cell.wrangler-grid-column-added {
+    color: var(--theme-wrangler-grid-cell-column-removed-fg);
+    background-color: var(--theme-wrangler-grid-cell-column-removed-hover-bg);
+    border-color: var(--theme-wrangler-grid-cell-column-removed-selected-border-color);
+
+    &:hover {
+        color: var(--theme-wrangler-grid-cell-column-removed-fg);
+        background-color: var(--theme-wrangler-grid-cell-column-removed-hover-bg);
+    }
+}
+
+.wrangler-grid-right-aligned {
+    input.editor-text {
+        text-align: right;
+        padding-right: 8px;
+        padding-left: 0px;
+    }
+}
+
+.wrangler-grid-center-aligned {
+    input.editor-text {
+        text-align: center;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+}
+
+input.editor-text {
+    border: none;
+    outline: none !important;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    outline: 0 none;
+    background-color: transparent;
+    font-size: 11px;
+    color: inherit;
+    padding: 0px;
+
+    &::placeholder {
+        color: var(--theme-wrangler-grid-cell-editor-placeholder-color);
+        font-style: italic;
+    }
+}
+
+// Grid cell base (includes view and edit mode cells)
+.wrangler-grid-cell {
+    border-right: thin solid var(--theme-wrangler-grid-cell-default-border-color);
+    border-bottom: thin solid var(--theme-wrangler-grid-cell-default-border-color);
+
+    // make sure that the contents don't shift when we do render borders here
+    border-left: thin solid transparent;
+    border-top: thin solid transparent;
+
+    color: var(--theme-wrangler-grid-cell-default-fg);
+    background-color: var(--theme-wrangler-grid-cell-default-bg);
+    contain: size layout; // RDG uses contain: size layout style paint, we need to remove the latter two to make sure our borders appear properly
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-default-hover-bg);
+    }
+
+    &[aria-selected="true"] {
+        color: var(--theme-wrangler-grid-cell-selected-fg);
+        background-color: var(--theme-wrangler-grid-cell-selected-bg);
+        box-shadow: unset;
+        outline: none;
+        border: thin solid var(--theme-wrangler-grid-cell-focus-border-color);
+    }
+}
+
+// Grid cell (column selected)
+.wrangler-grid-cell.wrangler-grid-column-selected {
+    background-color: var(--theme-wrangler-grid-cell-default-column-selected-bg);
+    border-bottom: thin solid var(--theme-wrangler-grid-cell-default-column-selected-border-color);
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-default-column-selected-hover-bg);
+    }
+
+    &.wrangler-grid-column-removed {
+        border-left: thin solid var(--theme-wrangler-grid-cell-column-removed-selected-border-color);
+        border-right: thin solid var(--theme-wrangler-grid-cell-column-removed-selected-border-color);
+
+        &.wrangler-grid-cell-last-row {
+            border-bottom: thin solid var(--theme-wrangler-grid-cell-column-removed-selected-border-color);
+        }
+    }
+
+    &.wrangler-grid-column-added {
+        border-left: thin solid var(--theme-wrangler-grid-cell-column-added-selected-border-color);
+        border-right: thin solid var(--theme-wrangler-grid-cell-column-added-selected-border-color);
+
+        &.wrangler-grid-cell-last-row {
+            border-bottom: thin solid var(--theme-wrangler-grid-cell-column-added-selected-border-color);
+        }
+    }
+}
+
+// Grid cell (row selected)
+.wrangler-grid-row-multi-selected .wrangler-grid-cell,
+.wrangler-grid-row-selected .wrangler-grid-cell {
+    background-color: var(--theme-wrangler-grid-cell-default-column-selected-bg);
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-default-column-selected-hover-bg);
+    }
+
+    &.wrangler-grid-column-removed {
+        background-color: var(--theme-wrangler-grid-cell-column-removed-hover-bg);
+
+        &:hover:not([aria-selected="true"]) {
+            background-color: var(--theme-wrangler-grid-header-cell-column-removed-hover-button-hover-bg);
+        }
+    }
+
+    &.wrangler-grid-column-added {
+        background-color: var(--theme-wrangler-grid-cell-column-added-hover-bg);
+
+        &:hover:not([aria-selected="true"]) {
+            background-color: var(--theme-wrangler-grid-header-cell-column-added-hover-button-hover-bg);
+        }
+    }
+
+    &.wrangler-grid-column-targeted {
+        background-color: var(--theme-wrangler-grid-cell-default-column-selected-hover-bg);
+
+        &:hover:not([aria-selected="true"]) {
+            background-color: var(--theme-wrangler-grid-header-cell-default-column-selected-bg);
+        }
+    }
+}
+
+// Grid cell (column removed style)
+.wrangler-grid-cell.wrangler-grid-column-removed {
+    color: var(--theme-wrangler-grid-cell-column-removed-fg);
+    background-color: var(--theme-wrangler-grid-cell-column-removed-bg);
+    border-bottom: thin solid var(--theme-wrangler-grid-cell-column-removed-border-color);
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-column-removed-hover-bg);
+    }
+
+    &.wrangler-grid-cell-modified {
+        background-color: var(--theme-wrangler-grid-cell-column-removed-modified-bg);
+
+        &:hover {
+            background-color: var(--theme-wrangler-grid-header-cell-column-removed-hover-button-hover-bg);
+        }
+    }
+}
+
+// Grid cell (row removed style)
+.wrangler-grid-row-removed.wrangler-grid-cell {
+    color: var(--theme-wrangler-grid-cell-column-removed-fg);
+    background-color: var(--theme-wrangler-grid-cell-column-removed-bg);
+    border-bottom: 1px solid var(--theme-wrangler-grid-cell-column-removed-border-color) !important;
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-column-removed-hover-bg);
+    }
+}
+
+// Grid cell (column added style)
+.wrangler-grid-cell.wrangler-grid-column-added {
+    color: var(--theme-wrangler-grid-cell-column-added-fg);
+    background-color: var(--theme-wrangler-grid-cell-column-added-bg);
+    border-bottom: thin solid var(--theme-wrangler-grid-cell-column-added-border-color);
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-column-added-hover-bg);
+    }
+
+    &.wrangler-grid-cell-modified {
+        background-color: var(--theme-wrangler-grid-cell-column-added-modified-bg);
+
+        &:hover {
+            background-color: var(--theme-wrangler-grid-header-cell-column-added-hover-button-hover-bg);
+        }
+    }
+}
+
+// Grid cell (row added style)
+.wrangler-grid-row-added.wrangler-grid-cell {
+    color: var(--theme-wrangler-grid-cell-column-added-fg);
+    background-color: var(--theme-wrangler-grid-cell-column-added-bg);
+    border-bottom: thin solid var(--theme-wrangler-grid-cell-column-added-border-color);
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-column-added-hover-bg);
+    }
+
+    &.wrangler-grid-row-selected {
+        border-block-start: thin solid var(--theme-wrangler-grid-cell-column-added-selected-border-color);
+        border-block-end: thin solid var(--theme-wrangler-grid-cell-column-added-selected-border-color);
+
+        &.wrangler-grid-cell-last-row {
+            border-bottom: thin solid var(--theme-wrangler-grid-cell-column-added-selected-border-color);
+        }
+    }
+}
+
+// Grid cell (targeted column style)
+.wrangler-grid-cell.wrangler-grid-column-targeted {
+    background-color: var(--theme-wrangler-grid-cell-default-column-selected-bg);
+    border-bottom: thin solid var(--theme-wrangler-grid-cell-default-column-selected-border-color);
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-default-column-selected-hover-bg);
+    }
+
+    &.wrangler-grid-column-removed {
+        background-color: var(--theme-wrangler-grid-cell-column-removed-hover-bg);
+
+        &:hover {
+            background-color: var(--theme-wrangler-grid-header-cell-column-removed-hover-button-hover-bg);
+        }
+    }
+
+    &.wrangler-grid-column-added {
+        background-color: var(--theme-wrangler-grid-cell-column-added-hover-bg);
+
+        &:hover {
+            background-color: var(--theme-wrangler-grid-header-cell-column-added-hover-button-hover-bg);
+        }
+    }
+}
+
+// Grid cell (targeted row style)
+.wrangler-grid-row-targeted > .wrangler-grid-cell {
+    background-color: var(--theme-wrangler-grid-cell-default-column-selected-bg);
+    border-bottom: unset !important;
+    &:hover {
+        background-color: var(--theme-wrangler-grid-cell-default-column-selected-hover-bg);
+    }
+}
+
+// Grid cell selected
+.wrangler-grid-cell[aria-selected="true"] {
+    box-shadow: unset;
+    outline: none;
+
+    &.wrangler-grid-column-removed {
+        border: thin solid var(--theme-wrangler-grid-cell-column-removed-selected-border-color);
+    }
+
+    &.wrangler-grid-column-added {
+        border: thin solid var(--theme-wrangler-grid-cell-column-added-selected-border-color);
+    }
+
+    &:not(.wrangler-grid-column-removed):not(.wrangler-grid-column-added) {
+        color: var(--theme-wrangler-grid-cell-selected-fg);
+        background-color: var(--theme-wrangler-grid-cell-selected-bg);
+    }
+}
+
+// Grid header cell base
+.wrangler-grid-header-cell {
+    padding: 0px;
+    color: var(--theme-wrangler-grid-header-cell-default-fg);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: normal;
+    display: flex;
+    flex-flow: column nowrap;
+    height: 100%;
+    // apply negative margin for the selection border above
+    .wrangler-grid-header-cell-content-container {
+        margin-top: -1px;
+    }
+
+    border: thin solid transparent;
+
+    &:hover {
+        background-color: var(--theme-wrangler-grid-header-cell-default-hover-bg);
+    }
+
+    .wrangler-grid-header-cell-content-container {
+        padding: 0 4px;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        height: 22px;
+        flex-shrink: 0;
+    }
+}
+
+// hack: we don't have a way to dynamically update the header cell classname, so we need to read the aria-selected and propagate it downwards
+.rdg-cell[role="columnheader"] {
+    &[aria-selected="true"] {
+        .wrangler-grid-header-cell:not(.wrangler-grid-column-removed):not(.wrangler-grid-column-added) {
+            color: var(--theme-wrangler-grid-header-cell-default-column-selected-fg);
+            background-color: var(--theme-wrangler-grid-header-cell-default-column-selected-bg);
+        }
+
+        .wrangler-grid-column-removed {
+            border: 1px solid var(--theme-wrangler-grid-cell-column-removed-selected-border-color) !important;
+            .wrangler-column-header-button {
+                margin-right: 0px;
+            }
+
+            &.wrangler-grid-column-selected {
+                border-bottom: thin solid transparent !important;
+            }
+        }
+
+        .wrangler-grid-column-added {
+            border: 1px solid var(--theme-wrangler-grid-cell-column-added-selected-border-color) !important;
+            .wrangler-column-header-button {
+                margin-right: 0px;
+            }
+
+            &.wrangler-grid-column-selected {
+                border-bottom: thin solid transparent !important;
+            }
+        }
+
+        .wrangler-column-header-button.wrangler-column-header-overflow-menu {
+            display: block;
+        }
+    }
+}
+
+// Grid header cell (column selected)
+.wrangler-grid-header-cell.wrangler-grid-column-selected {
+    color: var(--theme-wrangler-grid-header-cell-default-column-selected-fg);
+    background-color: var(--theme-wrangler-grid-header-cell-default-column-selected-bg) !important;
+}
+
+// Grid header cell (column targeted)
+.wrangler-grid-header-cell.wrangler-grid-column-targeted {
+    color: var(--theme-wrangler-grid-header-cell-default-column-selected-fg);
+    background-color: var(--theme-wrangler-grid-header-cell-default-column-selected-bg) !important;
+}
+
+// Grid header cell (column added)
+.wrangler-grid-header-cell.wrangler-grid-column-added {
+    background-color: var(--theme-wrangler-grid-header-cell-column-added-bg) !important;
+    color: var(--theme-wrangler-grid-header-cell-column-added-fg);
+    font-style: italic;
+
+    &.wrangler-grid-column-selected {
+        border: 1px solid var(--theme-wrangler-grid-cell-column-added-selected-border-color) !important;
+        border-bottom: thin solid transparent !important;
+        .wrangler-column-header-button {
+            margin-right: 0px;
+        }
+    }
+}
+
+// Grid header cell (column removed)
+.wrangler-grid-header-cell.wrangler-grid-column-removed {
+    background-color: var(--theme-wrangler-grid-header-cell-column-removed-bg) !important;
+    color: var(--theme-wrangler-grid-header-cell-column-removed-fg);
+    font-style: italic;
+
+    &.wrangler-grid-column-selected {
+        border: 1px solid var(--theme-wrangler-grid-cell-column-removed-selected-border-color) !important;
+        border-bottom: thin solid transparent !important;
+        .wrangler-column-header-button {
+            margin-right: 0px;
+        }
+    }
+}
+
+.wrangler-grid-header-cell:hover .wrangler-column-header-button.wrangler-column-header-overflow-menu {
+    display: block;
+}
+
+.wrangler-grid-header-cell .wrangler-column-header-button.wrangler-column-header-overflow-menu {
+    display: none;
+}
+
+.wrangler-column-header-button.wrangler-column-header-overflow-menu {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.wrangler-column-header-button.wrangler-column-header-accept-preview {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.wrangler-column-header-button.wrangler-column-header-sort-asc {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.wrangler-column-header-button.wrangler-column-header-sort-dsc {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.wrangler-column-header-button {
+    cursor: pointer;
+    padding: 0px;
+
+    // keep these in sync with the row height
+    width: 22px;
+    height: 22px;
+}
+
+.wrangler-column-header-button:hover {
+    background-color: var(--theme-wrangler-grid-header-cell-default-hover-button-hover-bg);
+}
+
+.wrangler-grid-column-targeted .wrangler-column-header-button:hover {
+    background-color: var(--theme-wrangler-grid-header-cell-default-column-selected-hover-button-hover-bg);
+}
+
+.rdg-cell[role="columnheader"][aria-selected="true"]
+    .wrangler-grid-header-cell:not(.wrangler-grid-column-removed):not(.wrangler-grid-column-added)
+    .wrangler-column-header-button:hover {
+    background-color: var(--theme-wrangler-grid-header-cell-default-column-selected-hover-button-hover-bg);
+}
+
+.wrangler-grid-column-selected .wrangler-column-header-button:hover {
+    background-color: var(--theme-wrangler-grid-header-cell-default-column-selected-hover-button-hover-bg);
+}
+
+.wrangler-grid-column-removed .wrangler-column-header-button:hover {
+    background-color: var(--theme-wrangler-grid-header-cell-column-removed-hover-button-hover-bg);
+}
+
+.wrangler-grid-column-added .wrangler-column-header-button:hover {
+    background-color: var(--theme-wrangler-grid-header-cell-column-added-hover-button-hover-bg);
+}
+
+.wrangler-grid-cell-filled {
+    font-style: italic;
+}
+
+// react-data-grid overrides
+.rdg {
+    border: unset !important;
+
+    &.disabled {
+        opacity: 0.4;
+    }
+}
+
+.rdg-cell,
+.rdg-cell[role="columnheader"] {
+    padding: 0px !important;
+    &[aria-selected="true"] {
+        outline: none;
+    }
+}
+
+.rdg-cell[role="columnheader"] {
+    background-color: var(--theme-wrangler-grid-cell-default-bg);
+    border-inline-end: unset;
+    border-block-end: unset;
+    box-shadow: 0 1px 0 var(--theme-wrangler-grid-cell-default-border-color);
+}
+
+.rdg {
+    background-color: var(--theme-wrangler-grid-cell-default-bg);
+}
+
+.rdg-row,
+.rdg-row:hover {
+    color: var(--theme-wrangler-grid-cell-default-fg);
+    background-color: var(--theme-wrangler-grid-cell-default-bg);
+}
+
+.wrangler-cell-icon {
+    // absolute so if the value is aligned to the right we still have it at the start
+    position: absolute;
+    left: 4px;
+    height: 16px;
+    width: 16px;
+    margin-right: 2px;
+}
+
+.wrangler-cell-icon-spacer {
+    flex-shrink: 0;
+    width: 16px;
+}

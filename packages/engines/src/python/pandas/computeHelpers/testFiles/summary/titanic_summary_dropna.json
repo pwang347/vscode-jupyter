@@ -1,0 +1,717 @@
+{
+    "header": {
+        "shape": {
+            "rows": 204,
+            "columns": 11
+        },
+        "indexColumnKey": "index",
+        "oldShape": {
+            "rows": 891,
+            "columns": 11
+        },
+        "previewShape": {
+            "rows": 891,
+            "columns": 11
+        },
+        "isPreviewUnchanged": false,
+        "previewStrategy": "AddedOrRemovedRows",
+        "isPreview": true,
+        "columns": [
+            {
+                "name": "index",
+                "index": 0,
+                "rawType": "int64",
+                "type": "integer"
+            },
+            {
+                "name": "PassengerId",
+                "key": "'PassengerId'",
+                "index": 1,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Survived",
+                "key": "'Survived'",
+                "index": 2,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Pclass",
+                "key": "'Pclass'",
+                "index": 3,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Name",
+                "key": "'Name'",
+                "index": 4,
+                "type": "string",
+                "rawType": "object",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Age",
+                "key": "'Age'",
+                "index": 5,
+                "type": "float",
+                "rawType": "float64",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "SibSp",
+                "key": "'SibSp'",
+                "index": 6,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Parch",
+                "key": "'Parch'",
+                "index": 7,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Ticket",
+                "key": "'Ticket'",
+                "index": 8,
+                "type": "string",
+                "rawType": "object",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Fare",
+                "key": "'Fare'",
+                "index": 9,
+                "type": "float",
+                "rawType": "float64",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Cabin",
+                "key": "'Cabin'",
+                "index": 10,
+                "type": "string",
+                "rawType": "object",
+                "isMixed": false,
+                "totalCount": 204
+            },
+            {
+                "name": "Embarked",
+                "key": "'Embarked'",
+                "index": 11,
+                "type": "string",
+                "rawType": "object",
+                "isMixed": false,
+                "totalCount": 204
+            }
+        ]
+    },
+    "header_stats": {
+        "missingValueCellsCount": 21,
+        "missingValueRowsCount": 21,
+        "missingValuesByColumn": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            19,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2
+        ],
+        "duplicateRowsCount": 0
+    },
+    "column_stats": [
+        {
+            "missingCount": 0,
+            "uniqueCount": 204
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 204,
+            "numericalData": {
+                "mean": 455.4019607843137,
+                "min": 2.0,
+                "25%": 261.75,
+                "75%": 684.0,
+                "max": 890.0,
+                "std": 251.37927930738823,
+                "kurtosis": -1.1418042517979055,
+                "skew": -0.043159133914162186,
+                "median": 457.5
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 2,
+                "max": 890,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 50.0,
+                        "count": 9
+                    },
+                    {
+                        "min": 50.0,
+                        "max": 100.0,
+                        "count": 11
+                    },
+                    {
+                        "min": 100.0,
+                        "max": 150.0,
+                        "count": 10
+                    },
+                    {
+                        "min": 150.0,
+                        "max": 200.0,
+                        "count": 10
+                    },
+                    {
+                        "min": 200.0,
+                        "max": 250.0,
+                        "count": 8
+                    },
+                    {
+                        "min": 250.0,
+                        "max": 300.0,
+                        "count": 15
+                    },
+                    {
+                        "min": 300.0,
+                        "max": 350.0,
+                        "count": 19
+                    },
+                    {
+                        "min": 350.0,
+                        "max": 400.0,
+                        "count": 9
+                    },
+                    {
+                        "min": 400.0,
+                        "max": 450.0,
+                        "count": 8
+                    },
+                    {
+                        "min": 450.0,
+                        "max": 500.0,
+                        "count": 14
+                    },
+                    {
+                        "min": 500.0,
+                        "max": 550.0,
+                        "count": 12
+                    },
+                    {
+                        "min": 550.0,
+                        "max": 600.0,
+                        "count": 12
+                    },
+                    {
+                        "min": 600.0,
+                        "max": 650.0,
+                        "count": 10
+                    },
+                    {
+                        "min": 650.0,
+                        "max": 700.0,
+                        "count": 10
+                    },
+                    {
+                        "min": 700.0,
+                        "max": 750.0,
+                        "count": 17
+                    },
+                    {
+                        "min": 750.0,
+                        "max": 800.0,
+                        "count": 11
+                    },
+                    {
+                        "min": 800.0,
+                        "max": 850.0,
+                        "count": 10
+                    },
+                    {
+                        "min": 850.0,
+                        "max": 900.0,
+                        "count": 9
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 2,
+            "numericalData": {
+                "mean": 0.6666666666666666,
+                "min": 0.0,
+                "25%": 0.0,
+                "75%": 1.0,
+                "max": 1.0,
+                "std": 0.47256418926118954,
+                "kurtosis": -1.5074257425742574,
+                "skew": -0.7123554239110504,
+                "median": 1.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0,
+                "max": 1,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "count": 68
+                    },
+                    {
+                        "min": 1.0,
+                        "max": 1.0,
+                        "count": 136
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 3,
+            "numericalData": {
+                "mean": 1.196078431372549,
+                "min": 1.0,
+                "25%": 1.0,
+                "75%": 1.0,
+                "max": 3.0,
+                "std": 0.5259608272939854,
+                "kurtosis": 5.840671482904547,
+                "skew": 2.6474296185215542,
+                "median": 1.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 1,
+                "max": 3,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 1.0,
+                        "max": 1.0,
+                        "count": 176
+                    },
+                    {
+                        "min": 2.0,
+                        "max": 2.0,
+                        "count": 16
+                    },
+                    {
+                        "min": 3.0,
+                        "max": 3.0,
+                        "count": 12
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 204,
+            "categoricalData": {
+                "top": {
+                    "frequency": 1
+                }
+            }
+        },
+        {
+            "missingCount": 19,
+            "uniqueCount": 63,
+            "numericalData": {
+                "mean": 35.829297297297295,
+                "min": 0.92,
+                "25%": 24.0,
+                "75%": 48.0,
+                "max": 80.0,
+                "std": 15.679355994262954,
+                "kurtosis": -0.23872804217923127,
+                "skew": 0.005570317792985991,
+                "median": 36.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0.92,
+                "max": 80.0,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 4.0,
+                        "count": 9
+                    },
+                    {
+                        "min": 4.0,
+                        "max": 8.0,
+                        "count": 1
+                    },
+                    {
+                        "min": 8.0,
+                        "max": 12.0,
+                        "count": 1
+                    },
+                    {
+                        "min": 12.0,
+                        "max": 16.0,
+                        "count": 5
+                    },
+                    {
+                        "min": 16.0,
+                        "max": 20.0,
+                        "count": 13
+                    },
+                    {
+                        "min": 20.0,
+                        "max": 24.0,
+                        "count": 19
+                    },
+                    {
+                        "min": 24.0,
+                        "max": 28.0,
+                        "count": 12
+                    },
+                    {
+                        "min": 28.0,
+                        "max": 32.0,
+                        "count": 17
+                    },
+                    {
+                        "min": 32.0,
+                        "max": 36.0,
+                        "count": 24
+                    },
+                    {
+                        "min": 36.0,
+                        "max": 40.0,
+                        "count": 18
+                    },
+                    {
+                        "min": 40.0,
+                        "max": 44.0,
+                        "count": 8
+                    },
+                    {
+                        "min": 44.0,
+                        "max": 48.0,
+                        "count": 16
+                    },
+                    {
+                        "min": 48.0,
+                        "max": 52.0,
+                        "count": 15
+                    },
+                    {
+                        "min": 52.0,
+                        "max": 56.0,
+                        "count": 8
+                    },
+                    {
+                        "min": 56.0,
+                        "max": 60.0,
+                        "count": 8
+                    },
+                    {
+                        "min": 60.0,
+                        "max": 64.0,
+                        "count": 6
+                    },
+                    {
+                        "min": 64.0,
+                        "max": 68.0,
+                        "count": 2
+                    },
+                    {
+                        "min": 68.0,
+                        "max": 72.0,
+                        "count": 2
+                    },
+                    {
+                        "min": 72.0,
+                        "max": 76.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 76.0,
+                        "max": 80.0,
+                        "count": 1
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 4,
+            "numericalData": {
+                "mean": 0.4411764705882353,
+                "min": 0.0,
+                "25%": 0.0,
+                "75%": 1.0,
+                "max": 3.0,
+                "std": 0.6289177413262957,
+                "kurtosis": 2.648215397989754,
+                "skew": 1.4841231210074426,
+                "median": 0.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0,
+                "max": 3,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "count": 126
+                    },
+                    {
+                        "min": 1.0,
+                        "max": 1.0,
+                        "count": 69
+                    },
+                    {
+                        "min": 2.0,
+                        "max": 2.0,
+                        "count": 6
+                    },
+                    {
+                        "min": 3.0,
+                        "max": 3.0,
+                        "count": 3
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 4,
+            "numericalData": {
+                "mean": 0.4362745098039216,
+                "min": 0.0,
+                "25%": 0.0,
+                "75%": 1.0,
+                "max": 4.0,
+                "std": 0.7299759380184838,
+                "kurtosis": 2.456403910846912,
+                "skew": 1.6432423310362083,
+                "median": 0.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0,
+                "max": 4,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "count": 141
+                    },
+                    {
+                        "min": 1.0,
+                        "max": 1.0,
+                        "count": 39
+                    },
+                    {
+                        "min": 2.0,
+                        "max": 2.0,
+                        "count": 23
+                    },
+                    {
+                        "min": 3.0,
+                        "max": 3.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 4.0,
+                        "max": 4.0,
+                        "count": 1
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 142,
+            "categoricalData": {
+                "top": {
+                    "frequency": 4
+                }
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 100,
+            "numericalData": {
+                "mean": 76.14150392156863,
+                "min": 0.0,
+                "25%": 29.453125,
+                "75%": 89.32815000000001,
+                "max": 512.3292,
+                "std": 74.39174915506777,
+                "kurtosis": 11.105671211812968,
+                "skew": 2.7451798533601157,
+                "median": 55.22085
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0.0,
+                "max": 512.3292,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 30.0,
+                        "count": 59
+                    },
+                    {
+                        "min": 30.0,
+                        "max": 60.0,
+                        "count": 52
+                    },
+                    {
+                        "min": 60.0,
+                        "max": 90.0,
+                        "count": 46
+                    },
+                    {
+                        "min": 90.0,
+                        "max": 120.0,
+                        "count": 17
+                    },
+                    {
+                        "min": 120.0,
+                        "max": 150.0,
+                        "count": 6
+                    },
+                    {
+                        "min": 150.0,
+                        "max": 180.0,
+                        "count": 7
+                    },
+                    {
+                        "min": 180.0,
+                        "max": 210.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 210.0,
+                        "max": 240.0,
+                        "count": 7
+                    },
+                    {
+                        "min": 240.0,
+                        "max": 270.0,
+                        "count": 8
+                    },
+                    {
+                        "min": 270.0,
+                        "max": 300.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 300.0,
+                        "max": 330.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 330.0,
+                        "max": 360.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 360.0,
+                        "max": 390.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 390.0,
+                        "max": 420.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 420.0,
+                        "max": 450.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 450.0,
+                        "max": 480.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 480.0,
+                        "max": 510.0,
+                        "count": 0
+                    },
+                    {
+                        "min": 510.0,
+                        "max": 540.0,
+                        "count": 2
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 147,
+            "categoricalData": {
+                "top": {
+                    "frequency": 4
+                }
+            }
+        },
+        {
+            "missingCount": 2,
+            "uniqueCount": 3,
+            "categoricalData": {
+                "top": {
+                    "frequency": 129
+                }
+            },
+            "visualization": {
+                "type": "categorical",
+                "categories": [
+                    {
+                        "label": "S",
+                        "count": 129
+                    },
+                    {
+                        "label": "C",
+                        "count": 69
+                    },
+                    {
+                        "label": "Q",
+                        "count": 4
+                    }
+                ],
+                "other": 0
+            }
+        }
+    ]
+}

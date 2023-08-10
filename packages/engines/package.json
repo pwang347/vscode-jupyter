@@ -1,0 +1,31 @@
+{
+    "name": "@dw/engines",
+    "version": "0.0.1-alpha.4",
+    "main": "lib/index.js",
+    "scripts": {
+        "prepare": "node scripts/preparePython.js",
+        "build": "npm run prepare && tsc",
+        "build:watch": "chokidar \"src/**/*.ts\" \"src/**/*.py\" -i \"src/**/*.python.ts\" -c \"npm run build\"",
+        "build:dogfood": "npm run build",
+        "build:prod": "npm run build",
+        "test:unit": "npm run test:node:unit && npm run test:python:unit",
+        "test:node:unit": "mocha ./**/*.unit.test.ts",
+        "test:python:unit": "python -m unittest discover -s src/python/pandas/computeHelpers -p *_test.py",
+        "clean": "rimraf lib",
+        "create:df": "python scripts/create_df.py"
+    },
+    "dependencies": {
+        "@dw/messaging": "0.0.1-alpha.4",
+        "@dw/orchestrator": "0.0.1-alpha.4",
+        "base64-js": "^1.5.1"
+    },
+    "devDependencies": {
+        "@types/mocha": "^9.1.1",
+        "@types/node": "^18.7.6",
+        "chokidar-cli": "^3.0.0",
+        "mocha": "^10.0.0",
+        "rimraf": "^4.4.0",
+        "ts-node": "^10.9.1",
+        "typescript": "^4.8.3"
+    }
+}

@@ -1,0 +1,90 @@
+.wrangler-cleaning-steps-root-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+
+    // Disable text selection
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.wrangler-cleaning-steps-container {
+    height: 24px;
+    min-height: 24px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: 500;
+    cursor: pointer;
+
+    &.fixed-to-bottom {
+        margin-top: auto;
+    }
+    &.no-cursor {
+        cursor: default;
+    }
+    &:hover .wrangler-cleaning-steps-actions,
+    &:focus-within .wrangler-cleaning-steps-actions {
+        opacity: 1;
+    }
+}
+
+.wrangler-cleaning-steps-number {
+    width: 20px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.wrangler-cleaning-steps-label {
+    display: flex;
+    align-items: flex-start;
+    padding-left: 8px;
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding-right: 10px;
+    }
+}
+
+.wrangler-cleaning-steps-targets {
+    display: inline;
+
+    opacity: 0.7;
+    margin-left: 0.5em;
+    font-size: 0.9em;
+}
+
+.wrangler-cleaning-steps-actions {
+    width: 40px;
+    flex-shrink: 0;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    // Use opacity to ensure it can still be navigated via keyboard
+    opacity: 0;
+}
+
+.wrangler-cleaning-steps-container.preview .wrangler-cleaning-steps-label {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.wrangler-cleaning-steps-container.active {
+    background-color: #edebe9;
+}
+
+.wrangler-cleaning-steps-container.after-active .wrangler-cleaning-steps-label {
+    text-decoration: line-through;
+}

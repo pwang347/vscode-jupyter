@@ -1,0 +1,28 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# python string artifacts (python files turned into literal TS strings)
+*.python.ts
+
+# test data frames
+scripts/test_dataframes
+
+# python
+__pycache__
+**/.venv*/
+
+# dependencies
+/node_modules
+
+# testing
+/coverage
+junit.xml
+*.trx
+
+# output
+/lib
+
+# vs related
+.suo
+.vs/
+obj/
+bin/

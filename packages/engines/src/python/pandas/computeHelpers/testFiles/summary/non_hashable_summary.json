@@ -1,0 +1,67 @@
+{
+    "header": {
+        "shape": {
+            "rows": 6,
+            "columns": 1
+        },
+        "indexColumnKey": "index",
+        "columns": [
+            {
+                "name": "index",
+                "index": 0,
+                "rawType": "int64",
+                "type": "integer"
+            },
+            {
+                "name": "0",
+                "key": "0",
+                "index": 1,
+                "type": "unknown",
+                "rawType": "object",
+                "isMixed": true,
+                "totalCount": 6
+            }
+        ]
+    },
+    "header_stats": {
+        "missingValueCellsCount": 0,
+        "missingValueRowsCount": 0,
+        "missingValuesByColumn": [
+            0,
+            0
+        ],
+        "duplicateRowsCount": 3
+    },
+    "column_stats": [
+        {
+            "missingCount": 0,
+            "uniqueCount": 6
+        },
+        {
+            "missingCount": 0,
+            "categoricalData": {
+                "top": {
+                    "frequency": 3
+                }
+            },
+            "visualization": {
+                "type": "categorical",
+                "categories": [
+                    {
+                        "label": "{'7': 8, '9': 0}",
+                        "count": 3
+                    },
+                    {
+                        "label": "(4, 5, 6)",
+                        "count": 2
+                    },
+                    {
+                        "label": "[1, 2, 3]",
+                        "count": 1
+                    }
+                ],
+                "other": 0
+            }
+        }
+    ]
+}

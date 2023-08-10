@@ -1,0 +1,221 @@
+{
+    "header": {
+        "shape": {
+            "rows": 1,
+            "columns": 5
+        },
+        "indexColumnKey": "index",
+        "columns": [
+            {
+                "name": "index",
+                "index": 0,
+                "rawType": "int64",
+                "type": "integer"
+            },
+            {
+                "name": "0",
+                "key": "0",
+                "index": 1,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 1
+            },
+            {
+                "name": "'\"",
+                "key": "'\\'\"'",
+                "index": 2,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 1
+            },
+            {
+                "name": "(1, 'a')",
+                "key": "(1, 'a')",
+                "index": 3,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 1
+            },
+            {
+                "name": "True",
+                "key": "True",
+                "index": 4,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 1
+            },
+            {
+                "name": "(1+5j)",
+                "key": "(1+5j)",
+                "index": 5,
+                "type": "integer",
+                "rawType": "int64",
+                "isMixed": false,
+                "totalCount": 1
+            }
+        ]
+    },
+    "header_stats": {
+        "missingValueCellsCount": 0,
+        "missingValueRowsCount": 0,
+        "missingValuesByColumn": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "duplicateRowsCount": 0
+    },
+    "column_stats": [
+        {
+            "missingCount": 0,
+            "uniqueCount": 1
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 1,
+            "numericalData": {
+                "mean": 0.0,
+                "min": 0.0,
+                "25%": 0.0,
+                "75%": 0.0,
+                "max": 0.0,
+                "std": "nan",
+                "kurtosis": "nan",
+                "skew": "nan",
+                "median": 0.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0,
+                "max": 0,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "count": 1
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 1,
+            "numericalData": {
+                "mean": 0.0,
+                "min": 0.0,
+                "25%": 0.0,
+                "75%": 0.0,
+                "max": 0.0,
+                "std": "nan",
+                "kurtosis": "nan",
+                "skew": "nan",
+                "median": 0.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0,
+                "max": 0,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "count": 1
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 1,
+            "numericalData": {
+                "mean": 0.0,
+                "min": 0.0,
+                "25%": 0.0,
+                "75%": 0.0,
+                "max": 0.0,
+                "std": "nan",
+                "kurtosis": "nan",
+                "skew": "nan",
+                "median": 0.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0,
+                "max": 0,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "count": 1
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 1,
+            "numericalData": {
+                "mean": 0.0,
+                "min": 0.0,
+                "25%": 0.0,
+                "75%": 0.0,
+                "max": 0.0,
+                "std": "nan",
+                "kurtosis": "nan",
+                "skew": "nan",
+                "median": 0.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0,
+                "max": 0,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "count": 1
+                    }
+                ]
+            }
+        },
+        {
+            "missingCount": 0,
+            "uniqueCount": 1,
+            "numericalData": {
+                "mean": 0.0,
+                "min": 0.0,
+                "25%": 0.0,
+                "75%": 0.0,
+                "max": 0.0,
+                "std": "nan",
+                "kurtosis": "nan",
+                "skew": "nan",
+                "median": 0.0
+            },
+            "visualization": {
+                "type": "numerical",
+                "min": 0,
+                "max": 0,
+                "binPrecision": 0,
+                "bins": [
+                    {
+                        "min": 0.0,
+                        "max": 0.0,
+                        "count": 1
+                    }
+                ]
+            }
+        }
+    ]
+}

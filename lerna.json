@@ -1,0 +1,14 @@
+{
+    "packages": [
+        ".",
+        "vscode-data-wrangler-internal/packages/*"
+    ],
+    "version": "0.0.1-alpha.4",
+    "command": {
+        "publish": {
+            "registry": "https://devdiv.pkgs.visualstudio.com/OnlineServices/_packaging/AzureNotebooksEntry/npm/registry/"
+        }
+    },
+    "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+    "useWorkspaces": false
+}

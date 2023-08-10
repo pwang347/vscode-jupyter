@@ -1,0 +1,50 @@
+{
+    "columns": {
+        "1": {
+            "annotationType": "added",
+            "dataEndIndex": 5
+        },
+        "2": {
+            "annotationType": "added",
+            "dataEndIndex": 5
+        },
+        "3": {
+            "annotationType": "added",
+            "dataEndIndex": 5
+        },
+        "4": {
+            "annotationType": "removed"
+        },
+        "5": {
+            "annotationType": "removed"
+        },
+        "6": {
+            "annotationType": "removed"
+        },
+        "7": {
+            "annotationType": "removed"
+        },
+        "8": {
+            "annotationType": "removed"
+        },
+        "9": {
+            "annotationType": "removed"
+        },
+        "10": {
+            "annotationType": "removed"
+        },
+        "11": {
+            "annotationType": "removed"
+        },
+        "12": {
+            "annotationType": "removed"
+        },
+        "13": {
+            "annotationType": "removed"
+        },
+        "14": {
+            "annotationType": "removed"
+        }
+    },
+    "rows": {}
+}
