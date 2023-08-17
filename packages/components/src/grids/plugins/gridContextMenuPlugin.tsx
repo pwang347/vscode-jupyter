@@ -300,19 +300,6 @@ export class GridContextMenuPlugin<TCol>
                     activeDataFrame
                 ),
                 gridOperations: [
-                    ...((this.gridSortPlugin?.getSortColumn()?.index === this.contextMenuTargetCol && this.contextMenuTargetCol) || (!!this.gridFilterPlugin?.getColumnFilter(this.contextMenuTargetCol))  ? [{
-                        type: "button",
-                        key: "clear",
-                        label: "Clear all",
-                        onClick: () => {
-                            this.gridSortPlugin?.clearSortColumn();
-                            this.gridFilterPlugin?.clearFilter(this.contextMenuTargetCol!)
-                        }
-                    },
-                    {
-                        type: "divider"
-                    },
-                ] : []) as any,
                     {
                         type: "button",
                         key: "sortAsc",
@@ -338,7 +325,21 @@ export class GridContextMenuPlugin<TCol>
                         label: "filter",
                         filter: this.gridFilterPlugin?.getColumnFilter(this.contextMenuTargetCol!) ?? "",
                         onFilterChange: (filter) => { this.gridFilterPlugin?.filterColumn(this.contextMenuTargetCol!, filter)}
+                    },
+                    ...((this.gridSortPlugin?.getSortColumn()?.index === this.contextMenuTargetCol && this.contextMenuTargetCol) || (!!this.gridFilterPlugin?.getColumnFilter(this.contextMenuTargetCol))  ? [
+                        {
+                            type: "divider"
+                        },
+                        {
+                        type: "button",
+                        key: "clear",
+                        label: "Clear all",
+                        onClick: () => {
+                            this.gridSortPlugin?.clearSortColumn();
+                            this.gridFilterPlugin?.clearFilter(this.contextMenuTargetCol!)
+                        }
                     }
+                ] : []) as any,
                 ]
             },
             defaultRender: () => null,

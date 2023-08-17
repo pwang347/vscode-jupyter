@@ -2039,6 +2039,7 @@
         "@dw/visualization-recharts": "0.0.1-alpha.4",
         "@enonic/fnv-plus": "^1.3.0",
         "@fluentui/react": "^7.160.1",
+        "@fluentui/react-icons-mdl2": "^1.3.48",
         "@jupyter-widgets/base": "4.0.0",
         "@jupyter-widgets/controls": "3.0.0",
         "@jupyter-widgets/schema": "0.4.0",

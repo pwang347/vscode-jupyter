@@ -24,8 +24,16 @@ import { ContextualMenu, DirectionalHint, ContextualMenuItemType } from "@fluent
 import { IContextualMenuItemProps, IContextualMenuItemRenderFunctions, IconButton, TextField, initializeIcons } from '@fluentui/react';
 import { DataWranglerMessages } from '../../extension-side/dataviewer/dataWranglerMessages';
 import { WranglerPostOffice } from './wranglerPostOffice';
+import {FilterAscendingIcon, FilterDescendingIcon} from "@fluentui/react-icons-mdl2";
+import { registerIcons } from '@fluentui/react/lib/Styling';
 
 initializeIcons(); // Register all FluentUI icons being used to prevent developer console errors
+registerIcons({
+    icons: {
+        FilterAscending: <FilterAscendingIcon />,
+        FilterDescending: <FilterDescendingIcon />
+    }
+})
 
 const loadingShimmer = [{ type: ShimmerElementType.line, height: 10 }];
 const loadingShimmerColors = {
