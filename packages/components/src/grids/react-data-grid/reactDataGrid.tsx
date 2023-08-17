@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import * as React from "react";
 import memoize from "memoize-one";
 
@@ -28,11 +31,14 @@ import debounce from "lodash.debounce";
 
 import "./reactDataGrid.scss";
 import { getCellProps, isDataFrameEditable } from "../helpers/cell";
+import { GridSortPlugin } from '../plugins/gridSortPlugin';
+import { GridFilterPlugin } from '../plugins/gridFilterPlugin';
 
 /**
  * Column definition for react-data-grid.
  */
 interface IReactDataGridColumn extends Column<IDataFrameRow> {
+    index: number;
     columnKey: string;
 }
 
@@ -87,6 +93,8 @@ const numLoadingRows = 5;
  * Wrangler grid implementation using react-data-grid.
  */
 export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IReactDataGridState> {
+    private gridSortPlugin: GridSortPlugin<IReactDataGridColumn>;
+    private gridFilterPlugin: GridFilterPlugin<IReactDataGridColumn>;
     private gridSelectionPlugin: GridSelectionPlugin<IReactDataGridColumn>;
     private gridContextMenuPlugin: GridContextMenuPlugin<IReactDataGridColumn>;
     private plugins: IGridPlugin<IReactDataGridColumn>[] = [];
@@ -104,13 +112,17 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
 
     constructor(props: IReactDataGridProps) {
         super(props);
+        this.gridSortPlugin = new GridSortPlugin(this.getColumnDefinitions, this.setColumnDefinitions, this.pluginRenderer);
+        this.gridFilterPlugin = new GridFilterPlugin(this.getColumnDefinitions, this.setColumnDefinitions, this.pluginRenderer);
         this.gridSelectionPlugin = new GridSelectionPlugin(this.getColumnDefinitions, this.setColumnDefinitions);
         this.gridContextMenuPlugin = new GridContextMenuPlugin(
             this.getColumnDefinitions,
             this.setColumnDefinitions,
             this.pluginRenderer,
             this.onChangeHeaderContextMenuVisibility,
-            this.gridSelectionPlugin
+            this.gridSelectionPlugin,
+            this.gridSortPlugin,
+            this.gridFilterPlugin
         );
         this.plugins = [this.gridSelectionPlugin, this.gridContextMenuPlugin];
 
@@ -270,6 +282,7 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
                 columnWidthCorrectionAmount +
                 (addPreviewColumnPadding ? previewColumnWidthCorrectionAmount : 0);
             const columnDefinition: IReactDataGridColumn = {
+                index: c.index,
                 key: String(c.index),
                 name: c.name,
                 columnKey: c.key,
@@ -417,6 +430,8 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
                             dataFrameColumnIndex={c.index}
                             gridContextMenuPlugin={this.gridContextMenuPlugin}
                             gridSelectionPlugin={this.gridSelectionPlugin}
+                            gridSortPlugin={this.gridSortPlugin}
+                            gridFilterPlugin={this.gridFilterPlugin}
                             renderers={renderers}
                             disabled={!!this.props.disabled}
                             disableInteractions={!!this.props.disableInteractions}
@@ -717,7 +732,16 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
     };
 
     private getRowDataWithLoadingRows = memoize(
-        (dataFrame: IDataFrame | undefined, rows: IDataFrameRow[], showLoadingRows: boolean) => {
+        (dataFrame: IDataFrame | undefined, rows: IDataFrameRow[], showLoadingRows: boolean, sortColumn: {index: number, sortOrder: boolean} | undefined, _: string) => {
+            console.log("@@@sortColumn2", sortColumn);
+            const filteredRows = rows.filter((row) => this.gridFilterPlugin.filterData(row));
+            const sortedRows = sortColumn ? filteredRows.sort((a, b) => {
+                if (typeof a.data[sortColumn.index] === 'number' && typeof b.data[sortColumn.index] === 'number') {
+                    return !sortColumn.sortOrder ? b.data[sortColumn.index] - a.data[sortColumn.index] : a.data[sortColumn.index] - b.data[sortColumn.index];
+                }
+                return !sortColumn.sortOrder ? String(b.data[sortColumn.index]).localeCompare(String(a.data[sortColumn.index])) : String(a.data[sortColumn.index]).localeCompare(String(b.data[sortColumn.index]))
+            }) : filteredRows;
+            console.log("@@sortedRows", sortedRows);
             if (dataFrame && showLoadingRows && rows.length < dataFrame.rowCount) {
                 const maxLoadingRows = Math.min(numLoadingRows, dataFrame.rowCount - rows.length);
                 const loadingRows = new Array<IDataFrameRow>(maxLoadingRows).fill({
@@ -725,9 +749,10 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
                     data: [],
                     index: -1
                 });
-                return rows.concat(loadingRows);
+
+                return sortedRows.concat(loadingRows);
             } else {
-                return rows;
+                return sortedRows;
             }
         }
     );
@@ -739,10 +764,13 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
             // force light theme in the base implementation
             "rdg-light": true
         });
+        console.log('@@RENDER RDG');
         const rows = this.getRowDataWithLoadingRows(
             this.state.activeDataFrame,
             this.state.rowData,
-            !this.props.disableFetching
+            !this.props.disableFetching,
+            this.gridSortPlugin.getSortColumn(),
+            this.gridFilterPlugin.getFilterId()
         );
         return (
             <div style={{ height: "100%", width: "100%", display: hidden ? "none" : undefined, ...style }}>

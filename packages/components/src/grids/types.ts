@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import {
     IDataFrame,
     IDataFrameRow,
@@ -13,16 +16,16 @@ import {
     ColumnType,
     ITelemetryLogger,
     IHistoryItem
-} from "@dw/messaging";
-import { LocalizedStrings } from "../localization";
-import { IRenderFunction } from "../customRender";
+} from '@dw/messaging';
+import { LocalizedStrings } from '../localization';
+import { IRenderFunction } from '../customRender';
 
 /**
  * Cell context menu grid operations.
  */
 export enum CellContextMenuGridOperations {
-    CopyCell = "copyCell",
-    CopyRows = "copyRows"
+    CopyCell = 'copyCell',
+    CopyRows = 'copyRows'
 }
 
 /**
@@ -58,6 +61,24 @@ export interface IContextMenuRenderers {
         columnIndex: number;
         selection: ISelection;
         operationContextMenuItems: any[];
+        gridOperations: Array<
+            | {
+                  type: 'button';
+                  key: string;
+                  label: string;
+                  onClick: () => void;
+              }
+            | {
+                  type: 'divider';
+              }
+            | {
+                  type: 'textField';
+                  key: string;
+                  label: string;
+                  filter: string;
+                  onFilterChange: (filter: string) => void;
+              }
+        >;
     }>;
     onRenderCellContextMenu?: IRenderFunction<{
         target: Element | Point;
@@ -181,10 +202,10 @@ export interface IVisualizationStyle {
  * Types of header labels.
  */
 export enum HeaderLabelType {
-    Added = "added",
-    Removed = "removed",
-    Targeted = "targeted",
-    Default = "default"
+    Added = 'added',
+    Removed = 'removed',
+    Targeted = 'targeted',
+    Default = 'default'
 }
 
 /**
@@ -200,6 +221,7 @@ export interface IHeaderRenderers {
     onRenderOverflowMenuButton?: IRenderFunction<{
         showHeaderContextMenu: (target: Element) => void;
         sortAsc?: boolean;
+        filter?: string;
     }>;
     onRenderCommitButton?: IRenderFunction<{
         disabled: boolean;
@@ -241,7 +263,7 @@ export interface IWranglerGridProps {
     enableEditLastAppliedOperation: boolean;
     historyItems: IHistoryItem[];
     onRowsLoaded?: (rows: IDataFrameRow[]) => void;
-    onHeaderContextMenuShown?: (how: "context" | "button") => void;
+    onHeaderContextMenuShown?: (how: 'context' | 'button') => void;
     onCellContextMenuShown?: () => void;
     telemetryLogger?: ITelemetryLogger;
 }
@@ -254,7 +276,7 @@ export interface Point {
 
 /** Represents the type of grid cell. */
 export enum GridCellIcon {
-    EditSuccess = "editSuccess",
-    EditFail = "editFail",
-    EditSuggested = "editSuggested"
+    EditSuccess = 'editSuccess',
+    EditFail = 'editFail',
+    EditSuggested = 'editSuggested'
 }

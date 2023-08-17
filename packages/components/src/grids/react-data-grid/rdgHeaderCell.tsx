@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import * as React from "react";
 import type { HeaderRendererProps } from "react-data-grid";
 import {
@@ -17,6 +20,8 @@ import { GridSelectionPlugin } from "../plugins/gridSelectionPlugin";
 import { GridContextMenuPlugin } from "../plugins/gridContextMenuPlugin";
 import { IHeaderRenderers, HeaderLabelType } from "../types";
 import { renderCustom } from "../../customRender";
+import { GridSortPlugin } from '../plugins/gridSortPlugin';
+import { GridFilterPlugin } from '../plugins/gridFilterPlugin';
 
 /**
  * Props for the react-data-grid header cell.
@@ -29,6 +34,8 @@ export interface IReactDataGridHeaderCellProps extends HeaderRendererProps<IData
     dataFrameColumnIndex: number;
     gridContextMenuPlugin: GridContextMenuPlugin<any>;
     gridSelectionPlugin: GridSelectionPlugin<any>;
+    gridSortPlugin: GridSortPlugin<any>;
+    gridFilterPlugin: GridFilterPlugin<any>;
     renderers?: IHeaderRenderers;
     disabled: boolean;
     disableInteractions: boolean;
@@ -135,6 +142,8 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
             columnAnnotations,
             dataFrameColumnIndex,
             gridContextMenuPlugin,
+            gridSortPlugin,
+            gridFilterPlugin,
             renderers,
             disabled,
             disableInteractions,
@@ -228,7 +237,9 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
                 showHeaderContextMenu: (target) => {
                     onHeaderContextMenuShown?.("button");
                     gridContextMenuPlugin.showHeaderContextMenu(target, dataFrameColumnIndex);
-                }
+                },
+                sortAsc: gridSortPlugin.getSortColumn()?.index === dataFrameColumnIndex ? gridSortPlugin.getSortColumn()?.sortOrder : undefined,
+                filter: gridFilterPlugin.getColumnFilter(dataFrameColumnIndex)
             },
             defaultRender: (props) => {
                 const className = "wrangler-column-header-button wrangler-column-header-overflow-menu";

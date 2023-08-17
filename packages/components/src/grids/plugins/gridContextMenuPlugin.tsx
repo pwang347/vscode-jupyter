@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import * as React from "react";
 import {
     FailedFilterCode,
@@ -18,6 +21,8 @@ import { IGridSelectionPlugin } from "./gridSelectionPlugin";
 import { BaseGridRenderPlugin } from "./baseGridRenderPlugin";
 import { IWranglerGridProps } from "../types";
 import { GridPluginRenderer } from "./gridPluginRenderer";
+import { IGridSortPlugin } from './gridSortPlugin';
+import { IGridFilterPlugin } from './gridFilterPlugin';
 
 /**
  * Context menu plugin.
@@ -47,7 +52,9 @@ export class GridContextMenuPlugin<TCol>
         setColumnDefinitions: (columnDefinitions: TCol[]) => void,
         renderer: React.RefObject<GridPluginRenderer>,
         private onChangeHeaderContextMenuVisibility: (visible: boolean) => void,
-        private gridSelectionPlugin?: IGridSelectionPlugin
+        private gridSelectionPlugin?: IGridSelectionPlugin,
+        private gridSortPlugin?: IGridSortPlugin,
+        private gridFilterPlugin?: IGridFilterPlugin
     ) {
         super(getColumnDefinitions, setColumnDefinitions, renderer);
         this.gridSelectionPlugin?.onSelectionChanged(() => {
@@ -157,6 +164,7 @@ export class GridContextMenuPlugin<TCol>
         syntheticSelection: ISelection,
         menuItems: WranglerContextMenuItem[],
         activeDataFrame: IDataFrame | undefined
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): any[] {
         const { renderers, comms } = props;
         return menuItems.map((menuItem, idx) => {
@@ -212,6 +220,7 @@ export class GridContextMenuPlugin<TCol>
         selection: ISelection,
         activeDataFrame: IDataFrame | undefined
     ) {
+        console.log("@@RENDER1");
         const { renderers, disabled, disableInteractions, operationContextMenu } = props;
 
         // nothing to do if we don't have a target or are missing information to render the header context menu
@@ -223,11 +232,13 @@ export class GridContextMenuPlugin<TCol>
             // we shouldn't allow context menu
             (!activeDataFrame.isPreviewUnchanged && activeDataFrame.previewStrategy === PreviewStrategy.None)
         ) {
+            console.log("@@@?1");
             return;
         }
 
         if (disabled || disableInteractions) {
             this.setHeaderContextMenuTarget(undefined);
+            console.log("@@@?2");
             return;
         }
 
@@ -266,6 +277,12 @@ export class GridContextMenuPlugin<TCol>
             return;
         }
 
+        console.log("@@@WE RENDERIN ", this.getMenuItemsRecursive(
+            props,
+            syntheticSelection,
+            operationContextMenu,
+            activeDataFrame
+        ));
         const headerContextMenu = renderCustom({
             props: {
                 selection: syntheticSelection,
@@ -281,7 +298,48 @@ export class GridContextMenuPlugin<TCol>
                     syntheticSelection,
                     operationContextMenu,
                     activeDataFrame
-                )
+                ),
+                gridOperations: [
+                    ...((this.gridSortPlugin?.getSortColumn()?.index === this.contextMenuTargetCol && this.contextMenuTargetCol) || (!!this.gridFilterPlugin?.getColumnFilter(this.contextMenuTargetCol))  ? [{
+                        type: "button",
+                        key: "clear",
+                        label: "Clear all",
+                        onClick: () => {
+                            this.gridSortPlugin?.clearSortColumn();
+                            this.gridFilterPlugin?.clearFilter(this.contextMenuTargetCol!)
+                        }
+                    },
+                    {
+                        type: "divider"
+                    },
+                ] : []) as any,
+                    {
+                        type: "button",
+                        key: "sortAsc",
+                        label: "Sort Ascending",
+                        onClick: () => {
+                            this.gridSortPlugin?.sortColumn(this.contextMenuTargetCol!, true)
+                        }
+                    },
+                    {
+                        type: "button",
+                        key: "sortDesc",
+                        label: "Sort Descending",
+                        onClick: () => {
+                            this.gridSortPlugin?.sortColumn(this.contextMenuTargetCol!, false)
+                        }
+                    },
+                    {
+                        type: "divider"
+                    },
+                    {
+                        type: "textField",
+                        key: "filter",
+                        label: "filter",
+                        filter: this.gridFilterPlugin?.getColumnFilter(this.contextMenuTargetCol!) ?? "",
+                        onFilterChange: (filter) => { this.gridFilterPlugin?.filterColumn(this.contextMenuTargetCol!, filter)}
+                    }
+                ]
             },
             defaultRender: () => null,
             customRender: renderers?.onRenderHeaderContextMenu

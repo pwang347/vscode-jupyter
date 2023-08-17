@@ -4,29 +4,17 @@
 import { inject, injectable, named } from 'inversify';
 import { EventEmitter, Memento, Uri, ViewColumn } from 'vscode';
 
-import { capturePerfTelemetry, sendTelemetryEvent } from '../../../telemetry';
-import { JupyterDataRateLimitError } from '../../../platform/errors/jupyterDataRateLimitError';
+import { capturePerfTelemetry } from '../../../telemetry';
 import { DataViewerMessageListener } from './dataViewerMessageListener';
-import {
-    DataViewerMessages,
-    IDataFrameInfo,
-    IDataViewer,
-    IDataViewerDataProvider,
-    IDataViewerMapping,
-    IGetRowsRequest,
-    IGetSliceRequest,
-    IJupyterVariableDataProvider
-} from './types';
-import { isValidSliceExpression, preselectedSliceExpression } from '../../webview-side/data-explorer/helpers';
-import { CheckboxState } from '../../../platform/telemetry/constants';
+import { IDataViewer, IDataViewerDataProvider, IJupyterVariableDataProvider } from './types';
 import { IKernel } from '../../../kernels/types';
 import {
     IWebviewPanelProvider,
-    IWorkspaceService,
-    IApplicationShell
+    IWorkspaceService
+    // IApplicationShell
 } from '../../../platform/common/application/types';
-import { HelpLinks, Telemetry } from '../../../platform/common/constants';
-import { traceError, traceInfo } from '../../../platform/logging';
+import { Telemetry } from '../../../platform/common/constants';
+import { traceError } from '../../../platform/logging';
 import {
     IConfigurationService,
     IMemento,
@@ -36,22 +24,156 @@ import {
     IExtensionContext
 } from '../../../platform/common/types';
 import * as localize from '../../../platform/common/utils/localize';
-import { StopWatch } from '../../../platform/common/utils/stopWatch';
 import { WebViewViewChangeEventArgs } from '../../../platform/webviews/types';
 import { WebviewPanelHost } from '../../../platform/webviews/webviewPanelHost';
-import { noop } from '../../../platform/common/utils/misc';
 import { joinPath } from '../../../platform/vscode-path/resources';
 import { IDataScienceErrorHandler } from '../../../kernels/errors/types';
+import { DataWranglerMessages } from './dataWranglerMessages';
+import { IKernelSession } from './dataWranglerTypes';
+import { VSCJupyterKernelSession } from './vscodeJupyterKernelSession';
+import { BasicOrchestrator, DataFrameTypeIdentifier, LocalizedStrings } from '@dw/orchestrator';
+import { PandasEngine, WranglerEngineIdentifier } from '@dw/engines';
+import {
+    AsyncTask,
+    DataImportOperationKey,
+    ICodeExecutorOptions,
+    IDataFrame,
+    IEngineConstants,
+    IError,
+    IGridCellEdit,
+    IHistoryItem,
+    IOperationView,
+    IOrchestratorComms,
+    IResolvedPackageDependencyMap,
+    WranglerContextMenuItem,
+    formatString
+} from '@dw/messaging';
+import { IVariableImportOperationArgs } from '@dw/engines/lib/core/operations/dataImport/variable';
+
+/**
+ * Grabs already-loaded rows from the given dataframe and attaches them so they can be serialized.
+ * Useful for eagerly sending rows to webviews to avoid flashing when the dataframe changes.
+ */
+export function preloadData(
+    dataframe: IDataFrame,
+    { rows = 0, stats = false, columnStats = false }: { rows?: number; stats?: boolean; columnStats?: boolean } = {}
+): DataWranglerMessages.ISerializedDataFrame {
+    if (!dataframe) {
+        return dataframe;
+    }
+
+    const loaded = dataframe.getLoadedRows();
+    return {
+        ...dataframe,
+        __rows: rows > 0 ? loaded.slice(0, rows) : undefined,
+        __stats: (stats && dataframe.tryGetStats()) || undefined,
+        __columnStats: (columnStats && dataframe.getLoadedColumnStats()) || undefined
+    };
+}
+
+const preloadGridData = (dataFrame: IDataFrame) =>
+    preloadData(dataFrame, {
+        rows: 1000,
+        columnStats: true
+    });
 
 const PREFERRED_VIEWGROUP = 'JupyterDataViewerPreferredViewColumn';
 @injectable()
-export class DataViewer extends WebviewPanelHost<IDataViewerMapping> implements IDataViewer, IDisposable {
+export class DataViewer
+    extends WebviewPanelHost<DataWranglerMessages.IHostMapping>
+    implements IDataViewer, IDisposable
+{
     private dataProvider: IDataViewerDataProvider | IJupyterVariableDataProvider | undefined;
-    private rowsTimer: StopWatch | undefined;
+    private kernelSession: IKernelSession | undefined;
     private pendingRowsCount: number = 0;
-    private dataFrameInfoPromise: Promise<IDataFrameInfo> | undefined;
-    private currentSliceExpression: string | undefined;
-    private sentDataViewerSliceDimensionalityTelemetry = false;
+    private orchestrator: BasicOrchestrator | undefined;
+    private dataFrame: IDataFrame | undefined;
+    private orchestratorComms: IOrchestratorComms = {
+        ui: {
+            raiseError: (_error: IError) => {
+                // TODO
+            },
+            reset: () => {
+                // TODO
+            },
+            start: (dataFrame: IDataFrame) => {
+                this.setDataFrame(dataFrame);
+            },
+            updateConstants: (_engineConstants: IEngineConstants) => {
+                // TODO
+            },
+            updateDependencies: (_dependencies: IResolvedPackageDependencyMap) => {
+                // TODO
+            },
+            updateOperations: (_operations: IOperationView[], _operationContextMenu: WranglerContextMenuItem[]) => {
+                // TODO
+            },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            updateActiveOperation: (_operationKey?: string, _args?: any, _source?: any, _skipPreview?: boolean) => {
+                // TODO
+            },
+            updateHistory: (_historyItems: IHistoryItem[]) => {
+                // TODO
+            },
+            updateActiveHistoryState: (_historyState?: { historyItem?: IHistoryItem; dataFrame?: IDataFrame }) => {
+                // TODO
+            },
+            updateGridCellEdits: (_gridCellEdits: IGridCellEdit[]) => {
+                // TODO
+            },
+            updateDataFrame: (dataFrame: IDataFrame) => {
+                this.setDataFrame(dataFrame);
+            },
+            setPreviewAllTheCode: (_value: boolean) => {
+                // TODO
+            }
+        },
+
+        operations: {
+            completePreviewOperation: (_dataFrame: IDataFrame) => {
+                // TODO
+            },
+
+            /**
+             * Commits an operation.
+             */
+            completeCommitOperation: (_dataFrame: IDataFrame) => {
+                // TODO
+            },
+
+            /**
+             * Updates the data in the grid.
+             */
+            completeRejectOperation: (_dataFrame: IDataFrame, _rejectedItem?: IHistoryItem) => {
+                // TODO
+            },
+            completeUndoOperation: (_dataFrame: IDataFrame, _undoneItem: IHistoryItem) => {
+                // TODO
+            }
+        },
+
+        code: {
+            execute: async (code: string, options?: ICodeExecutorOptions): Promise<string> => {
+                try {
+                    const result = await this.kernelSession?.executeCode(code, options);
+                    return result ?? '';
+                } catch (e) {
+                    throw e;
+                }
+            },
+
+            interrupt: async () => {
+                return this.kernelSession?.interrupt();
+            }
+        }
+    };
+
+    public setDataFrame(df: IDataFrame) {
+        this.dataFrame = df;
+        const preloaded = preloadGridData(df);
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        this.postMessage(DataWranglerMessages.Host.SetDataFrame, preloaded);
+    }
 
     public get active() {
         return !!this.webPanel?.isActive();
@@ -76,7 +198,7 @@ export class DataViewer extends WebviewPanelHost<IDataViewerMapping> implements 
         @inject(IWebviewPanelProvider) provider: IWebviewPanelProvider,
         @inject(IConfigurationService) configuration: IConfigurationService,
         @inject(IWorkspaceService) workspaceService: IWorkspaceService,
-        @inject(IApplicationShell) private applicationShell: IApplicationShell,
+        // @inject(IApplicationShell) private applicationShell: IApplicationShell,
         @inject(IMemento) @named(GLOBAL_MEMENTO) readonly globalMemento: Memento,
         @inject(IDataScienceErrorHandler) readonly errorHandler: IDataScienceErrorHandler,
         @inject(IExtensionContext) readonly context: IExtensionContext
@@ -103,26 +225,66 @@ export class DataViewer extends WebviewPanelHost<IDataViewerMapping> implements 
         if (!this.isDisposed) {
             // Save the data provider
             this.dataProvider = dataProvider;
+            const kernel = (this.dataProvider as IJupyterVariableDataProvider).kernel;
+            this.kernelSession = new VSCJupyterKernelSession(
+                {
+                    connection: kernel?.session?.kernel!,
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    kernelSocket: {} as any
+                },
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                kernel?.kernelConnectionMetadata! as any
+            );
 
             // Load the web panel using our current directory as we don't expect to load any other files
             await super.loadWebview(Uri.file(process.cwd())).catch(traceError);
 
             super.setTitle(title);
 
+            this.orchestrator = new BasicOrchestrator(
+                this.orchestratorComms,
+                {
+                    [WranglerEngineIdentifier.Pandas]: {
+                        engine: new PandasEngine()
+                    }
+                },
+                {},
+                () => LocalizedStrings.Orchestrator,
+                formatString,
+                'en',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                {} as any,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                {} as any
+            );
+            const dfInfo = await this.dataProvider.getDataFrameInfo();
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            await this.orchestrator.startWranglerSession(
+                WranglerEngineIdentifier.Pandas,
+                DataImportOperationKey.Variable,
+                () =>
+                    AsyncTask.resolve<IVariableImportOperationArgs>({
+                        VariableName: dfInfo.name ?? 'df',
+                        DataFrameType: dfInfo.originalVariableType?.toLowerCase().includes('pyspark')
+                            ? DataFrameTypeIdentifier.PySpark
+                            : DataFrameTypeIdentifier.Pandas
+                    })
+            );
+
             // Then show our web panel. Eventually we need to consume the data
             await super.show(true);
 
-            let dataFrameInfo = await this.prepDataFrameInfo();
+            // let dataFrameInfo = await this.prepDataFrameInfo();
 
-            // If higher dimensional data, preselect a slice to show
-            if (dataFrameInfo.shape && dataFrameInfo.shape.length > 2) {
-                this.maybeSendSliceDataDimensionalityTelemetry(dataFrameInfo.shape.length);
-                const slice = preselectedSliceExpression(dataFrameInfo.shape);
-                dataFrameInfo = await this.getDataFrameInfo(slice);
-            }
+            // // If higher dimensional data, preselect a slice to show
+            // if (dataFrameInfo.shape && dataFrameInfo.shape.length > 2) {
+            //     this.maybeSendSliceDataDimensionalityTelemetry(dataFrameInfo.shape.length);
+            //     const slice = preselectedSliceExpression(dataFrameInfo.shape);
+            //     dataFrameInfo = await this.getDataFrameInfo(slice);
+            // }
 
-            // Send a message with our data
-            this.postMessage(DataViewerMessages.InitializeData, dataFrameInfo).catch(noop);
+            // // Send a message with our data
+            // this.postMessage(DataViewerMessages.InitializeData, dataFrameInfo).catch(noop);
         }
     }
 
@@ -138,27 +300,27 @@ export class DataViewer extends WebviewPanelHost<IDataViewerMapping> implements 
     }
 
     public async refreshData() {
-        const currentSliceExpression = this.currentSliceExpression;
-        // Clear our cached info promise
-        this.dataFrameInfoPromise = undefined;
-        // Then send a refresh data payload
-        // At this point, variable shape or type may have changed
-        // such that previous slice expression is no longer valid
-        let dataFrameInfo = await this.getDataFrameInfo(undefined, true);
-        // Check whether the previous slice expression is valid WRT the new shape
-        if (currentSliceExpression !== undefined && dataFrameInfo.shape !== undefined) {
-            if (isValidSliceExpression(currentSliceExpression, dataFrameInfo.shape)) {
-                dataFrameInfo = await this.getDataFrameInfo(currentSliceExpression);
-            } else {
-                // Previously applied slice expression isn't valid anymore
-                // Generate a preselected slice
-                const newSlice = preselectedSliceExpression(dataFrameInfo.shape);
-                dataFrameInfo = await this.getDataFrameInfo(newSlice);
-            }
-        }
-        traceInfo(`Refreshing data viewer for variable ${dataFrameInfo.name}`);
-        // Send a message with our data
-        this.postMessage(DataViewerMessages.InitializeData, dataFrameInfo).catch(noop);
+        // const currentSliceExpression = this.currentSliceExpression;
+        // // Clear our cached info promise
+        // this.dataFrameInfoPromise = undefined;
+        // // Then send a refresh data payload
+        // // At this point, variable shape or type may have changed
+        // // such that previous slice expression is no longer valid
+        // let dataFrameInfo = await this.getDataFrameInfo(undefined, true);
+        // // Check whether the previous slice expression is valid WRT the new shape
+        // if (currentSliceExpression !== undefined && dataFrameInfo.shape !== undefined) {
+        //     if (isValidSliceExpression(currentSliceExpression, dataFrameInfo.shape)) {
+        //         dataFrameInfo = await this.getDataFrameInfo(currentSliceExpression);
+        //     } else {
+        //         // Previously applied slice expression isn't valid anymore
+        //         // Generate a preselected slice
+        //         const newSlice = preselectedSliceExpression(dataFrameInfo.shape);
+        //         dataFrameInfo = await this.getDataFrameInfo(newSlice);
+        //     }
+        // }
+        // traceInfo(`Refreshing data viewer for variable ${dataFrameInfo.name}`);
+        // // Send a message with our data
+        // this.postMessage(DataViewerMessages.InitializeData, dataFrameInfo).catch(noop);
     }
 
     public override dispose(): void {
@@ -185,146 +347,56 @@ export class DataViewer extends WebviewPanelHost<IDataViewerMapping> implements 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected override onMessage(message: string, payload: any) {
         switch (message) {
-            case DataViewerMessages.GetAllRowsRequest:
-                this.getAllRows(payload as string).catch(noop);
+            case DataWranglerMessages.Webview.LoadRows:
+                if (this.dataFrame) {
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                    this.dataFrame.loadRows(payload.end).then((rows) => {
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        this.postMessage(DataWranglerMessages.Host.LoadRows, {
+                            requestId: payload.requestId,
+                            data: rows.slice(payload.start) // Send as many rows as we have loaded.
+                        });
+                    });
+                }
                 break;
-
-            case DataViewerMessages.GetRowsRequest:
-                this.getRowChunk(payload as IGetRowsRequest).catch(noop);
+            case DataWranglerMessages.Webview.LoadStats:
+                if (this.dataFrame) {
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                    this.dataFrame.loadStats().then((stats) => {
+                        if (stats) {
+                            // Assume that if loading was interrupted, the webview no longer needs to know.
+                            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                            this.postMessage(DataWranglerMessages.Host.LoadStats, {
+                                requestId: payload.requestId,
+                                stats: payload.stats
+                            });
+                        }
+                    });
+                }
                 break;
-
-            case DataViewerMessages.GetSliceRequest:
-                this.getSlice(payload as IGetSliceRequest).catch(noop);
+            case DataWranglerMessages.Webview.LoadColumnStats:
+                if (this.dataFrame) {
+                    let columnStats = this.dataFrame.tryGetColumnStats(payload.columnIndex);
+                    // let isFirstLoad = false;
+                    if (!columnStats) {
+                        // isFirstLoad = true;
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        this.dataFrame.loadColumnStats(payload.columnIndex).then((columnStats) => {
+                            if (columnStats) {
+                                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                                this.postMessage(DataWranglerMessages.Host.LoadColumnStats, {
+                                    requestId: payload.requestId,
+                                    columnStats
+                                });
+                            }
+                        });
+                    }
+                }
                 break;
-
-            case DataViewerMessages.RefreshDataViewer:
-                this.refreshData().catch(noop);
-                void sendTelemetryEvent(Telemetry.RefreshDataViewer);
-                break;
-
-            case DataViewerMessages.SliceEnablementStateChanged:
-                void sendTelemetryEvent(Telemetry.DataViewerSliceEnablementStateChanged, undefined, {
-                    newState: payload.newState ? CheckboxState.Checked : CheckboxState.Unchecked
-                });
-                break;
-
             default:
                 break;
         }
 
         super.onMessage(message, payload);
-    }
-
-    private getDataFrameInfo(sliceExpression?: string, isRefresh?: boolean): Promise<IDataFrameInfo> {
-        // If requesting a new slice, refresh our cached info promise
-        if (!this.dataFrameInfoPromise || sliceExpression !== this.currentSliceExpression) {
-            this.dataFrameInfoPromise = this.dataProvider
-                ? this.dataProvider.getDataFrameInfo(sliceExpression, isRefresh)
-                : Promise.resolve({});
-            this.currentSliceExpression = sliceExpression;
-        }
-        return this.dataFrameInfoPromise;
-    }
-
-    private async prepDataFrameInfo(): Promise<IDataFrameInfo> {
-        this.rowsTimer = new StopWatch();
-        const output = await this.getDataFrameInfo();
-
-        // Log telemetry about number of rows
-        try {
-            sendTelemetryEvent(Telemetry.ShowDataViewer, undefined, {
-                rows: output.rowCount ? output.rowCount : 0,
-                columns: output.columns ? output.columns.length : 0
-            });
-
-            // Count number of rows to fetch so can send telemetry on how long it took.
-            this.pendingRowsCount = output.rowCount ? output.rowCount : 0;
-        } catch {
-            noop();
-        }
-
-        return output;
-    }
-
-    // Deprecate this
-    private async getAllRows(sliceExpression?: string) {
-        return this.wrapRequest(async () => {
-            if (this.dataProvider) {
-                const allRows = await this.dataProvider.getAllRows(sliceExpression);
-                this.pendingRowsCount = 0;
-                return this.postMessage(DataViewerMessages.GetAllRowsResponse, allRows);
-            }
-        });
-    }
-
-    private getSlice(request: IGetSliceRequest) {
-        return this.wrapRequest(async () => {
-            if (this.dataProvider) {
-                const payload = await this.getDataFrameInfo(request.slice);
-                if (payload.shape?.length) {
-                    this.maybeSendSliceDataDimensionalityTelemetry(payload.shape.length);
-                }
-                sendTelemetryEvent(Telemetry.DataViewerSliceOperation, undefined, { source: request.source });
-                return this.postMessage(DataViewerMessages.InitializeData, payload);
-            }
-        });
-    }
-
-    private getRowChunk(request: IGetRowsRequest) {
-        return this.wrapRequest(async () => {
-            if (this.dataProvider) {
-                const dataFrameInfo = await this.getDataFrameInfo(request.sliceExpression);
-                const rows = await this.dataProvider.getRows(
-                    request.start,
-                    Math.min(request.end, dataFrameInfo.rowCount ? dataFrameInfo.rowCount : 0),
-                    request.sliceExpression
-                );
-                this.pendingRowsCount = Math.max(0, this.pendingRowsCount - rows.length);
-                return this.postMessage(DataViewerMessages.GetRowsResponse, {
-                    rows,
-                    start: request.start,
-                    end: request.end
-                });
-            }
-        });
-    }
-
-    private async wrapRequest(func: () => Promise<void>) {
-        try {
-            return await func();
-        } catch (e) {
-            if (e instanceof JupyterDataRateLimitError) {
-                traceError(e.message);
-                const actionTitle = localize.DataScience.pythonInteractiveHelpLink;
-                this.applicationShell
-                    .showErrorMessage(localize.DataScience.jupyterDataRateExceeded, actionTitle)
-                    .then((v) => {
-                        // User clicked on the link, open it.
-                        if (v === actionTitle) {
-                            this.applicationShell.openUrl(HelpLinks.JupyterDataRateHelpLink);
-                        }
-                    }, noop);
-                this.dispose();
-            }
-            traceError(e);
-            this.errorHandler.handleError(e).then(noop, noop);
-        } finally {
-            this.sendElapsedTimeTelemetry();
-        }
-    }
-
-    private sendElapsedTimeTelemetry() {
-        if (this.rowsTimer && this.pendingRowsCount === 0) {
-            sendTelemetryEvent(Telemetry.ShowDataViewerRowsLoaded, undefined, {
-                rowsTimer: this.rowsTimer.elapsedTime
-            });
-        }
-    }
-
-    private maybeSendSliceDataDimensionalityTelemetry(numberOfDimensions: number) {
-        if (!this.sentDataViewerSliceDimensionalityTelemetry) {
-            sendTelemetryEvent(Telemetry.DataViewerDataDimensionality, { numberOfDimensions });
-            this.sentDataViewerSliceDimensionalityTelemetry = true;
-        }
     }
 }

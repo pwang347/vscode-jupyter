@@ -155,6 +155,11 @@ function buildConfiguration(bundle) {
                 fs: false,
                 path: require.resolve('path-browserify'),
                 os: false
+            },
+            alias: {
+                // Make sure that we use the same version of react globally
+                react: path.resolve('./node_modules/react'),
+                'react-dom': path.resolve('./node_modules/react-dom')
             }
         },
 
