@@ -312,10 +312,10 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                                         iconName: this.getContextMenuIconName(o.key)
                                     },
                                     onRender: (item: any, dismissMenu: (ev?: any, dismissAll?: boolean) => void) => {
-                                        return <div style={{margin: 10}}>
+                                        return <div style={{margin: 10, color: "white"}}>
                                             <div style={{marginBottom: 10, display: "flex", alignItems: "center", gap: 5}}>
                                             <Icon iconName='Filter' />Filter
-                                            </div><TextField defaultValue={o.filter} onChange={(_, newValue) => {
+                                            </div><TextField style={{color: "white"}} defaultValue={o.filter} onChange={(_, newValue) => {
                                             o.onFilterChange(newValue ?? "");
                                         }} /></div>
                                     }

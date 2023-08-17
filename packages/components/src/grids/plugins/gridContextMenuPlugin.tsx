@@ -335,7 +335,7 @@ export class GridContextMenuPlugin<TCol>
                         key: "clear",
                         label: "Clear all",
                         onClick: () => {
-                            this.gridSortPlugin?.clearSortColumn();
+                            this.gridSortPlugin?.clearSortColumn(this.contextMenuTargetCol!);
                             this.gridFilterPlugin?.clearFilter(this.contextMenuTargetCol!)
                         }
                     }

@@ -55,8 +55,10 @@ export class GridFilterPlugin<TCol extends { index: number }>
         return this.getColumnDefinition(colIndex).filter;
     }
 
-    public clearFilter() {
-        this.setColumnDefinitions(this.getColumnDefinitions().map((def) => ({ ...def, filter: '' })));
+    public clearFilter(colIndex: number) {
+        this.setColumnDefinitions(
+            this.getColumnDefinitions().map((def) => (colIndex === def.index ? { ...def, filter: '' } : def))
+        );
         setTimeout(() => {
             this.renderer.current?.forceUpdate();
         }, 0);

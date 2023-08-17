@@ -8,7 +8,8 @@ import { BaseGridRenderPlugin } from './baseGridRenderPlugin';
  * Sort plugin.
  */
 export interface IGridSortPlugin {
-    clearSortColumn: () => void;
+    clearAllSortColumns: () => void;
+    clearSortColumn: (colIndex: number) => void;
     sortColumn: (colIndex: number, sortAsc: boolean) => void;
     getSortColumn: () =>
         | {
@@ -39,7 +40,7 @@ export class GridSortPlugin<TCol>
     }
 
     public sortColumn(colIndex: number, sortAsc: boolean) {
-        this.clearSortColumn();
+        this.clearAllSortColumns();
         this.setColumnDefinition(colIndex, { ...this.getColumnDefinition(colIndex), sortAsc });
         this.sortCol = {
             index: colIndex,
@@ -51,13 +52,19 @@ export class GridSortPlugin<TCol>
         }, 0);
     }
 
-    public clearSortColumn() {
+    public clearAllSortColumns() {
         this.setColumnDefinitions(this.getColumnDefinitions().map((def) => ({ ...def, sortAsc: undefined })));
         this.sortCol = undefined;
         console.log('@@CLEAR');
         setTimeout(() => {
             this.renderer.current?.forceUpdate();
         }, 0);
+    }
+
+    public clearSortColumn(colIndex: number) {
+        if (this.sortCol?.index === colIndex) {
+            this.clearAllSortColumns();
+        }
     }
 
     public addColumnProperties(
