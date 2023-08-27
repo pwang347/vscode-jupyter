@@ -12,6 +12,7 @@ const path = require('path');
 const constants = require('../constants');
 const configFileName = 'tsconfig.datascience-ui.json';
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const copyWebpackPlugin = require('copy-webpack-plugin');
 
 // Any build on the CI is considered production mode.
 const isProdBuild = constants.isCI || process.argv.includes('--mode');
@@ -23,7 +24,8 @@ function getEntry(bundle) {
             return {
                 plotViewer: ['babel-polyfill', `./src/webviews/webview-side/plot/index.tsx`],
                 dataExplorer: ['babel-polyfill', `./src/webviews/webview-side/data-explorer/index.tsx`],
-                variableView: ['babel-polyfill', `./src/webviews/webview-side/variable-view/index.tsx`]
+                variableView: ['babel-polyfill', `./src/webviews/webview-side/variable-view/index.tsx`],
+                summaryView: ['babel-polyfill', `./src/webviews/webview-side/summary-view/index.tsx`]
             };
         case 'ipywidgetsKernel':
             return {
@@ -94,6 +96,12 @@ function getPlugins(bundle) {
                         indexUrl: `${constants.ExtensionRootDir}/out/1`,
                         chunks: ['commons', 'variableView'],
                         filename: 'index.variableView.html'
+                    }),
+                    new HtmlWebpackPlugin({
+                        template: 'src/webviews/webview-side/summary-view/index.html',
+                        indexUrl: `${constants.ExtensionRootDir}/out/1`,
+                        chunks: ['commons', 'summaryView'],
+                        filename: 'index.summaryView.html'
                     })
                 ]
             );
@@ -124,7 +132,10 @@ function buildConfiguration(bundle) {
         new webpack.optimize.LimitChunkCountPlugin({
             maxChunks: 100
         }),
-        ...getPlugins(bundle)
+        ...getPlugins(bundle),
+        new copyWebpackPlugin({
+            patterns: [{ from: './node_modules/@vscode/codicons/dist', to: 'codicons' }]
+        })
     ];
     return {
         context: constants.ExtensionRootDir,

@@ -9,6 +9,8 @@ import { DataViewerMessageListener } from './dataViewerMessageListener';
 import { IDataViewer, IDataViewerDataProvider, IJupyterVariableDataProvider } from './types';
 import { IKernel } from '../../../kernels/types';
 import {
+    IApplicationShell,
+    ICommandManager,
     IWebviewPanelProvider,
     IWorkspaceService
     // IApplicationShell
@@ -29,26 +31,13 @@ import { WebviewPanelHost } from '../../../platform/webviews/webviewPanelHost';
 import { joinPath } from '../../../platform/vscode-path/resources';
 import { IDataScienceErrorHandler } from '../../../kernels/errors/types';
 import { DataWranglerMessages } from './dataWranglerMessages';
-import { IKernelSession } from './dataWranglerTypes';
 import { VSCJupyterKernelSession } from './vscodeJupyterKernelSession';
-import { BasicOrchestrator, DataFrameTypeIdentifier, LocalizedStrings } from '@dw/orchestrator';
-import { PandasEngine, WranglerEngineIdentifier } from '@dw/engines';
-import {
-    AsyncTask,
-    DataImportOperationKey,
-    ICodeExecutorOptions,
-    IDataFrame,
-    IEngineConstants,
-    IError,
-    IGridCellEdit,
-    IHistoryItem,
-    IOperationView,
-    IOrchestratorComms,
-    IResolvedPackageDependencyMap,
-    WranglerContextMenuItem,
-    formatString
-} from '@dw/messaging';
+import { DataFrameTypeIdentifier } from '@dw/orchestrator';
+import { WranglerEngineIdentifier } from '@dw/engines';
+import { AsyncTask, ColumnType, DataImportOperationKey, IDataFrame, IOperationView } from '@dw/messaging';
 import { IVariableImportOperationArgs } from '@dw/engines/lib/core/operations/dataImport/variable';
+import { IDataWranglerOrchestrator } from '../variablesView/types';
+import { ContextKey } from '../../../platform/common/contextKey';
 
 /**
  * Grabs already-loaded rows from the given dataframe and attaches them so they can be serialized.
@@ -84,89 +73,9 @@ export class DataViewer
     implements IDataViewer, IDisposable
 {
     private dataProvider: IDataViewerDataProvider | IJupyterVariableDataProvider | undefined;
-    private kernelSession: IKernelSession | undefined;
     private pendingRowsCount: number = 0;
-    private orchestrator: BasicOrchestrator | undefined;
     private dataFrame: IDataFrame | undefined;
-    private orchestratorComms: IOrchestratorComms = {
-        ui: {
-            raiseError: (_error: IError) => {
-                // TODO
-            },
-            reset: () => {
-                // TODO
-            },
-            start: (dataFrame: IDataFrame) => {
-                this.setDataFrame(dataFrame);
-            },
-            updateConstants: (_engineConstants: IEngineConstants) => {
-                // TODO
-            },
-            updateDependencies: (_dependencies: IResolvedPackageDependencyMap) => {
-                // TODO
-            },
-            updateOperations: (_operations: IOperationView[], _operationContextMenu: WranglerContextMenuItem[]) => {
-                // TODO
-            },
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            updateActiveOperation: (_operationKey?: string, _args?: any, _source?: any, _skipPreview?: boolean) => {
-                // TODO
-            },
-            updateHistory: (_historyItems: IHistoryItem[]) => {
-                // TODO
-            },
-            updateActiveHistoryState: (_historyState?: { historyItem?: IHistoryItem; dataFrame?: IDataFrame }) => {
-                // TODO
-            },
-            updateGridCellEdits: (_gridCellEdits: IGridCellEdit[]) => {
-                // TODO
-            },
-            updateDataFrame: (dataFrame: IDataFrame) => {
-                this.setDataFrame(dataFrame);
-            },
-            setPreviewAllTheCode: (_value: boolean) => {
-                // TODO
-            }
-        },
-
-        operations: {
-            completePreviewOperation: (_dataFrame: IDataFrame) => {
-                // TODO
-            },
-
-            /**
-             * Commits an operation.
-             */
-            completeCommitOperation: (_dataFrame: IDataFrame) => {
-                // TODO
-            },
-
-            /**
-             * Updates the data in the grid.
-             */
-            completeRejectOperation: (_dataFrame: IDataFrame, _rejectedItem?: IHistoryItem) => {
-                // TODO
-            },
-            completeUndoOperation: (_dataFrame: IDataFrame, _undoneItem: IHistoryItem) => {
-                // TODO
-            }
-        },
-
-        code: {
-            execute: async (code: string, options?: ICodeExecutorOptions): Promise<string> => {
-                try {
-                    const result = await this.kernelSession?.executeCode(code, options);
-                    return result ?? '';
-                } catch (e) {
-                    throw e;
-                }
-            },
-
-            interrupt: async () => {
-                return this.kernelSession?.interrupt();
-            }
-        }
-    };
+    private summaryVisible: ContextKey = new ContextKey('jupyter.summaryPanel', this.commandManager);
 
     public setDataFrame(df: IDataFrame) {
         this.dataFrame = df;
@@ -201,7 +110,10 @@ export class DataViewer
         // @inject(IApplicationShell) private applicationShell: IApplicationShell,
         @inject(IMemento) @named(GLOBAL_MEMENTO) readonly globalMemento: Memento,
         @inject(IDataScienceErrorHandler) readonly errorHandler: IDataScienceErrorHandler,
-        @inject(IExtensionContext) readonly context: IExtensionContext
+        @inject(IExtensionContext) readonly context: IExtensionContext,
+        @inject(IApplicationShell) private readonly applicationShell: IApplicationShell,
+        @inject(IDataWranglerOrchestrator) readonly dwOrchestrator: IDataWranglerOrchestrator,
+        @inject(ICommandManager) private commandManager: ICommandManager
     ) {
         const dataExplorerDir = joinPath(context.extensionUri, 'out', 'webviews', 'webview-side', 'viewers');
         super(
@@ -215,6 +127,11 @@ export class DataViewer
             globalMemento.get(PREFERRED_VIEWGROUP) ?? ViewColumn.One
         );
         this.onDidDispose(this.dataViewerDisposed, this);
+        this.dwOrchestrator.onSetDf(this.setDataFrame.bind(this));
+        this.dwOrchestrator.onOperationsChanged((operations: IOperationView[]) => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            this.postMessage(DataWranglerMessages.Host.SetOperations, { operations });
+        });
     }
 
     @capturePerfTelemetry(Telemetry.DataViewerWebviewLoaded)
@@ -226,7 +143,7 @@ export class DataViewer
             // Save the data provider
             this.dataProvider = dataProvider;
             const kernel = (this.dataProvider as IJupyterVariableDataProvider).kernel;
-            this.kernelSession = new VSCJupyterKernelSession(
+            const kernelSession = new VSCJupyterKernelSession(
                 {
                     connection: kernel?.session?.kernel!,
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -235,31 +152,18 @@ export class DataViewer
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 kernel?.kernelConnectionMetadata! as any
             );
+            this.dwOrchestrator.setKernel(kernelSession);
 
             // Load the web panel using our current directory as we don't expect to load any other files
             await super.loadWebview(Uri.file(process.cwd())).catch(traceError);
 
             super.setTitle(title);
 
-            this.orchestrator = new BasicOrchestrator(
-                this.orchestratorComms,
-                {
-                    [WranglerEngineIdentifier.Pandas]: {
-                        engine: new PandasEngine()
-                    }
-                },
-                {},
-                () => LocalizedStrings.Orchestrator,
-                formatString,
-                'en',
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                {} as any,
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                {} as any
-            );
             const dfInfo = await this.dataProvider.getDataFrameInfo();
+            this.dwOrchestrator.setTitle(dfInfo.name ?? 'df');
+
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            await this.orchestrator.startWranglerSession(
+            await this.dwOrchestrator.orchestrator.startWranglerSession(
                 WranglerEngineIdentifier.Pandas,
                 DataImportOperationKey.Variable,
                 () =>
@@ -321,6 +225,19 @@ export class DataViewer
         // traceInfo(`Refreshing data viewer for variable ${dataFrameInfo.name}`);
         // // Send a message with our data
         // this.postMessage(DataViewerMessages.InitializeData, dataFrameInfo).catch(noop);
+        const dfInfo = await this.dataProvider!.getDataFrameInfo();
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        await this.dwOrchestrator.orchestrator!.startWranglerSession(
+            WranglerEngineIdentifier.Pandas,
+            DataImportOperationKey.Variable,
+            () =>
+                AsyncTask.resolve<IVariableImportOperationArgs>({
+                    VariableName: dfInfo.name ?? 'df',
+                    DataFrameType: dfInfo.originalVariableType?.toLowerCase().includes('pyspark')
+                        ? DataFrameTypeIdentifier.PySpark
+                        : DataFrameTypeIdentifier.Pandas
+                })
+        );
     }
 
     public override dispose(): void {
@@ -344,9 +261,87 @@ export class DataViewer
         return undefined;
     }
 
+    // async exportDataToFileHelper(format: WranglerDataExportFormat, fileExtension: string, formatName: string) {
+    //     return await this.applicationShell.withProgress(
+    //         {
+    //             // TODO@DW: localize
+    //             location: vscode.ProgressLocation.Notification,
+    //             title: `Exporting ${formatName} file...`,
+    //             cancellable: true
+    //         },
+    //         async (_, token) => {
+    //             const exportDataTask = this.orchestrator.exportData(format);
+    //             token.onCancellationRequested(() => exportDataTask.interrupt());
+
+    //             const data = await exportDataTask;
+    //             const baseUri =
+    //                 this.session.metadata.type === DataWranglerSessionType.FileUri
+    //                     ? this.session.metadata.originalFsPath.substring(
+    //                           0,
+    //                           this.session.metadata.originalFsPath.lastIndexOf('.')
+    //                       )
+    //                     : this.session.uri.fsPath.substring(0, this.session.uri.fsPath.lastIndexOf(DataWranglerSuffix));
+
+    //             if (!data || token.isCancellationRequested) {
+    //                 return;
+    //             }
+
+    //             let saveDialogUri = vscode.Uri.file(baseUri + '.' + fileExtension);
+
+    //             // If we're in a walkthrough, we want to save the file in the workspace directory, or the home directory if there is no workspace
+    //             if (this.session.metadata.isWalkthrough) {
+    //                 const workspaceFolder = this.workspaceService.getWorkspaceFolder(this.session.uri);
+    //                 const directory = workspaceFolder ? workspaceFolder.uri.fsPath : os.homedir();
+    //                 saveDialogUri = vscode.Uri.file(path.join(directory, path.basename(baseUri) + '.' + fileExtension));
+    //                 this.telemetryClient.debug(`Saving data as ${formatName} on`, saveDialogUri.fsPath);
+    //             }
+
+    //             // note: rather than opening an untitled file here, we must save the file directly due to limitations in the VS Code extension API
+    //             // see https://github.com/microsoft/vscode/issues/32608
+    //             const fileUri = await this.applicationShell.showSaveDialog({
+    //                 defaultUri: saveDialogUri,
+    //                 filters: {
+    //                     [formatName]: [fileExtension]
+    //                 }
+    //             });
+    //             if (fileUri) {
+    //                 await this.fileSystem.writeFile(fileUri, data);
+    //             }
+    //             return fileUri;
+    //         }
+    //     );
+    // }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    protected override onMessage(message: string, payload: any) {
+    protected override async onMessage(message: string, payload: any) {
         switch (message) {
+            case DataWranglerMessages.Webview.RefreshData:
+                await this.refreshData();
+                break;
+            case DataWranglerMessages.Webview.ExportData:
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                this.dwOrchestrator.exportDataToFile();
+                break;
+            case DataWranglerMessages.Webview.RevealColumn:
+                const columns = this.dataFrame?.columns;
+                if (!columns) {
+                    return;
+                }
+                const columnOptions = columns.slice(1).map((col) => ({
+                    label: mapColumnTypeToProductIcon(col.type) + ' ' + col.name,
+                    // TODO@DW: localize
+                    description: col.rawType + (col.isMixed ? ' (mixed)' : ''),
+                    index: col.index
+                }));
+                const columnChoice = await this.applicationShell.showQuickPick(columnOptions, {
+                    //TODO@DW: localize
+                    placeHolder: 'Choose a column to reveal',
+                    ignoreFocusOut: true
+                });
+                if (columnChoice) {
+                    await this.postMessage(DataWranglerMessages.Host.RevealColumn, { columnIndex: columnChoice.index });
+                }
+                break;
             case DataWranglerMessages.Webview.LoadRows:
                 if (this.dataFrame) {
                     // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -393,10 +388,49 @@ export class DataViewer
                     }
                 }
                 break;
+            case DataWranglerMessages.Webview.ToggleSummary:
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                this.summaryVisible.set(!this.summaryVisible.value);
+                break;
+            case DataWranglerMessages.Webview.UpdateGridSelection:
+                this.dwOrchestrator.setSelection(payload);
+                break;
+            case DataWranglerMessages.Webview.PreviewOperation:
+                console.log('@@GOT THE PREVIEW', payload);
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                this.dwOrchestrator.orchestrator.startPreview(
+                    payload.operationKey,
+                    payload.args,
+                    this.dwOrchestrator.dataFrame!,
+                    []
+                );
+                break;
             default:
                 break;
         }
 
         super.onMessage(message, payload);
+    }
+}
+
+function mapColumnTypeToProductIcon(type: ColumnType) {
+    switch (type) {
+        case ColumnType.Integer:
+        case ColumnType.Float:
+        case ColumnType.Complex:
+            return '$(symbol-number)';
+        case ColumnType.Boolean:
+            return '$(symbol-boolean)';
+        case ColumnType.Datetime:
+        case ColumnType.Timedelta:
+            return '$(calendar)';
+        case ColumnType.String:
+            return '$(symbol-text)';
+        case ColumnType.Category:
+        case ColumnType.Interval:
+        case ColumnType.Period:
+        case ColumnType.Unknown:
+        default:
+            return '$(database)';
     }
 }

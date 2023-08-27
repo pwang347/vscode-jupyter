@@ -1,0 +1,70 @@
+body {
+    padding: 1px;
+}
+
+.wrangler-summary {
+    font-family: var(--vscode-font-family);
+    font-size: 13px;
+
+    .wrangler-summary-fold-section-header {
+        font-weight: 600;
+        padding: 2px 0px;
+
+        .wrangler-summary-fold-section-title {
+            margin: 0 0 3px 28px;
+            font-size: 13px;
+        }
+    }
+    .wrangler-summary-fold-tab-focus:focus-visible {
+        outline: 1px solid var(--vscode-focusBorder);
+    }
+
+    .wrangler-summary-secondary-text {
+        color: var(--vscode-foreground);
+    }
+    .wrangler-summary-fold-section-secondary-title {
+        margin-right: 20px;
+    }
+
+    .wrangler-secondary-text {
+        color: var(--vscode-foreground);
+    }
+
+    .wrangler-summary-warning-icon {
+        color: var(--vscode-problemsWarningIcon-foreground);
+    }
+
+    .wrangler-summary-fold-section {
+        padding-top: 3px;
+
+        .codicon {
+            margin-left: -20px;
+            position: absolute;
+            margin-top: 1px;
+            color: var(--vscode-icon-foreground);
+        }
+    }
+
+    .wrangler-summary-row-title {
+        display: flex;
+        flex-flow: row nowrap;
+    }
+
+    .wrangler-summary-row-wrapper {
+        display: flex;
+        justify-content: space-between;
+        padding: 0px 20px;
+
+        & > .ms-TooltipHost {
+            width: 100%;
+        }
+
+        .wrangler-summary-row-content {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--vscode-tree-indentGuidesStroke, #454545);
+        }
+    }
+}

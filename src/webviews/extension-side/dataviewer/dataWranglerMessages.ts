@@ -1,8 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { IDataFrameColumnStats, IDataFrameHeader, IDataFrameRow, IDataFrameStats } from '@dw/messaging';
+import {
+    IDataFrameColumnStats,
+    IDataFrameHeader,
+    IDataFrameRow,
+    IDataFrameStats,
+    IOperationView,
+    ISelection
+} from '@dw/messaging';
 import { SharedMessages } from '../../../messageTypes';
+import { WranglerDataExportFormat } from '@dw/orchestrator';
 
 export namespace DataWranglerMessages {
     // export const Started = SharedMessages.Started;
@@ -35,13 +43,13 @@ export namespace DataWranglerMessages {
         // SetActiveHistoryIndex = 'setActiveHistoryIndex',
         // SetVSCodeConfig = 'setVSCodeConfig',
         // SetActiveHistoryItem = 'setActiveHistoryItem',
-        // SetOperations = 'setOperations',
-        // SetGridSelection = 'setGridSelection',
+        SetOperations = 'setOperations',
+        SetGridSelection = 'setGridSelection',
         // SetOperation = 'setOperation',
         // PreviewOperation = 'previewOperation',
         // CommitOperation = 'commitOperation',
         // RejectOperation = 'rejectOperation',
-        SetDataFrame = 'setDataFrame'
+        SetDataFrame = 'setDataFrame',
         // SetGridCellEdits = 'setGridCellEdits',
         // ResetUI = 'resetUI',
         // SetInputErrors = 'setInputErrors',
@@ -50,7 +58,8 @@ export namespace DataWranglerMessages {
         // InstallDependenciesFailed = 'installDependenciesFailed',
         // SetViewAllTheCode = 'setPreviewAllTheCode',
         // FocusOperationSearch = 'focusOperationSearch',
-        // SetCollapsedOperationGroups = 'setCollapsedOperationGroups'
+        // SetCollapsedOperationGroups = 'setCollapsedOperationGroups',
+        RevealColumn = 'revealColumn'
     }
 
     /**
@@ -94,11 +103,11 @@ export namespace DataWranglerMessages {
         // historyItem?: IHistoryItem;
         // dataFrame?: ISerializedDataFrame;
         // };
-        // [Host.SetOperations]: {
-        // operations: IOperationView[];
-        // operationContextMenu: WranglerContextMenuItem[];
-        // };
-        // [Host.SetGridSelection]: ISelection;
+        [Host.SetOperations]: {
+            operations: IOperationView[];
+            // operationContextMenu: WranglerContextMenuItem[];
+        };
+        [Host.SetGridSelection]: ISelection;
         // [Host.SetOperation]: {
         // operationKey?: string;
         // args?: any;
@@ -120,6 +129,9 @@ export namespace DataWranglerMessages {
         // [Host.SetCollapsedOperationGroups]: {
         // collapsedOperationGroups: { [key: string]: boolean };
         // };
+        [Host.RevealColumn]: {
+            columnIndex: number;
+        };
     }
 
     /**
@@ -129,16 +141,16 @@ export namespace DataWranglerMessages {
         Started = SharedMessages.Started,
         // ChangeKernel = 'changeKernel',
         // CommitOperation = 'commitOperation',
-        // RejectOperation = 'rejectOperation',
+        RejectOperation = 'rejectOperation',
         // UndoOperation = 'undoOperation',
-        // UpdateGridSelection = 'updateGridSelection',
+        UpdateGridSelection = 'updateGridSelection',
         // UpdateOperation = 'updateOperation',
         // UpdateOperationUsingContextMenu = 'updateOperationUsingContextMenu',
-        // PreviewOperation = 'previewOperation',
+        PreviewOperation = 'previewOperation',
         // UpdateGridCellEdits = 'updateGridCellEdits',
         ExportData = 'exportData',
         // ExportCodeToNotebook = 'exportCodeToNotebook',
-        CopyCodeToClipboard = 'copyCodeToClipboard',
+        // CopyCodeToClipboard = 'copyCodeToClipboard',
         // ShowMessage = 'showMessage',
         Reload = 'reload',
         ReloadWithTruncation = 'reloadWithTruncation',
@@ -152,9 +164,12 @@ export namespace DataWranglerMessages {
         // FocusChanged = 'focusChanged',
         // SetViewAllTheCode = 'setPreviewAllTheCode',
         // ShowErrorMessageInEditor = 'showErrorMessageInEditor',
-        FocusOperationSearch = 'focusOperationSearch'
+        FocusOperationSearch = 'focusOperationSearch',
         // ReportIssue = 'ReportIssue',
-        // SetCollapsedOperationGroups = 'setCollapsedOperationGroups'
+        // SetCollapsedOperationGroups = 'setCollapsedOperationGroups',
+        RevealColumn = 'revealColumn',
+        RefreshData = 'refreshData',
+        ToggleSummary = 'toggleSummary'
     }
 
     /**
@@ -165,22 +180,23 @@ export namespace DataWranglerMessages {
         //extends BaseMessaging.IWebviewMapping {
         // [Webview.ChangeKernel]: void;
         // [Webview.CommitOperation]: void;
-        // [Webview.RejectOperation]: void;
+        [Webview.RejectOperation]: void;
         // [Webview.UndoOperation]: void;
-        // [Webview.UpdateGridSelection]: ISelection;
+        [Webview.UpdateGridSelection]: ISelection;
         // [Webview.UpdateOperation]: {
         // operationKey: string;
         // args?: any;
         // };
         // [Webview.UpdateOperationUsingContextMenu]: { selection: ISelection; id: IOperationContextMenuItemIdentifier };
-        // [Webview.PreviewOperation]: {
-        // operationKey: string;
-        // args: any;
-        // activeHistoryIndex?: number;
-        // skipCodeExecution?: boolean;
-        // };
+        [Webview.PreviewOperation]: {
+            operationKey: string;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            args: any;
+            activeHistoryIndex?: number;
+            skipCodeExecution?: boolean;
+        };
         // [Webview.UpdateGridCellEdits]: IGridCellEdit[];
-        // [Webview.ExportData]: { format?: WranglerDataExportFormat };
+        [Webview.ExportData]: { format?: WranglerDataExportFormat };
         // [Webview.ExportCodeToNotebook]: void;
         // [Webview.CopyCodeToClipboard]: void;
         // [Webview.ShowMessage]: {
@@ -221,6 +237,9 @@ export namespace DataWranglerMessages {
         // [Webview.SetCollapsedOperationGroups]: {
         // collapsedOperationGroups: { [key: string]: boolean };
         // };
+        [Webview.RevealColumn]: void;
+        [Webview.RefreshData]: void;
+        [Webview.ToggleSummary]: void;
     }
 
     /**

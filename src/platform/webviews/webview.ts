@@ -15,6 +15,8 @@ import { Identifiers } from '../common/constants';
 import { IFileSystem } from '../common/platform/types';
 import { IDisposableRegistry } from '../common/types';
 import * as localize from '../common/utils/localize';
+// eslint-disable-next-line local-rules/node-imports
+import * as path from 'path';
 
 // Wrapper over a vscode webview. To be used with either WebviewPanel or WebviewView
 export abstract class Webview implements IWebview {
@@ -65,6 +67,14 @@ export abstract class Webview implements IWebview {
     // After load is finished allow derived classes to hook up class specific code
     protected abstract postLoad(webviewHost: vscodeWebviewView | vscodeWebviewPanel): void;
 
+    /**
+     * Helper to get codicons path.
+     */
+    private getcodiconsPath() {
+        const codiconsPath = path.join(this.options.rootPath.path, 'codicons', 'codicon.css');
+        return codiconsPath;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected async generateLocalReactHtml() {
         if (!this.webviewHost?.webview) {
@@ -75,6 +85,7 @@ export abstract class Webview implements IWebview {
         const uris = this.options.scripts.map((script) => this.webviewHost!.webview!.asWebviewUri(script));
 
         const rootPath = this.webviewHost.webview.asWebviewUri(this.options.rootPath).toString();
+        const codiconsUri = this.asWebviewUri(Uri.file(this.getcodiconsPath())).toString();
 
         // Change to `true` to force on Test middleware for our react code
         const forceTestMiddleware = 'false';
@@ -92,6 +103,7 @@ export abstract class Webview implements IWebview {
                 <meta name="theme" content="${Identifiers.GeneratedThemeName}"/>
                 <title>VS Code Python React UI</title>
                 <base href="${uriBase}${uriBase.endsWith('/') ? '' : '/'}"/>
+                <link rel="stylesheet" type="text/css" href="${codiconsUri}">
                 </head>
             <body>
                 <noscript>You need to enable JavaScript to run this app.</noscript>

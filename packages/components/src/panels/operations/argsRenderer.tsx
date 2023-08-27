@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import * as React from "react";
 import { IOperationsPanelArgumentRenderers, IOperationsPanelProps, IOperationsPanelState } from "./types";
 import argsRendererMap from "./argsRenderers";
@@ -60,11 +63,13 @@ export function renderOperationPanelArgument(context: IArgsRenderContext): Array
               startPreview();
           };
 
+    console.log("@@@ARG", arg);
     let renderer: ArgsRenderer<any> | null = argsRendererMap[arg.type];
     if (!renderer) {
         renderer = DefaultArgsRenderer;
     }
 
+    console.log("@@OK2", renderer.name, currentArgState);
     return renderer(
         {
             ...context,

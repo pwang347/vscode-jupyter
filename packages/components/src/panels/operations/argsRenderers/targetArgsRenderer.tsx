@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import {
     ArgType,
     typeEqual,
@@ -38,10 +41,13 @@ const TargetArgsRenderer: ArgsRenderer<ArgType.Target> = (context, renderOperati
     }
     const selectedColumnType = columns.find((c) => c.key === currentArgState[arg.key]?.value[0]?.key)?.type;
     const selectedColumnTargets = currentArgState[arg.key]?.value;
+    console.log("@@HI1", selectedColumnTargets);
+
     const selectedColumnNames: string[] = selectedColumnTargets.map((columns: IDataFrameColumn) => {
         return columns.key;
     });
     const subMenuArgs: IOperationArgView[] = targetArgOptions.subMenu ?? [];
+    console.log("@@HI", subMenuArgs);
     const subMenuArgsRendered = subMenuArgs.flatMap((a) =>
         renderOperationPanelArgument({
             ...context,

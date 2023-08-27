@@ -1,6 +1,6 @@
-/**
- * Constants associated with an engine.
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 export interface IEngineConstants {
     /** Prefix for a line comment, e.g. "# " for python. */
     lineCommentPrefix: string;
@@ -22,17 +22,17 @@ export enum DataImportOperationKey {
     /**
      * Data imported from CSV file.
      */
-    ReadCsv = "ReadCsv",
+    ReadCsv = 'ReadCsv',
 
     /**
      * Data imported from parquet file.
      */
-    ReadParquet = "ReadParquet",
+    ReadParquet = 'ReadParquet',
 
     /**
      * Data imported from variable in kernel memory.
      */
-    Variable = "Variable"
+    Variable = 'Variable'
 }
 
 /**
@@ -42,157 +42,162 @@ export enum OperationKey {
     /**
      * Changes the type of the selected columns.
      */
-    ChangeType = "ChangeType",
+    ChangeType = 'ChangeType',
 
     /**
      * Creates a copy of a column.
      */
-    Clone = "Clone",
+    Clone = 'Clone',
 
     /**
      * (FlashFill rename): Derives a new column based on selected columns.
      */
-    StringTransformByExample = "StringTransformByExample",
+    StringTransformByExample = 'StringTransformByExample',
 
     /**
      * (FlashFill rename): Derives a new column based on selected columns.
      */
-    DateTimeFormattingByExample = "DateTimeFormattingByExample",
+    DateTimeFormattingByExample = 'DateTimeFormattingByExample',
 
     /**
      * (FlashFill rename): Derives a new column based on selected columns.
      */
-    ArithmeticByExample = "ArithmeticByExample",
+    ArithmeticByExample = 'ArithmeticByExample',
 
     /**
      * (FlashFill rename): Derives a new column based on selected columns.
      */
-    NewColumnByExample = "NewColumnByExample",
+    NewColumnByExample = 'NewColumnByExample',
 
     /*
      * Generates code using a GPT model.
      */
-    DescribeYourOperation = "DescribeYourOperation",
+    DescribeYourOperation = 'DescribeYourOperation',
 
     /**
      * Drops selected columns.
      */
-    Drop = "Drop",
+    Drop = 'Drop',
 
     /**
      * Drops duplicate rows within the selected columns.
      */
-    DropDuplicates = "DropDuplicates",
+    DropDuplicates = 'DropDuplicates',
 
     /**
      * Drops rows with missing values within the selected columns.
      */
-    DropNa = "DropNa",
+    DropNa = 'DropNa',
 
     /**
      * Replaces missing values within the selected columns.
      */
-    FillNa = "FillNa",
+    FillNa = 'FillNa',
 
     /**
      * Scales and translates the values of the selected numerical columns so that they fit between a minimum and maximum value.
      */
-    Scale = "Scale",
+    Scale = 'Scale',
 
     /**
      * Renames the selected columns.
      */
-    Rename = "Rename",
+    Rename = 'Rename',
 
     /**
      * Replaces all occurrences of a specified value with another within the selected columns.
      */
-    ReplaceAll = "ReplaceAll",
+    ReplaceAll = 'ReplaceAll',
 
     /**
      * Rounds numbers to the specified number of decimal places.
      */
-    RoundDecimals = "RoundDecimals",
+    RoundDecimals = 'RoundDecimals',
 
     /**
      * Rounds numbers down (floor).
      */
-    RoundDown = "RoundDown",
+    RoundDown = 'RoundDown',
 
     /**
      * Rounds numbers up (ceiling).
      */
-    RoundUp = "RoundUp",
+    RoundUp = 'RoundUp',
 
     /**
      * Splits a text column into several columns based on a split value.
      */
-    SplitText = "SplitText",
+    SplitText = 'SplitText',
 
     /*
      * Removes leading and trailing whitespaces from a text column.
      */
-    StripText = "StripText",
+    StripText = 'StripText',
 
     /*
      * Convert text to lowercase in a text column.
      */
-    ConvertToLowercase = "ConvertToLowercase",
+    ConvertToLowercase = 'ConvertToLowercase',
 
     /*
      * Convert text to uppercase in a text column.
      */
-    ConvertToUppercase = "ConvertToUppercase",
+    ConvertToUppercase = 'ConvertToUppercase',
 
     /*
      * Convert text to capital case in a text column.
      */
-    ConvertToCapitalCase = "ConvertToCapitalCase",
+    ConvertToCapitalCase = 'ConvertToCapitalCase',
 
     /*
      * Creates a new column with the length of a text column.
      */
-    CalculateTextLength = "CalculateTextLength",
+    CalculateTextLength = 'CalculateTextLength',
 
     /**
      * Group by and aggregate over the selected columns.
      */
-    GroupByAndAggregate = "GroupByAndAggregate",
+    GroupByAndAggregate = 'GroupByAndAggregate',
 
     /*
      * Drops all columns except for the selected columns.
      */
-    Select = "Select",
+    Select = 'Select',
 
     /**
      * Performs "one-hot" encoding on a selected column, splitting categorical data into columns for each category with values of 1 or 0.
      */
-    OneHotEncode = "OneHotEncode",
+    OneHotEncode = 'OneHotEncode',
 
     /**
      * Performs binary encoding on a selected text column, splitting categorical data into columns for each category generated by splitting the text, with values of 1 or 0.
      */
-    MultiLabelTextBinarizer = "MultiLabelTextBinarizer",
+    MultiLabelTextBinarizer = 'MultiLabelTextBinarizer',
 
     /*
      * Sorts the dataframe using one or more columns.
      */
-    Sort = "Sort",
+    Sort = 'Sort',
 
     /**
      * Filters rows based on one or more conditions.
      */
-    Filter = "Filter",
+    Filter = 'Filter',
+
+    /**
+     * Filters rows based on one or more conditions.
+     */
+    FilterAndSort = 'FilterAndSort',
 
     /**
      * Creates a column from a formula.
      */
-    CreateColumnFromFormula = "CreateColumnFromFormula",
+    CreateColumnFromFormula = 'CreateColumnFromFormula',
 
     /**
      * Custom user code.
      */
-    CustomOperation = "CustomOperation"
+    CustomOperation = 'CustomOperation'
 }
 
 /**
@@ -202,17 +207,17 @@ export enum RowOperation {
     /**
      * Drops selected rows.
      */
-    Drop = "Drop",
+    Drop = 'Drop',
 
     /**
      * Drops all rows with missing values in the data frame.
      */
-    DropNa = "DropNa",
+    DropNa = 'DropNa',
 
     /**
      * Drops all duplicate rows in the data frame.
      */
-    DropDuplicates = "DropDuplicates"
+    DropDuplicates = 'DropDuplicates'
 }
 
 /**
@@ -220,15 +225,15 @@ export enum RowOperation {
  */
 export enum PreviewStrategy {
     /** Generic strategy with no additional invariants added */
-    Infer = "Infer",
+    Infer = 'Infer',
     /** The two data frames are mostly unrelated, so show the two of them side-by-side */
-    SideBySide = "SideBySide",
+    SideBySide = 'SideBySide',
     /** Invariant: columns or their contents have changed */
-    ModifiedColumns = "ModifiedColumns",
+    ModifiedColumns = 'ModifiedColumns',
     /** Invariant: columns have not changed, and changes to contents are always at the row level */
-    AddedOrRemovedRows = "AddedOrRemovedRows",
+    AddedOrRemovedRows = 'AddedOrRemovedRows',
     /** Do not calculate a preview. Only show the new contents. */
-    None = "None",
+    None = 'None',
     /** Only show the new contents, and always cache stats. */
-    NoneWithCachedStats = "NoneWithCachedStats"
+    NoneWithCachedStats = 'NoneWithCachedStats'
 }

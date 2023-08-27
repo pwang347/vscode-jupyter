@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 import {
     IViewComms,
     IOperationView,
@@ -7,9 +10,9 @@ import {
     IHistoryItem,
     ISelection,
     ITelemetryLogger
-} from "@dw/messaging";
-import { IRenderFunction } from "../../customRender";
-import { LocalizedStrings } from "../../localization";
+} from '@dw/messaging';
+import { IRenderFunction } from '../../customRender';
+import { LocalizedStrings } from '../../localization';
 
 /**
  * State props for the wrangler operations panel.

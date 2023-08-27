@@ -12,6 +12,7 @@
         "types": [
             "webpack-env"
         ],
+        "skipLibCheck": true
     },
     "include": [
         "./**/*",

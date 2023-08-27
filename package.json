@@ -1949,6 +1949,12 @@
                     "id": "jupyterViewVariables",
                     "name": "Variables",
                     "when": "jupyter.hasNativeNotebookOrInteractiveWindowOpen"
+                },
+                {
+                    "type": "webview",
+                    "id": "jupyter-summary-view",
+                    "name": "Data summary",
+                    "when": "jupyter.summaryPanel"
                 }
             ]
         },
@@ -2048,8 +2054,10 @@
         "@jupyterlab/services": "6.1.17",
         "@lumino/widgets": "^1.28.0",
         "@nteract/messaging": "^7.0.0",
+        "@vscode/codicons": "^0.0.33",
         "@vscode/extension-telemetry": "^0.7.7",
         "@vscode/jupyter-lsp-middleware": "^0.2.50",
+        "@vscode/webview-ui-toolkit": "^1.2.2",
         "ajv-keywords": "^3.5.2",
         "ansi-to-html": "^0.6.7",
         "bootstrap": "^4.3.1",

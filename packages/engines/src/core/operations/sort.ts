@@ -1,22 +1,25 @@
-import { ArgType, createArg, IColumnTarget } from "@dw/messaging";
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+import { ArgType, createArg, IColumnTarget } from '@dw/messaging';
 import {
     LocalizedStrings,
     OperationCategory,
     OperationCodeGenResultType,
     PreviewStrategy,
     IGenericOperation
-} from "@dw/orchestrator";
-import { formatColumnNamesInDescription } from "./util";
+} from '@dw/orchestrator';
+import { formatColumnNamesInDescription } from './util';
 
 /**
  * Sort order.
  */
 export enum SortOrder {
-    Ascending = "ascending",
-    Descending = "descending"
+    Ascending = 'ascending',
+    Descending = 'descending'
 }
 
-type ISortOperationArgs = {
+export type ISortOperationArgs = {
     TargetColumns: {
         value: IColumnTarget[];
     };
@@ -35,7 +38,7 @@ type ISortOperationArgs = {
         }>;
     };
 };
-type ISortBaseProgram = {
+export type ISortBaseProgram = {
     variableName: string;
     columnKeysSort: Array<{
         columnKey: string;
@@ -93,7 +96,7 @@ export const SortOperationBase: () => IGenericOperation<
                     formatColumnNamesInDescription(
                         columnKeysSort.map((col, i) =>
                             ctx.formatString(
-                                ascendingFlags[i] === "ascending"
+                                ascendingFlags[i] === 'ascending'
                                     ? locStrings.OperationSortDescriptionAscendingLabel
                                     : locStrings.OperationSortDescriptionDescendingLabel,
                                 col.columnKey
@@ -116,7 +119,7 @@ export const SortOperationBase: () => IGenericOperation<
                     properties: {
                         isMissingValuesFirst: ctx.args.MissingValuesFirst.toString(),
                         // redact after set to maintain uniqueness
-                        uniqueRawTypes: Array.from(uniqueRawTypes).map(ctx.redactCustomRawType).join(",")
+                        uniqueRawTypes: Array.from(uniqueRawTypes).map(ctx.redactCustomRawType).join(',')
                     },
                     measurements: {
                         numSortTargets: ctx.args.AdditionalSortColumns.children.length + 1
@@ -143,7 +146,7 @@ export const SortOperationBase: () => IGenericOperation<
     },
     getArgs: (ctx) => [
         createArg(
-            "TargetColumns",
+            'TargetColumns',
             ArgType.Target,
             {
                 targetFilter: {
@@ -153,22 +156,22 @@ export const SortOperationBase: () => IGenericOperation<
             },
             ctx.getLocalizedStrings(ctx.locale).OperationSortArgsColumnName
         ),
-        createArg("SortOrder", ArgType.Category, {
+        createArg('SortOrder', ArgType.Category, {
             choices: [
                 {
-                    key: "ascending",
+                    key: 'ascending',
                     label: ctx.getLocalizedStrings(ctx.locale).OperationSortOrderAscending
                 },
                 {
-                    key: "descending",
+                    key: 'descending',
                     label: ctx.getLocalizedStrings(ctx.locale).OperationSortOrderDescending
                 }
             ]
         }),
-        createArg("AdditionalSortColumns", ArgType.ArgGroup, {
+        createArg('AdditionalSortColumns', ArgType.ArgGroup, {
             args: [
                 createArg(
-                    "TargetColumns",
+                    'TargetColumns',
                     ArgType.Target,
                     {
                         targetFilter: {
@@ -179,16 +182,16 @@ export const SortOperationBase: () => IGenericOperation<
                     ctx.getLocalizedStrings(ctx.locale).OperationSortArgsColumnName
                 ),
                 createArg(
-                    "SortOrder",
+                    'SortOrder',
                     ArgType.Category,
                     {
                         choices: [
                             {
-                                key: "ascending",
+                                key: 'ascending',
                                 label: ctx.getLocalizedStrings(ctx.locale).OperationSortOrderAscending
                             },
                             {
-                                key: "descending",
+                                key: 'descending',
                                 label: ctx.getLocalizedStrings(ctx.locale).OperationSortOrderDescending
                             }
                         ]
@@ -200,6 +203,6 @@ export const SortOperationBase: () => IGenericOperation<
             sequentiallyFillTargets: true,
             sequentiallyFillTargetsOffset: 1
         }),
-        createArg("MissingValuesFirst", ArgType.Boolean)
+        createArg('MissingValuesFirst', ArgType.Boolean)
     ]
 });

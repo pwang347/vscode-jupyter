@@ -25,9 +25,17 @@ import { PlotViewHandler } from './plotView/plotViewHandler';
 import { RendererCommunication } from './plotView/rendererCommunication';
 import { IPlotSaveHandler } from './plotView/types';
 import { NotebookWatcher } from './variablesView/notebookWatcher';
-import { INotebookWatcher, IVariableViewProvider } from './variablesView/types';
+import { SummaryViewActivationService } from './variablesView/summaryViewActivationService';
+import {
+    IDataWranglerOrchestrator,
+    INotebookWatcher,
+    ISummaryViewProvider,
+    IVariableViewProvider
+} from './variablesView/types';
 import { VariableViewActivationService } from './variablesView/variableViewActivationService';
 import { VariableViewProvider } from './variablesView/variableViewProvider';
+import { SummaryViewProvider } from './variablesView/summaryViewProvider';
+import { DataWranglerOrchestrator } from './dataWranglerOrchestrator';
 
 export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IExtensionSyncActivationService>(
@@ -53,6 +61,8 @@ export function registerTypes(serviceManager: IServiceManager) {
     serviceManager.addSingleton<IPlotSaveHandler>(IPlotSaveHandler, PlotSaveHandler);
     serviceManager.addSingleton<PlotViewHandler>(PlotViewHandler, PlotViewHandler);
 
+    serviceManager.addSingleton<IDataWranglerOrchestrator>(IDataWranglerOrchestrator, DataWranglerOrchestrator);
+
     // Variable View
     serviceManager.addSingleton<INotebookWatcher>(INotebookWatcher, NotebookWatcher);
     serviceManager.addSingleton<IExtensionSyncActivationService>(
@@ -61,9 +71,15 @@ export function registerTypes(serviceManager: IServiceManager) {
     );
     serviceManager.addSingleton<IExtensionSyncActivationService>(
         IExtensionSyncActivationService,
+        SummaryViewActivationService
+    );
+    serviceManager.addSingleton<IExtensionSyncActivationService>(
+        IExtensionSyncActivationService,
         IPyWidgetRendererComms
     );
     serviceManager.addSingleton<IVariableViewProvider>(IVariableViewProvider, VariableViewProvider);
+    serviceManager.addSingleton<ISummaryViewProvider>(ISummaryViewProvider, SummaryViewProvider);
+
     serviceManager.add<IJupyterVariableDataProvider>(IJupyterVariableDataProvider, JupyterVariableDataProvider);
     serviceManager.addSingleton<IJupyterVariableDataProviderFactory>(
         IJupyterVariableDataProviderFactory,

@@ -33,6 +33,7 @@ import "./reactDataGrid.scss";
 import { getCellProps, isDataFrameEditable } from "../helpers/cell";
 import { GridSortPlugin } from '../plugins/gridSortPlugin';
 import { GridFilterPlugin } from '../plugins/gridFilterPlugin';
+import { getColumnScrollLeft, waitForScrollEnd } from "../helpers/scroll";
 
 /**
  * Column definition for react-data-grid.
@@ -103,6 +104,7 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
     private stagedEdit?: IGridCellEdit;
     private activeGridCell?: { row: number; col: number };
     private editInFlight: boolean = false;
+    private columnWidths: number[] = [];
 
     public state: IReactDataGridState = {
         columnDefinitions: [],
@@ -264,6 +266,7 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
             enableEditLastAppliedOperation
         });
 
+        this.columnWidths = [];
         return df.columns.map((c) => {
             const nameWidth = measureText(
                 c.name,
@@ -281,19 +284,22 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
                 nameWidth +
                 columnWidthCorrectionAmount +
                 (addPreviewColumnPadding ? previewColumnWidthCorrectionAmount : 0);
+            const width =
+                c.index === 0
+                    ? minimumIndexColumnWidth
+                    : // use the min width wherever possible, otherwise try to use length based on the column name
+                    nameWidthWithCorrections > minimumColumnWidth
+                    ? nameWidthWithCorrections
+                    : minimumColumnWidth;
+
+            this.columnWidths.push(width);
             const columnDefinition: IReactDataGridColumn = {
                 index: c.index,
                 key: String(c.index),
                 name: c.name,
                 columnKey: c.key,
                 resizable: true,
-                width:
-                    c.index === 0
-                        ? minimumIndexColumnWidth
-                        : // use the min width wherever possible, otherwise try to use length based on the column name
-                        nameWidthWithCorrections > minimumColumnWidth
-                        ? nameWidthWithCorrections
-                        : minimumColumnWidth,
+                width,
                 // styling for grid cells (edit + view mode)
                 // note: header cells don't support a function interface, so we'll have to apply the CSS for it
                 // inside of a custom-rendered div
@@ -699,6 +705,24 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
         return;
     }
 
+    public async scrollToColumn(columnIndex: number) {
+        const gridElement = this.grid.current?.element;
+        if (gridElement) {
+            const scrollLeft = getColumnScrollLeft(
+                columnIndex,
+                this.columnWidths,
+                gridElement.scrollWidth,
+                gridElement.clientWidth
+            );
+            gridElement.scroll({
+                left: scrollLeft,
+                behavior: "smooth"
+            });
+            await waitForScrollEnd(gridElement);
+            this.gridSelectionPlugin.selectColumn(columnIndex);
+        }
+    }
+
     private rerenderGrid = () => {
         // the entire grid is rerendered when any of the columns change
         this.setState((state) => ({
@@ -820,6 +844,9 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
                     }}
                     rowHeight={rowHeight}
                     onScroll={this.onScroll}
+                    onColumnResize={(idx, width) => {
+                        this.columnWidths[idx] = width;
+                    }}
                     headerRowHeight={150}
                     enableVirtualization={!disableVirtualization}
                 />

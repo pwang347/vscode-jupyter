@@ -160,8 +160,11 @@ export class WranglerPostOffice extends PostOffice implements IViewComms {
     };
 
     ui = {
-        updateSelection: (_selection: ISelection) => {
-            // TODO
+        updateSelection: (selection: ISelection) => {
+            this.sendMessage<DataWranglerMessages.IWebviewMapping>(
+                DataWranglerMessages.Webview.UpdateGridSelection,
+                selection
+            );
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         updateOperation: (_operationKey: string, _operationArgs?: any) => {

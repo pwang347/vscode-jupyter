@@ -25,6 +25,7 @@
         "noImplicitOverride": true,
         "noFallthroughCasesInSwitch": true,
         "useUnknownInCatchVariables": false,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
+        "skipLibCheck": true
     }
 }

@@ -1,4 +1,7 @@
-import { ArgType, ColumnType, createArg, IArgLayoutHint, IColumnTarget, IOperationArgView } from "@dw/messaging";
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+import { ArgType, ColumnType, createArg, IArgLayoutHint, IColumnTarget, IOperationArgView } from '@dw/messaging';
 import {
     LocalizedStrings,
     OperationCategory,
@@ -6,38 +9,38 @@ import {
     PreviewStrategy,
     IGenericOperation,
     IDataWranglerOperationArgContext
-} from "@dw/orchestrator";
-import { formatColumnNamesInDescription } from "./util";
+} from '@dw/orchestrator';
+import { formatColumnNamesInDescription } from './util';
 
 /**
  * Types of filter conditions.
  */
 export enum FilterCondition {
-    NaN = "nan",
-    NotNaN = "notNan",
-    IsTrue = "isTrue",
-    IsFalse = "isFalse",
-    Equal = "equal",
-    NotEqual = "notEqual",
-    StartsWith = "startsWith",
-    EndsWith = "endsWith",
-    Has = "has",
-    NotHas = "notHas",
-    GreaterThan = "greaterThan",
-    GreaterThanOrEqual = "greaterThanOrEqual",
-    LessThan = "lessThan",
-    LessThanOrEqual = "lessThanOrEqual"
+    NaN = 'nan',
+    NotNaN = 'notNan',
+    IsTrue = 'isTrue',
+    IsFalse = 'isFalse',
+    Equal = 'equal',
+    NotEqual = 'notEqual',
+    StartsWith = 'startsWith',
+    EndsWith = 'endsWith',
+    Has = 'has',
+    NotHas = 'notHas',
+    GreaterThan = 'greaterThan',
+    GreaterThanOrEqual = 'greaterThanOrEqual',
+    LessThan = 'lessThan',
+    LessThanOrEqual = 'lessThanOrEqual'
 }
 
 /**
  * Type of join.
  */
 export enum JoinType {
-    And = "and",
-    Or = "or"
+    And = 'and',
+    Or = 'or'
 }
 
-type IFilterOperationArgs = {
+export type IFilterOperationArgs = {
     TargetColumns: {
         value: IColumnTarget[];
         subMenu: {
@@ -74,7 +77,7 @@ type IFilterOperationArgs = {
         }>;
     };
 };
-type IFilterBaseProgram = {
+export type IFilterBaseProgram = {
     variableName: string;
     condition: {
         columnKey: string;
@@ -168,9 +171,9 @@ export const FilterOperationBase: () => IGenericOperation<
                 );
                 return {
                     properties: {
-                        uniqueFilterMethods: Array.from(uniqueFilterMethods).join(","),
+                        uniqueFilterMethods: Array.from(uniqueFilterMethods).join(','),
                         // redact after set to maintain uniqueness
-                        uniqueRawTypes: Array.from(uniqueRawTypes).map(ctx.redactCustomRawType).join(",")
+                        uniqueRawTypes: Array.from(uniqueRawTypes).map(ctx.redactCustomRawType).join(',')
                     },
                     measurements: {
                         numConditions: ctx.args.AdditionalConditions.children.length + 1
@@ -207,7 +210,7 @@ function getFilterArgs(ctx: IDataWranglerOperationArgContext<typeof LocalizedStr
         }
     ];
 
-    const booleanCondition = createArg("Condition", ArgType.Category, {
+    const booleanCondition = createArg('Condition', ArgType.Category, {
         choices: [
             {
                 key: FilterCondition.IsTrue,
@@ -224,14 +227,14 @@ function getFilterArgs(ctx: IDataWranglerOperationArgContext<typeof LocalizedStr
         layoutHint: IArgLayoutHint.InlineGrow
     });
 
-    const stringValue = createArg("Value", ArgType.String, { layoutHint: IArgLayoutHint.InlineGrow });
+    const stringValue = createArg('Value', ArgType.String, { layoutHint: IArgLayoutHint.InlineGrow });
     const matchCase = createArg(
-        "MatchCase",
+        'MatchCase',
         ArgType.Boolean,
         { layoutHint: IArgLayoutHint.InlineGrow, default: true },
         locStrings.OperationFilterArgsMatchCase
     );
-    const stringCondition = createArg("Condition", ArgType.Category, {
+    const stringCondition = createArg('Condition', ArgType.Category, {
         choices: [
             {
                 key: FilterCondition.Equal,
@@ -272,7 +275,7 @@ function getFilterArgs(ctx: IDataWranglerOperationArgContext<typeof LocalizedStr
     });
 
     function getNumericalCondition(valueArg: IOperationArgView) {
-        return createArg("Condition", ArgType.Category, {
+        return createArg('Condition', ArgType.Category, {
             choices: [
                 {
                     key: FilterCondition.Equal,
@@ -313,16 +316,16 @@ function getFilterArgs(ctx: IDataWranglerOperationArgContext<typeof LocalizedStr
         });
     }
     const integerCondition = getNumericalCondition(
-        createArg("Value", ArgType.Integer, { layoutHint: IArgLayoutHint.InlineGrow })
+        createArg('Value', ArgType.Integer, { layoutHint: IArgLayoutHint.InlineGrow })
     );
     const floatCondition = getNumericalCondition(
-        createArg("Value", ArgType.Float, { layoutHint: IArgLayoutHint.InlineGrow })
+        createArg('Value', ArgType.Float, { layoutHint: IArgLayoutHint.InlineGrow })
     );
     const datetimeCondition = getNumericalCondition(
-        createArg("Value", ArgType.Datetime, { layoutHint: IArgLayoutHint.InlineGrow })
+        createArg('Value', ArgType.Datetime, { layoutHint: IArgLayoutHint.InlineGrow })
     );
     const timedeltaCondition = getNumericalCondition(
-        createArg("Value", ArgType.Timedelta, { layoutHint: IArgLayoutHint.InlineGrow })
+        createArg('Value', ArgType.Timedelta, { layoutHint: IArgLayoutHint.InlineGrow })
     );
 
     const typedArgs: { [key in ColumnType]: IOperationArgView[] } = {
@@ -341,21 +344,21 @@ function getFilterArgs(ctx: IDataWranglerOperationArgContext<typeof LocalizedStr
 
     return [
         createArg(
-            "TargetColumns",
+            'TargetColumns',
             ArgType.Target,
             {
                 targetFilter: {
                     isSingleTarget: true,
                     allowMixedType: true
                 },
-                subMenu: [createArg("TypedCondition", ArgType.TypeDependent, typedArgs)],
+                subMenu: [createArg('TypedCondition', ArgType.TypeDependent, typedArgs)],
                 layoutHint: IArgLayoutHint.InlineGrow
             },
             ctx.getLocalizedStrings(ctx.locale).OperationArgTarget
         ),
-        createArg("AdditionalConditions", ArgType.ArgGroup, {
+        createArg('AdditionalConditions', ArgType.ArgGroup, {
             args: [
-                createArg("Join", ArgType.Category, {
+                createArg('Join', ArgType.Category, {
                     choices: [
                         {
                             key: JoinType.And,
@@ -369,14 +372,14 @@ function getFilterArgs(ctx: IDataWranglerOperationArgContext<typeof LocalizedStr
                     layoutHint: IArgLayoutHint.InlineGrow
                 }),
                 createArg(
-                    "TargetColumns",
+                    'TargetColumns',
                     ArgType.Target,
                     {
                         targetFilter: {
                             isSingleTarget: true,
                             allowMixedType: true
                         },
-                        subMenu: [createArg("TypedCondition", ArgType.TypeDependent, typedArgs)],
+                        subMenu: [createArg('TypedCondition', ArgType.TypeDependent, typedArgs)],
                         layoutHint: IArgLayoutHint.InlineGrow
                     },
                     ctx.getLocalizedStrings(ctx.locale).OperationArgTarget

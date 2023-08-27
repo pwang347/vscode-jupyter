@@ -189,7 +189,6 @@ input.editor-text {
 
     color: var(--theme-wrangler-grid-cell-default-fg);
     background-color: var(--theme-wrangler-grid-cell-default-bg);
-    contain: size layout; // RDG uses contain: size layout style paint, we need to remove the latter two to make sure our borders appear properly
 
     &:hover {
         background-color: var(--theme-wrangler-grid-cell-default-hover-bg);

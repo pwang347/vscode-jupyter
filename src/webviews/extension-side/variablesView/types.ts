@@ -7,6 +7,9 @@ import { InteractiveWindowMessages, IShowDataViewer, IFinishCell, SharedMessages
 import { IKernel } from '../../../kernels/types';
 import { IJupyterVariablesRequest, IJupyterVariablesResponse } from '../../../kernels/variables/types';
 import { IVSCWebviewViewProvider } from '../../../platform/webviews/types';
+import { BasicOrchestrator, WranglerDataExportFormat } from '@dw/orchestrator';
+import { IDataFrame, IOperationView, ISelection } from '@dw/messaging';
+import { IKernelSession } from '../dataviewer/dataWranglerTypes';
 
 // Mapping of Message to payload that our VariableViewPanel needs to support
 export class IVariableViewPanelMapping {
@@ -45,3 +48,19 @@ export interface INotebookWatcher {
 
 export const IVariableViewProvider = Symbol('IVariableViewProvider');
 export interface IVariableViewProvider extends IVSCWebviewViewProvider {}
+
+export const ISummaryViewProvider = Symbol('ISummaryViewProvider');
+export interface ISummaryViewProvider extends IVSCWebviewViewProvider {}
+
+export const IDataWranglerOrchestrator = Symbol('IDataWranglerOrchestrator');
+export interface IDataWranglerOrchestrator {
+    orchestrator: BasicOrchestrator;
+    dataFrame: IDataFrame | undefined;
+    setTitle: (title: string) => void;
+    setKernel: (kernel: IKernelSession) => void;
+    setSelection: (selection: ISelection) => void;
+    onSetDf: (listener: (df: IDataFrame) => void) => void;
+    onSelectionChange: (listener: (selection: ISelection) => void) => void;
+    exportDataToFile: (format?: WranglerDataExportFormat) => Promise<void>;
+    onOperationsChanged: (listener: (operations: IOperationView[]) => void) => void;
+}

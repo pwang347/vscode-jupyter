@@ -130,7 +130,7 @@ export class FoldSection extends React.Component<IFoldSectionProps, IFoldSection
         handleVerticalArrows(e);
     }
 
-    render() {
+    override render() {
         return (
             <div className="wrangler-summary-fold-section" style={{ display: "flex", flexDirection: "column" }}>
                 <div
@@ -179,7 +179,7 @@ export interface IFoldSectionItemProps {
  * A section item that can located using the left and right arrows of the keyboard.
  */
 export class FoldSectionItem extends React.Component<IFoldSectionItemProps> {
-    render() {
+    override render() {
         return (
             <div
                 tabIndex={0}
