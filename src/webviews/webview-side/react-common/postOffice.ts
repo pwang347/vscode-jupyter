@@ -169,6 +169,7 @@ export class PostOffice implements IDisposable {
     }
 
     public sendMessage<M, T extends keyof M = keyof M>(type: T, payload?: M[T]) {
+        console.log('[' + document.title + ']' + '@@@SEND', type, payload);
         return this.sendUnsafeMessage(type.toString(), payload);
     }
 

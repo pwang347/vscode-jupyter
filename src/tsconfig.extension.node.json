@@ -12,7 +12,10 @@
         "types": [
             "webpack-env"
         ],
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "paths": {
+            "react": ["./node_modules/@types/react"]
+        }
     },
     "include": [
         "./**/*",

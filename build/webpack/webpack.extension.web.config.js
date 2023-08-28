@@ -133,7 +133,8 @@ const config = {
                 : {})
         },
         fallback: {
-            os: require.resolve('os-browserify')
+            os: require.resolve('os-browserify'),
+            path: false
         }
     },
     output: {

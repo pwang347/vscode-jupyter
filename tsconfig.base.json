@@ -7,6 +7,9 @@
         // Types
         "lib": [],
         "types": [],
+        "paths": {
+            "react": ["./node_modules/@types/react"]
+        },
 
         // Features/output
         "sourceMap": true,
