@@ -363,7 +363,7 @@ export class DataViewer
                             // eslint-disable-next-line @typescript-eslint/no-floating-promises
                             this.postMessage(DataWranglerMessages.Host.LoadStats, {
                                 requestId: payload.requestId,
-                                stats: payload.stats
+                                stats
                             });
                         }
                     });
@@ -384,6 +384,13 @@ export class DataViewer
                                     columnStats
                                 });
                             }
+                        });
+                    } else {
+                        // Assume that if loading was interrupted, the webview no longer needs to know.
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        this.postMessage(DataWranglerMessages.Host.LoadColumnStats, {
+                            requestId: payload.requestId,
+                            columnStats
                         });
                     }
                 }

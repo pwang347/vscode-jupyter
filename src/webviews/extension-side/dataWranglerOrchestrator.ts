@@ -214,7 +214,7 @@ export class DataWranglerOrchestrator implements IDataWranglerOrchestrator {
                 });
                 if (fileUri) {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    await this.fileSystem.writeFile(fileUri, data.buffer as any);
+                    await this.fileSystem.writeFile(fileUri, Buffer.from(data));
                 }
                 return fileUri;
             }

@@ -133,12 +133,13 @@ export class SummaryView extends WebviewViewHost<DataWranglerMessages.IHostMappi
                 if (this.dwOrchestrator.dataFrame) {
                     // eslint-disable-next-line @typescript-eslint/no-floating-promises
                     this.dwOrchestrator.dataFrame.loadStats().then((stats) => {
+                        console.log('@@GOT DF STATS', stats);
                         if (stats) {
                             // Assume that if loading was interrupted, the webview no longer needs to know.
                             // eslint-disable-next-line @typescript-eslint/no-floating-promises
                             this.postMessage(DataWranglerMessages.Host.LoadStats, {
                                 requestId: payload.requestId,
-                                stats: payload.stats
+                                stats
                             });
                         }
                     });
@@ -148,6 +149,8 @@ export class SummaryView extends WebviewViewHost<DataWranglerMessages.IHostMappi
                 if (this.dwOrchestrator.dataFrame) {
                     let columnStats = this.dwOrchestrator.dataFrame.tryGetColumnStats(payload.columnIndex);
                     // let isFirstLoad = false;
+                    console.log('@@GOT STATS', columnStats);
+
                     if (!columnStats) {
                         // isFirstLoad = true;
                         // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -159,6 +162,12 @@ export class SummaryView extends WebviewViewHost<DataWranglerMessages.IHostMappi
                                     columnStats
                                 });
                             }
+                        });
+                    } else {
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        this.postMessage(DataWranglerMessages.Host.LoadColumnStats, {
+                            requestId: payload.requestId,
+                            columnStats
                         });
                     }
                 }

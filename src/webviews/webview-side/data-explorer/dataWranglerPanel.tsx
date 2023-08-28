@@ -15,6 +15,7 @@ import {
 } from "@dw/components";
 import "@dw/components/dist/index.css";
 import "./dataWranglerPanel.css";
+import "./fluentOverrides.css";
 
 import visualizationRenderers from "@dw/visualization-recharts";
 import { TooltipHost } from "@fluentui/react/lib/Tooltip";
@@ -76,6 +77,24 @@ interface IGridPanelState {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class GridPanel extends React.PureComponent<any, IGridPanelState> implements IMessageHandler {
     private gridRef = React.createRef<ReactDataGrid>();
+
+    countSortTargets = () => {
+        let sortTargets = 0;
+        sortTargets += this.state.sortArgs?.TargetColumns.value.length ?? 0;
+        for (const sortColumn of this.state.sortArgs?.AdditionalSortColumns.children ?? []) {
+            sortTargets += sortColumn.TargetColumns.value.length;
+        }
+        return sortTargets;
+    }
+
+    countFilterTargets = () => {
+        let filterTargets = 0;
+        filterTargets += this.state.filterArgs?.TargetColumns.value.length ?? 0;
+        for (const filterColumn of this.state.filterArgs?.AdditionalConditions.children ?? []) {
+            filterTargets += filterColumn.TargetColumns.value.length;
+        }
+        return filterTargets;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     handleMessage(type: string, payload?: any): boolean {
@@ -176,7 +195,9 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     onClick={() => {
                         this.setState({
                             sortArgs: undefined,
-                            filterArgs: undefined
+                            filterArgs: undefined,
+                            sortVisible: false,
+                            filterVisible: false
                         })
                         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RefreshData);
                     }}
@@ -192,15 +213,19 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     appearance="secondary"
                     className="gridPanel-toolbar-vscode-button"
                     onClick={() => {
+                        if (this.state.filterVisible) {
+                            return;
+                        }
                         this.setState({
-                            filterVisible: !this.state.filterVisible
+                            filterVisible: true,
+                            sortVisible: false
                         })
                     }}
                     disabled={noDataFrame}
                     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Filter")}
                 >
                     {/* TODO@DW:localize */}
-                    Filter
+                    {this.countFilterTargets() > 0 ? `Filter (${this.countFilterTargets()})` : "Filter"}
                     <span slot="start" className="codicon codicon-filter" />
                 </VSCodeButton>
                 <VSCodeButton
@@ -208,15 +233,19 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     appearance="secondary"
                     className="gridPanel-toolbar-vscode-button"
                     onClick={() => {
+                        if (this.state.sortVisible) {
+                            return;
+                        }
                         this.setState({
-                            sortVisible: !this.state.sortVisible
+                            sortVisible: true,
+                            filterVisible: false
                         })
                     }}
                     disabled={noDataFrame}
                     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Sort")}
                 >
                     {/* TODO@DW:localize */}
-                    Sort
+                    {this.countSortTargets() > 0 ? `Sort (${this.countSortTargets()})` : "Sort"}
                     <span slot="start" className="codicon codicon-sort-precedence" />
                 </VSCodeButton>
                 <VSCodeButton
@@ -268,11 +297,41 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
         }
 
         return <Callout target={'#sort-button'} role="dialog"
+        preventDismissOnEvent={(e) => {
+            return e.type !== "click"}
+        }
+        isBeakVisible={false}
         gapSpace={0} onDismiss={() => {
             this.setState({
                 sortVisible: false
             })
-        }}><div style={{padding: 20}}>{renderOperationPanelArguments({
+        }}><div style={{padding: 20}}><div style={{position: "absolute", right: 0, top: 0}}><VSCodeButton
+        id="filter-button"
+        appearance="secondary"
+        className="gridPanel-toolbar-vscode-button"
+        onClick={() => {
+            this.setState({
+                sortArgs: getDefaultArgs(
+                    this.state.dataFrame!,
+                    this.state.operations.find((operation) => operation.key === OperationKey.Sort)?.args ?? [],
+                    []
+                ) as any
+            }, () => {
+                this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.PreviewOperation, {
+                    operationKey: OperationKey.FilterAndSort,
+                    args: {
+                        filter: this.state.filterArgs,
+                        sort: this.state.sortArgs
+                    }
+                });
+            })
+        }}
+        title={"Clear"}
+    >
+        {/* TODO@DW:localize */}
+        Clear
+        <span slot="start" className="codicon codicon-clear-all" />
+    </VSCodeButton></div>{renderOperationPanelArguments({
             comms: this.postOffice,
             operations: [],
             gridCellEdits: [],
@@ -323,11 +382,41 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
         }
 
         return <Callout target={'#filter-button'} role="dialog"
+        preventDismissOnEvent={(e) => {
+            return e.type !== "click"}
+        }
+        isBeakVisible={false}
         gapSpace={0} onDismiss={() => {
             this.setState({
                 filterVisible: false
             })
-        }}><div style={{padding: 20}}>{renderOperationPanelArguments({
+        }}><div style={{padding: 20}}><div style={{position: "absolute", right: 0, top: 0}}><VSCodeButton
+        id="filter-button"
+        appearance="secondary"
+        className="gridPanel-toolbar-vscode-button"
+        onClick={() => {
+            this.setState({
+                filterArgs: getDefaultArgs(
+                    this.state.dataFrame!,
+                    this.state.operations.find((operation) => operation.key === OperationKey.Filter)?.args ?? [],
+                    []
+                ) as any
+            }, () => {
+                this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.PreviewOperation, {
+                    operationKey: OperationKey.FilterAndSort,
+                    args: {
+                        filter: this.state.filterArgs,
+                        sort: this.state.sortArgs
+                    }
+                });
+            })
+        }}
+        title={"Clear"}
+    >
+        {/* TODO@DW:localize */}
+        Clear
+        <span slot="start" className="codicon codicon-clear-all" />
+    </VSCodeButton></div>{renderOperationPanelArguments({
             comms: this.postOffice,
             operations: [],
             gridCellEdits: [],
@@ -723,7 +812,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                                             flexBasis: 0,
                                             gap: 4,
                                             marginRight: 8,
-                                            maxWidth: "100%"
+                                            // maxWidth: "100%"
                                         }}
                                     >
                                         {subMenuArg}
@@ -850,14 +939,14 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                                 root: {
                                     selectors: {
                                         "::after": {
-                                            borderColor: "var(--vscode-dropdown-border)"
+                                            borderColor: "var(--vscode-dropdown-border) !important"
                                         }
                                     }
                                 },
                                 rootHovered: {
                                     selectors: {
                                         "::after": {
-                                            borderColor: "var(--vscode-dropdown-border)"
+                                            borderColor: "var(--vscode-dropdown-border) !important"
                                         }
                                     }
                                 },
@@ -1004,14 +1093,9 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     errorMessage={props.errorMessage}
                     style={getStyleForLayoutHint(props.layoutHint)}
                 >
-                    {/* <DateTimePicker
-                        {...props}
-                        // TODO@DW: localize
-                        locStrings={{
-                            dateTimePickerInvalidDateTimeFormatMessage:
-                                "{0} is not a valid date time value."
-                        }}
-                    /> */}
+                    <TextField value={props.value} onChange={(e) => {
+                        props.onChange((e.target as HTMLInputElement).value);
+                    }} />
                 </ArgFieldWithErrorLabel>
             );
         },
@@ -1036,28 +1120,33 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                             let target = e.target as HTMLInputElement;
                             this.handleFloatKeyDown(target, props);
                         }}
-                        // onChange={(_, newValue) => {
-                        //     if (newValue !== undefined) {
-                        //         props.onChange(parseFloat(newValue));
-                        //     }
-                        // }}
-                        // styles={(props) => {
-                        //     if (!props.isFocused) {
-                        //         return {
-                        //             spinButtonWrapper: {
-                        //                 selectors: {
-                        //                     "::after": {
-                        //                         borderColor: "var(--vscode-dropdown-border)"
-                        //                     },
-                        //                     ":hover::after": {
-                        //                         borderColor: "var(--vscode-dropdown-border)"
-                        //                     }
-                        //                 }
-                        //             }
-                        //         };
-                        //     }
-                        //     return {};
-                        // }}
+                        onChange={(newValue) => {
+                            if (newValue !== undefined) {
+                                props.onChange(parseFloat((newValue.target as HTMLInputElement).value));
+                            }
+                        }}
+                        onIncrement={(value) => {
+                            if (value !== undefined) {
+                                props.onChange(parseFloat(value) + 1);
+                            }
+                        }}
+                        onDecrement={(value) => {
+                            if (value !== undefined) {
+                                props.onChange(parseFloat(value) - 1);
+                            }
+                        }}
+                        styles={{
+                            spinButtonWrapper: {
+                                selectors: {
+                                    "::after": {
+                                        borderColor: "var(--vscode-dropdown-border)"
+                                    },
+                                    ":hover::after": {
+                                        borderColor: "var(--vscode-dropdown-border)"
+                                    }
+                                }
+                            }
+                        }}
                     />
                 </ArgFieldWithErrorLabel>
             );
@@ -1083,28 +1172,33 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                             let target = e.target as HTMLInputElement;
                             this.handleIntKeyDown(target, props);
                         }}
-                        // onChange={(_, newValue) => {
-                        //     if (newValue !== undefined) {
-                        //         props.onChange(parseInt(newValue, 10));
-                        //     }
-                        // }}
-                        // styles={(props) => {
-                        //     if (!props.isFocused) {
-                        //         return {
-                        //             spinButtonWrapper: {
-                        //                 selectors: {
-                        //                     "::after": {
-                        //                         borderColor: "var(--vscode-dropdown-border)"
-                        //                     },
-                        //                     ":hover::after": {
-                        //                         borderColor: "var(--vscode-dropdown-border)"
-                        //                     }
-                        //                 }
-                        //             }
-                        //         };
-                        //     }
-                        //     return {};
-                        // }}
+                        onIncrement={(value) => {
+                            if (value !== undefined) {
+                                props.onChange(parseInt(value, 10) + 1);
+                            }
+                        }}
+                        onDecrement={(value) => {
+                            if (value !== undefined) {
+                                props.onChange(parseInt(value, 10) - 1);
+                            }
+                        }}
+                        onChange={(newValue) => {
+                            if (newValue !== undefined) {
+                                props.onChange(parseInt((newValue.target as HTMLInputElement).value, 10));
+                            }
+                        }}
+                        styles={{
+                            spinButtonWrapper: {
+                                selectors: {
+                                    "::after": {
+                                        borderColor: "var(--vscode-dropdown-border) !important"
+                                    },
+                                    ":hover::after": {
+                                        borderColor: "var(--vscode-dropdown-border) !important"
+                                    }
+                                }
+                            }
+                        }}
                     />
                 </ArgFieldWithErrorLabel>
             );
@@ -1116,7 +1210,9 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     errorMessage={props.errorMessage}
                     style={getStyleForLayoutHint(props.layoutHint)}
                 >
-                    <TextField />
+                    <TextField value={props.value} onChange={(e) => {
+                        props.onChange((e.target as HTMLInputElement).value);
+                    }} />
                 </ArgFieldWithErrorLabel>
             );
         },
@@ -1133,11 +1229,11 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                         value={props.value.toString()}
                         inputProps={{size: 1}}
                         disabled={props.disabled}
-                        // onChange={(_, newValue) => {
-                        //     if (newValue !== undefined) {
-                        //         props.onChange(newValue);
-                        //     }
-                        // }}
+                        onChange={(newValue) => {
+                            if (newValue !== undefined) {
+                                props.onChange((newValue.target as HTMLInputElement).value);
+                            }
+                        }}
                     />
                 </ArgFieldWithErrorLabel>
             );
@@ -1228,9 +1324,10 @@ function getStyleForLayoutHint(hint?: IArgLayoutHint): React.CSSProperties | und
         case IArgLayoutHint.Inline:
             return undefined;
         case IArgLayoutHint.InlineGrow:
-            return { flexGrow: 1, flexShrink: 0 };
+            return { flexGrow: 1, flexShrink: 0, marginTop: "auto" };
         case IArgLayoutHint.Block:
         default:
-            return { width: "100%" };
+            return {};
+            // return { width: "100%" };
     }
 }

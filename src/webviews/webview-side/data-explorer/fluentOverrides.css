@@ -1,0 +1,424 @@
+.ms-Panel-main {
+    max-width: 80%;
+}
+
+body.vscode-high-contrast {
+    .ms-ContextualMenu {
+        .ms-ContextualMenu-link {
+            height: 29px;
+            border: thin solid transparent;
+
+            &:hover {
+                background-color: rgba(15, 74, 133, 0.1);
+                color: var(--vscode-foreground);
+                border: thin solid var(--focus-border);
+            }
+        }
+    }
+}
+
+body.vscode-dark,
+body.vscode-high-contrast[data-vscode-theme-name="Dark High Contrast"] {
+    .ms-Overlay {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+}
+
+.ms-ContextualMenu-Callout {
+    animation: none;
+
+    .ms-Callout-main {
+        background-color: var(--vscode-panel-background);
+    }
+
+    outline: var(--vscode-menu-border) solid 1px;
+    border-radius: 5px;
+    box-shadow: rgb(0 0 0 / 36%) 0px 2px 8px;
+}
+
+.ms-ContextualMenu {
+    background-color: var(--vscode-menu-background);
+
+    .ms-ContextualMenu-icon {
+        color: var(--vscode-foreground);
+    }
+
+    .ms-ContextualMenu-item {
+        display: flex;
+    }
+
+    .ms-ContextualMenu-itemText {
+        color: var(--vscode-foreground);
+        font-size: 13px;
+        height: 16px;
+        line-height: 13px;
+    }
+
+    .ms-ContextualMenu-link {
+        height: 28px;
+        padding-left: 22px;
+        padding-right: 22px;
+        margin-left: 4px;
+        margin-right: 4px;
+        border-radius: 4px;
+        flex: 1;
+
+        &:hover,
+        &.is-expanded {
+            background-color: var(--vscode-menu-selectionBackground);
+
+            .ms-ContextualMenu-itemText {
+                color: var(--vscode-menu-selectionForeground);
+            }
+
+            .ms-ContextualMenu-icon {
+                color: var(--vscode-menu-selectionForeground);
+            }
+
+            .ms-ContextualMenu-submenuIcon {
+                color: var(--vscode-menu-selectionForeground);
+            }
+        }
+
+        &.is-disabled {
+            .ms-ContextualMenu-itemText {
+                color: var(--vscode-menu-separatorBackground);
+            }
+
+            .ms-ContextualMenu-icon {
+                color: var(--vscode-menu-separatorBackground);
+            }
+        }
+    }
+
+    .ms-ContextualMenu-list {
+        padding: 4px 0;
+    }
+
+    .ms-ContextualMenu-linkContent {
+        height: 28px;
+
+        i {
+            margin-left: -16px;
+        }
+    }
+}
+
+.ms-Callout-main {
+    border-radius: 5px;
+}
+
+.ms-ContextualMenu-divider {
+    background-color: var(--vscode-menu-separatorBackground);
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.ms-SearchBox {
+    input:focus {
+        outline: unset;
+    }
+}
+
+.ms-Dropdown-item .ms-Button-flexContainer,
+.ms-Dropdown-item .ms-Checkbox-label {
+    white-space: nowrap;
+}
+
+input.ms-ComboBox-Input {
+    outline: unset;
+}
+
+.ms-Dropdown-container {
+    .ms-Dropdown-title {
+        border-color: var(--vscode-dropdown-border) !important;
+        background-color: var(--vscode-dropdown-background);
+        color: var(--vscode-dropdown-foreground);
+    }
+
+    .is-disabled {
+        opacity: 0.4;
+    }
+}
+
+.ms-ComboBox-container {
+    .ms-ComboBox {
+        background-color: var(--vscode-dropdown-background);
+        color: var(--vscode-dropdown-foreground);
+
+        input {
+            background-color: var(--vscode-dropdown-background);
+            color: var(--vscode-dropdown-foreground);
+        }
+
+        button {
+            background-color: var(--vscode-dropdown-background);
+        }
+    }
+
+    .is-disabled {
+        opacity: 0.4;
+    }
+}
+
+.ms-SearchBox {
+    background-color: var(--vscode-panel-background);
+    color: var(--vscode-foreground);
+}
+
+.ms-TextField {
+    label {
+        pointer-events: none;
+    }
+
+    &.is-disabled {
+        opacity: 0.4;
+    }
+}
+
+.ms-TextField-fieldGroup {
+    background-color: var(--vscode-dropdown-background);
+    color: var(--vscode-dropdown-foreground);
+    border-color: var(--vscode-dropdown-border) !important;
+}
+
+.ms-spinButton-input {
+    outline: none;
+    background-color: var(--vscode-dropdown-background);
+    color: var(--vscode-dropdown-foreground);
+}
+
+.ms-Panel-contentInner {
+    background-color: var(--vscode-panel-background);
+    color: var(--vscode-foreground);
+    padding: 0px !important;
+
+    .ms-Panel-content {
+        padding-right: 0px;
+    }
+}
+
+.ms-Checkbox.is-checked.is-enabled.ms-Dropdown-item {
+    background-color: var(--vscode-menu-selectionBackground);
+    color: var(--vscode-menu-selectionForeground);
+}
+
+.ms-Checkbox.is-enabled.ms-ComboBox-item {
+    background-color: var(--vscode-menu-selectionBackground);
+    color: var(--vscode-menu-selectionForeground);
+}
+
+.ms-ComboBox-option.is-disabled {
+    .ms-Checkbox-label {
+        opacity: 0.4;
+    }
+}
+
+.ms-Dropdown-callout .ms-Callout-main {
+    background-color: var(--vscode-panel-background);
+    color: var(--vscode-foreground);
+}
+
+.ms-ComboBox-callout {
+    box-shadow: unset;
+
+    .ms-Callout-main {
+        background-color: var(--vscode-menu-background);
+        color: var(--vscode-menu-foreground);
+        margin-right: 2px;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+
+        box-shadow: rgb(0 0 0 / 13%) 0px 3.2px 7.2px 0px, rgb(0 0 0 / 11%) 1px 0.6px 1.8px 0px;
+
+        &::-webkit-scrollbar-track {
+            background-color: var(--vscode-sideBar-background);
+        }
+
+        .ms-ComboBox-divider {
+            background-color: var(--vscode-menu-separatorBackground);
+        }
+
+        .ms-Checkbox {
+            background-color: unset;
+            align-items: stretch;
+
+            .ms-ComboBox-optionText {
+                color: var(--vscode-foreground);
+            }
+
+            .ms-Checkbox-checkbox {
+                margin-right: 12px;
+                border: thin solid var(--vscode-checkbox-border);
+                border-radius: 3px;
+                background-color: var(--vscode-checkbox-background);
+
+                &::after {
+                    border: unset !important;
+                    background-color: var(--vscode-foreground) !important;
+                    width: 8px;
+                    height: 8px;
+                    top: 5px;
+                    left: 5px;
+                }
+            }
+
+            i {
+                display: none;
+            }
+
+            &.is-checked {
+                .ms-Checkbox-checkbox::before {
+                    font: normal normal normal 16px/1 codicon;
+                    display: inline-block;
+                    text-decoration: none;
+                    text-rendering: auto;
+                    text-align: center;
+                    -webkit-font-smoothing: antialiased;
+                    -moz-osx-font-smoothing: grayscale;
+                    user-select: none;
+                    -webkit-user-select: none;
+                    -ms-user-select: none;
+                    content: "\eab2";
+                }
+            }
+        }
+    }
+}
+
+.ms-spinButton-input {
+    outline: none !important;
+}
+
+.ms-Button--action.ms-Button--command.is-disabled {
+    opacity: 0.4;
+}
+
+.ms-TextField-errorMessage span {
+    color: var(--vscode-errorForeground);
+}
+
+.ms-DetailsRow {
+    background: unset;
+    border-bottom: unset;
+    min-height: unset;
+    width: 100%;
+
+    &:hover {
+        color: var(--vscode-list-hoverForeground);
+        background-color: var(--vscode-list-hoverBackground);
+    }
+
+    &:focus {
+        color: var(--vscode-list-focusForeground);
+        background-color: var(--vscode-list-focusBackground);
+    }
+
+    animation: none;
+}
+
+.ms-GroupHeader {
+    border-bottom: unset;
+    padding-top: 3px;
+    padding-bottom: 3px;
+
+    &:hover {
+        color: var(--vscode-list-hoverForeground);
+        background-color: var(--vscode-list-hoverBackground);
+    }
+
+    &:focus {
+        color: var(--vscode-list-focusForeground);
+        background-color: var(--vscode-list-focusBackground);
+    }
+
+    .ms-GroupHeader-title {
+        font-size: 13px;
+        font-weight: 500;
+        padding-left: 6px;
+
+        span[class^="headerCount-"] {
+            font-size: 11px;
+            padding-left: 6px;
+        }
+    }
+
+    div[class^="groupHeaderContainer-"] {
+        height: unset;
+
+        button {
+            width: unset;
+            height: unset;
+            margin-left: 15px;
+
+            &:hover {
+                color: var(--vscode-list-hoverForeground);
+                background-color: var(--vscode-list-hoverBackground);
+            }
+
+            i {
+                display: none;
+            }
+
+            &::before {
+                width: 16px;
+                font: normal normal normal 16px/1 codicon;
+                display: inline-block;
+                text-decoration: none;
+                text-rendering: auto;
+                text-align: center;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+                user-select: none;
+                -webkit-user-select: none;
+                -ms-user-select: none;
+                content: "\eab6";
+            }
+
+            &[aria-expanded="true"] {
+                &::before {
+                    content: "\eab4";
+                }
+            }
+        }
+    }
+}
+
+.ms-DetailsList {
+    overflow-x: hidden;
+
+    .ms-List {
+        .ms-List-cell {
+            min-height: unset;
+
+            .ms-GroupSpacer {
+                min-height: unset;
+                border-right: thin solid var(--vscode-tree-indentGuidesStroke);
+                width: 23px !important;
+            }
+
+            .ms-DetailsRow-fields {
+                min-height: unset;
+                padding-top: 3px;
+                padding-bottom: 3px;
+
+                .ms-DetailsRow-cell {
+                    min-height: unset;
+                    padding-top: 0px;
+                    padding-bottom: 0px;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: var(--vscode-foreground);
+
+                    &:hover {
+                        color: var(--vscode-list-hoverForeground);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.wrangler-grid-header-cell-content-container .ms-TooltipHost {
+    display: flex;
+}
