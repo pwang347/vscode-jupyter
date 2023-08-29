@@ -8,8 +8,10 @@ import { FoldSection, SummaryPanel } from '@dw/components';
 import { IDataFrame, ISelection } from '@dw/messaging';
 import { SummaryRow } from './summaryRow';
 import { IMessageHandler } from '../react-common/postOffice';
+import { VSCodeBadge } from '@vscode/webview-ui-toolkit/react';
 
 interface ISummaryPanelState {
+    originalDataFrame: IDataFrame | undefined,
     dataFrame: IDataFrame | undefined,
     selection: ISelection
 }
@@ -22,6 +24,7 @@ export class SummaryViewPanel extends React.PureComponent<any, ISummaryPanelStat
     private postOffice: WranglerPostOffice = new WranglerPostOffice();
 
     override state: ISummaryPanelState = {
+        originalDataFrame: undefined,
         dataFrame: undefined,
         selection: {
             columns: [],
@@ -36,13 +39,17 @@ export class SummaryViewPanel extends React.PureComponent<any, ISummaryPanelStat
         console.log("@@@@GOT MESSAGE", type);
         switch (type) {
             case DataWranglerMessages.Host.InitializeData:
+                const df1 = this.postOffice.linkDataFrame(payload)
                 this.setState({
-                    dataFrame: this.postOffice.linkDataFrame(payload),
+                    originalDataFrame: this.state.originalDataFrame ?? df1,
+                    dataFrame: df1,
                 });
                 break;
             case DataWranglerMessages.Host.SetDataFrame:
+                const df2 = this.postOffice.linkDataFrame(payload)
                 this.setState({
-                    dataFrame: this.postOffice.linkDataFrame(payload),
+                    originalDataFrame: this.state.originalDataFrame ?? df2,
+                    dataFrame: df2,
                 })
                 break;
                 case DataWranglerMessages.Host.SetGridSelection:
@@ -74,6 +81,7 @@ export class SummaryViewPanel extends React.PureComponent<any, ISummaryPanelStat
         } = this.state;
 
         return (
+            <div>{this.state.dataFrame?.isPreview && !this.state.dataFrame?.isPreviewUnchanged && <div style={{marginLeft: 20}}><VSCodeBadge>Preview active</VSCodeBadge></div>}
                 <SummaryPanel
                     dataFrame={dataFrame}
                     selection={selection}
@@ -126,6 +134,7 @@ export class SummaryViewPanel extends React.PureComponent<any, ISummaryPanelStat
                         }
                     }}
                 />
+                </div>
         );
     }
 }

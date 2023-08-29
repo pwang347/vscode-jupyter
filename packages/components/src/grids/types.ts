@@ -222,6 +222,7 @@ export interface IHeaderRenderers {
         showHeaderContextMenu: (target: Element) => void;
         sortAsc?: boolean;
         filter?: string;
+        key: string;
     }>;
     onRenderCommitButton?: IRenderFunction<{
         disabled: boolean;

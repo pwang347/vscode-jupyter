@@ -19,7 +19,7 @@ import {
     DataImportOperationKey,
     IExportCodeOptions,
     TranslationValidationResultType
-} from "@dw/messaging";
+} from '@dw/messaging';
 import {
     IDataImportOperation,
     IDataImportOperationWithBaseProgram,
@@ -28,9 +28,9 @@ import {
     OperationCodeGenResultType,
     PreviewStrategy,
     WranglerContextMenuItemWithArgs
-} from "../operations/types";
-import { IDataWranglerOperationContext, IGetDataImportArgsContext, IWranglerStartSessionBaseContext } from "../context";
-import { IDataWranglerOrchestrator } from "../types";
+} from '../operations/types';
+import { IDataWranglerOperationContext, IGetDataImportArgsContext, IWranglerStartSessionBaseContext } from '../context';
+import { IDataWranglerOrchestrator } from '../types';
 import {
     IWranglerEngine,
     IWranglerEngineConfig,
@@ -40,18 +40,18 @@ import {
     IWranglerCodeExportResultMap,
     IWranglerDataExportResultMap,
     IWranglerTranslationEngine
-} from "../engines";
-import { LocalizedStrings } from "../localization";
-import { createHistoryItem, IOrchestratorHistoryItem } from "../history";
-import { IProseApiClient } from "../prose";
-import { DataWranglerOperationContextMenu } from "../operations/contextMenu";
-import CodeExecutionQueue from "./codeExecutionQueue";
-import BatchedCodeExecutionQueue from "./batchedCodeExecutionQueue";
-import { ICodeExecutionQueue } from "./types";
-import { INaturalLanguageClient } from "../naturalLanguage";
+} from '../engines';
+import { LocalizedStrings } from '../localization';
+import { createHistoryItem, IOrchestratorHistoryItem } from '../history';
+import { IProseApiClient } from '../prose';
+import { DataWranglerOperationContextMenu } from '../operations/contextMenu';
+import CodeExecutionQueue from './codeExecutionQueue';
+import BatchedCodeExecutionQueue from './batchedCodeExecutionQueue';
+import { ICodeExecutionQueue } from './types';
+import { INaturalLanguageClient } from '../naturalLanguage';
 
 const formatErrorStack = (error: Error | IRuntimeError) => {
-    return Array.isArray(error.stack) ? error.stack : String(error.stack || "").split("\n");
+    return Array.isArray(error.stack) ? error.stack : String(error.stack || '').split('\n');
 };
 
 /**
@@ -114,7 +114,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
     ) {
         for (const engineId of Object.keys(this.engines)) {
             if (engineId !== this.engines[engineId].engine.id) {
-                throw new Error("Failed sanity check: engine ID mismatch");
+                throw new Error('Failed sanity check: engine ID mismatch');
             }
             const config = this.engines[engineId].config;
             const queue: ICodeExecutionQueue = new CodeExecutionQueue(
@@ -166,7 +166,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Initializes the data wrangler using a function that instantiates the initial history state.
      */
     public startWranglerSession = AsyncTask.factory(
-        "startWranglerSession",
+        'startWranglerSession',
         async (
             subtask,
             engine: string,
@@ -210,7 +210,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         innerError: `Could not find operation '${operationKey}' for engine '${this.activeEngine.id}'`,
                         operationKey
                     },
-                    "Start session",
+                    'Start session',
                     true
                 );
                 return;
@@ -221,7 +221,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
             try {
                 result = await subtask(
                     dataImportOperation.generateCode({ ...context, ...{ args: dataImportArgs } }),
-                    "generateCode"
+                    'generateCode'
                 );
             } catch (e) {
                 if (e === INTERRUPTED_ERROR) {
@@ -234,9 +234,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         innerError: error.message,
                         operationKey
                     },
-                    "Start session",
+                    'Start session',
                     !isCustomOperation, // only keep innerError if it's not a custom operation
-                    isCustomOperation ? "Custom code generation failed" : undefined
+                    isCustomOperation ? 'Custom code generation failed' : undefined
                 );
                 this.telemetryClient?.logOperationCodeGenerationFailed(
                     { key: operationKey },
@@ -257,7 +257,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         innerError: result.reason ?? `Code generation failed`,
                         operationKey
                     },
-                    "Start session",
+                    'Start session',
                     true // since we control the code generation result type even in custom cases, it should be safe to log errors here
                 );
                 const { getTelemetryProperties } = result;
@@ -345,9 +345,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         innerError: `${error.name}: ${error.message}`,
                         operationKey
                     },
-                    "Start session",
+                    'Start session',
                     false,
-                    "Failed to prepare initial session"
+                    'Failed to prepare initial session'
                 );
                 return;
             }
@@ -380,9 +380,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         innerError: `${error.name}: ${error.message}`,
                         operationKey
                     },
-                    "Start session",
+                    'Start session',
                     false,
-                    "Failed to execute initial code"
+                    'Failed to execute initial code'
                 );
                 return;
             }
@@ -405,9 +405,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         isInitialDataFrame: true,
                         isPreview: false
                     },
-                    "Start session",
+                    'Start session',
                     false,
-                    "Failed to inspect initial code"
+                    'Failed to inspect initial code'
                 );
             }
 
@@ -460,7 +460,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
             engine.customOperationExecutor
                 ? engine.customOperationExecutor(code, options)
                 : this.executeCode(engine.id, code, options)
-        ).withName("executeOperationCode");
+        ).withName('executeOperationCode');
     }
 
     /**
@@ -481,7 +481,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Updates the orchestrator's active engine and ensures that the engine dependencies are met.
      */
     private setActiveEngine = AsyncTask.factory(
-        "setActiveEngine",
+        'setActiveEngine',
         async (subtask, engineId: string, force: boolean = false) => {
             // check if the engine is supported and if dependencies are met
             // update the active engine only if both of these pass
@@ -514,7 +514,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
 
                 // if we have an existing engine, we should dispose it first (only if we're not restarting it)
                 if (this.activeEngine && this.activeEngine.id !== engineId) {
-                    await subtask(this.activeEngine.dispose(), "disposeOldEngine");
+                    await subtask(this.activeEngine.dispose(), 'disposeOldEngine');
                 }
 
                 // unset the active engine
@@ -540,7 +540,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                             engineId,
                             innerError: `${error.name}: ${error.message}`
                         },
-                        "Set active engine",
+                        'Set active engine',
                         false,
                         `Failed dependency check - ${error.name}: ${error.message}`
                     );
@@ -554,7 +554,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                     {
                         engineId
                     },
-                    "Set active engine",
+                    'Set active engine',
                     false,
                     `Failed to set active engine as ${engineId} is unsupported`
                 );
@@ -563,7 +563,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
     );
 
     private checkEngineDependencies = AsyncTask.factory(
-        "checkEngineDependencies",
+        'checkEngineDependencies',
         async (subtask, engineId: string, engine: IWranglerEngine, dependencies: IPackageDependencyMap) => {
             try {
                 this.resolvedDependencies = await subtask(engine.resolvePackageDependencies(dependencies));
@@ -575,7 +575,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         engineId,
                         innerError: `${error.name}: ${error.message}`
                     },
-                    "Check engine dependencies",
+                    'Check engine dependencies',
                     false,
                     `Failed dependency check - ${error.name}: ${error.message}`
                 );
@@ -668,7 +668,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                 continue;
             }
             const operationNameKey = `Operation${operationKey}` as keyof typeof LocalizedStrings.Orchestrator;
-            const operationName = operationNameKey in locStrings ? locStrings[operationNameKey] : "";
+            const operationName = operationNameKey in locStrings ? locStrings[operationNameKey] : '';
             const operationHelpTextKey =
                 `Operation${operationKey}HelpText` as keyof typeof LocalizedStrings.Orchestrator;
             const operationHelpText =
@@ -677,7 +677,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                     locale: this.locale,
                     formatString: this.formatString,
                     variableToWrangle: this.variableToWrangle!
-                }) ?? (operationHelpTextKey in locStrings ? locStrings[operationHelpTextKey] : "");
+                }) ?? (operationHelpTextKey in locStrings ? locStrings[operationHelpTextKey] : '');
 
             // don't show the operation if no text is available for it
             if (!operationName || !operationHelpText) {
@@ -816,7 +816,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Starts previewing an operation.
      */
     public startPreview = AsyncTask.factory(
-        "startPreview",
+        'startPreview',
         async (
             subtask,
             operationKey: string,
@@ -831,10 +831,10 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                 this.raiseError(
                     ErrorCode.PreviewNotGeneratedError,
                     {
-                        innerError: "Unknown error - Data Wrangler is in a bad state",
+                        innerError: 'Unknown error - Data Wrangler is in a bad state',
                         operationKey
                     },
-                    "Start preview",
+                    'Start preview',
                     true
                 );
                 return;
@@ -849,7 +849,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         innerError: `Could not find operation '${operationKey}' for engine '${this.activeEngine.id}'`,
                         operationKey
                     },
-                    "Start preview",
+                    'Start preview',
                     true
                 );
                 return;
@@ -859,7 +859,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
             this.comms.ui.setPreviewAllTheCode(false);
 
             // update the active operation
-            this.comms.ui.updateActiveOperation(operationKey, args, "preview");
+            this.comms.ui.updateActiveOperation(operationKey, args, 'preview');
 
             // create the operation execution context
             const context: IDataWranglerOperationContext<any, typeof LocalizedStrings.Orchestrator> = {
@@ -888,7 +888,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
             const generateCodeStartTime = Date.now();
             let result;
             try {
-                result = await subtask(operation.generateCode(context), "generateCode");
+                result = await subtask(operation.generateCode(context), 'generateCode');
             } catch (e) {
                 if (e === INTERRUPTED_ERROR) throw e;
                 const error = e as Error;
@@ -898,9 +898,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         innerError: error.message,
                         operationKey
                     },
-                    "Start preview",
+                    'Start preview',
                     false,
-                    "Code generation error: " + `${error.name} ${error.message}`
+                    'Code generation error: ' + `${error.name} ${error.message}`
                 );
 
                 this.telemetryClient?.logOperationCodeGenerationFailed(
@@ -937,9 +937,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                             inputErrors: result.inputErrors,
                             operationKey
                         },
-                        "Start preview",
+                        'Start preview',
                         false,
-                        "Code generation failure: " + result.reason
+                        'Code generation failure: ' + result.reason
                     );
 
                     const { getTelemetryProperties } = result;
@@ -961,8 +961,8 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         keepDataFrameState: operation.showOldPreviewOnError,
                         error: result.reason
                             ? {
-                                  name: "",
-                                  message: result.reason ?? "",
+                                  name: '',
+                                  message: result.reason ?? '',
                                   stack: []
                               }
                             : undefined
@@ -974,9 +974,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                             inputErrors: result.inputErrors,
                             operationKey
                         },
-                        "Start preview",
+                        'Start preview',
                         false,
-                        "Code generation incomplete"
+                        'Code generation incomplete'
                     );
                     void this.rejectPreview({
                         rejectedDueToMissingArguments: true,
@@ -1118,18 +1118,18 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         isPreview: true,
                         operationKey
                     },
-                    "Start preview",
+                    'Start preview',
                     false,
-                    "Failed to inspect data"
+                    'Failed to inspect data'
                 );
                 // if we were previously in a preview, we should clear it out but keep the selection in the operation panel
                 void this.rejectPreview({
                     rejectedDueToError: true,
                     clearOperation: false,
-                    error: error.message.startsWith("DW_NOT_A_DATAFRAME")
+                    error: error.message.startsWith('DW_NOT_A_DATAFRAME')
                         ? {
                               executedHistoryItem: previewHistoryItem.getPayload(),
-                              name: "",
+                              name: '',
                               message: this.formatString(
                                   this.getLocalizedStrings(this.locale).NotADataFrameError,
                                   this.variableToWrangle,
@@ -1192,10 +1192,10 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
             this.raiseError(
                 ErrorCode.PreviewNotGeneratedError,
                 {
-                    innerError: "No active engine",
+                    innerError: 'No active engine',
                     operationKey: id.operationKey
                 },
-                "Start preview (Get args for context menu)",
+                'Start preview (Get args for context menu)',
                 true
             );
             return;
@@ -1215,7 +1215,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Accepts an operation preview.
      */
     public acceptPreview = AsyncTask.factory(
-        "acceptPreview",
+        'acceptPreview',
         async (subtask) => {
             if (
                 !this.previewHistoryItem ||
@@ -1259,9 +1259,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         isInitialDataFrame: false,
                         isPreview: false
                     },
-                    "Accept preview",
+                    'Accept preview',
                     false,
-                    "Failed to inspect data"
+                    'Failed to inspect data'
                 );
             }
 
@@ -1311,7 +1311,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Rejects an operation preview. If clearOperation is set to true, the operation state is also cleared.
      */
     public rejectPreview = AsyncTask.factory(
-        "rejectPreview",
+        'rejectPreview',
         async (
             subtask,
             options?: {
@@ -1374,7 +1374,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                     codeGenPreviewHistoryItem,
                     // if we're reverting to a previous state on error, make sure we don't display code for it
                     historyItem: keepDataFrameState
-                        ? { ...baseDataFrame.historyItem, code: "", description: "" }
+                        ? { ...baseDataFrame.historyItem, code: '', description: '' }
                         : baseDataFrame.historyItem,
                     error
                 };
@@ -1404,7 +1404,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Undo's the last history operation.
      */
     public undoOperation = AsyncTask.factory(
-        "undoOperation",
+        'undoOperation',
         async (subtask) => {
             if (this.historyItems.length <= 1 || !this.activeEngine) {
                 return;
@@ -1460,10 +1460,11 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Exports data.
      */
     public exportData = AsyncTask.factory(
-        "exportData",
+        'exportData',
         async (
             subtask,
-            format: WranglerDataExportFormat
+            format: WranglerDataExportFormat,
+            variable?: string
         ): Promise<IWranglerDataExportResultMap[WranglerDataExportFormat] | undefined> => {
             const dataExporter = this.activeEngine?.dataExporters?.[format];
             if (!dataExporter || !this.variableToWrangle) {
@@ -1472,9 +1473,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                     {
                         format,
                         isSupported: false,
-                        innerError: !this.variableToWrangle ? "No variable to wrangle" : "No data exporter found"
+                        innerError: !this.variableToWrangle ? 'No variable to wrangle' : 'No data exporter found'
                     },
-                    "Export data",
+                    'Export data',
                     true
                 );
                 return;
@@ -1482,12 +1483,16 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
 
             let variableName = undefined;
             try {
+                console.log('@@@VARIABLE', variableName, this.variableToWrangle);
                 this.telemetryClient?.logExportData(format);
-                variableName = await subtask(
-                    this.activeEngine!.evaluateHistory(this.variableToWrangle, this.historyItems)
-                );
-                const res = await subtask(dataExporter(variableName));
-                return res;
+                if (!variable) {
+                    variableName = await subtask(
+                        this.activeEngine!.evaluateHistory(this.variableToWrangle, this.historyItems)
+                    );
+                    return await subtask(dataExporter(variableName));
+                } else {
+                    return await subtask(dataExporter(this.variableToWrangle));
+                }
             } catch (e) {
                 if (e !== INTERRUPTED_ERROR) {
                     const error = e as Error;
@@ -1498,9 +1503,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                             innerError: `${error.name}: ${error.message}`,
                             isSupported: true
                         },
-                        "Export data",
+                        'Export data',
                         false,
-                        "Unknown export error"
+                        'Unknown export error'
                     );
                 }
                 return;
@@ -1517,7 +1522,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Exports code.
      */
     public exportCode = AsyncTask.factory(
-        "exportCode",
+        'exportCode',
         async (
             subtask,
             format: WranglerCodeExportFormat,
@@ -1530,9 +1535,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                     {
                         format,
                         isSupported: false,
-                        innerError: "No engine available for translation"
+                        innerError: 'No engine available for translation'
                     },
-                    "Export code",
+                    'Export code',
                     true
                 );
                 return;
@@ -1545,9 +1550,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                     {
                         format,
                         isSupported: false,
-                        innerError: "No code exporter found"
+                        innerError: 'No code exporter found'
                     },
-                    "Export code",
+                    'Export code',
                     true
                 );
                 return;
@@ -1564,7 +1569,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                 for (const historyItem of this.historyItems) {
                     let code;
                     let validationResult;
-                    const description = historyItem.description ?? "";
+                    const description = historyItem.description ?? '';
                     const baseProgram = historyItem.getBaseProgram?.();
                     const operation = historyItem.operation.isDataImportOperation
                         ? this.getDataImportOperation(engine, historyItem.operation.key)
@@ -1619,7 +1624,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                             (warningMessage) =>
                                 `${engine.lineCommentPrefix}${this.formatString(warningTemplate, warningMessage)}`
                         );
-                        code = `${warningMessagesAsComments.join("\n")}${code ? "\n" + code : ""}`;
+                        code = `${warningMessagesAsComments.join('\n')}${code ? '\n' + code : ''}`;
                     }
 
                     options.onTranslation?.(
@@ -1631,7 +1636,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         translatedHistoryItems.push({ ...historyItem, code, description });
                     } else {
                         // TODO@DW: add auto-translation here
-                        translatedHistoryItems.push({ ...historyItem, code: "", description });
+                        translatedHistoryItems.push({ ...historyItem, code: '', description });
                     }
 
                     this.telemetryClient?.logTranslationResult(historyItem, validationResult);
@@ -1657,9 +1662,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                         innerError: `${error.name}: ${error.message}`,
                         isSupported: true
                     },
-                    "Export code",
+                    'Export code',
                     false,
-                    "Unknown code export error"
+                    'Unknown code export error'
                 );
                 return;
             }
@@ -1736,10 +1741,10 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
     /**
      * Returns the API of the specified engine or the currently active one if unspecified.
      */
-    public getEngineApi = AsyncTask.factory("getEngineApi", async (subtask, engineId?: string) => {
+    public getEngineApi = AsyncTask.factory('getEngineApi', async (subtask, engineId?: string) => {
         const engine = engineId ? this.engines[engineId].engine : this.activeEngine;
         if (!engine) {
-            throw new Error("No corresponding engine");
+            throw new Error('No corresponding engine');
         }
         await subtask(engine.init((code, options) => this.executeCode(engine.id, code, options)));
 
@@ -1773,12 +1778,12 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
         // we should attempt to use the custom provided message for telemetry
         if (!preserveInnerErrorInTelemetry) {
             innerErrorString = innerErrorTelemetryPrefix
-                ? innerErrorTelemetryPrefix + " > " + innerErrorTelemetryOverride
+                ? innerErrorTelemetryPrefix + ' > ' + innerErrorTelemetryOverride
                 : innerErrorTelemetryOverride;
         } else {
             // otherwise, just see if we need to pre-pend any telemetry prefix
             innerErrorString = innerErrorTelemetryPrefix
-                ? innerErrorTelemetryPrefix + " > " + value.innerError
+                ? innerErrorTelemetryPrefix + ' > ' + value.innerError
                 : value.innerError;
         }
 
@@ -1787,7 +1792,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
         const inputErrors: { [key: string]: string } = {};
         if (value.inputErrors) {
             for (const key of Object.keys(value.inputErrors)) {
-                inputErrors[key] = "[REDACTED]";
+                inputErrors[key] = '[REDACTED]';
             }
         }
 
@@ -1809,7 +1814,7 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
      * Reloads the data wrangler state.
      */
     public reload = AsyncTask.factory(
-        "reload",
+        'reload',
         async (subtask) => {
             if (!this.activeEngine || !this.variableToWrangle) {
                 return;
@@ -1864,9 +1869,9 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
                 this.raiseError(
                     ErrorCode.DataLoadFailedError,
                     { innerError: error.message },
-                    "Reload",
+                    'Reload',
                     false,
-                    "Unknown error during reload"
+                    'Unknown error during reload'
                 );
             }
         },

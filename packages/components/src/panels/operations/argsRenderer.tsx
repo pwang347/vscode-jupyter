@@ -25,6 +25,7 @@ export function renderOperationPanelArguments(
     }
     return (
         <React.Fragment>
+            <div style={{display: "flex", flexWrap: "wrap", gap: "0px 5px"}}>
             {state.selectedOperation.args.flatMap((arg) => {
                 return renderOperationPanelArgument({
                     arg,
@@ -39,6 +40,7 @@ export function renderOperationPanelArguments(
                     renderers
                 });
             })}
+            </div>
         </React.Fragment>
     );
 }

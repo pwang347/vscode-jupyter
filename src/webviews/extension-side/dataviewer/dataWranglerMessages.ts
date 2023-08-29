@@ -169,7 +169,8 @@ export namespace DataWranglerMessages {
         // SetCollapsedOperationGroups = 'setCollapsedOperationGroups',
         RevealColumn = 'revealColumn',
         RefreshData = 'refreshData',
-        ToggleSummary = 'toggleSummary'
+        ToggleSummary = 'toggleSummary',
+        EditInDataWrangler = 'editInDataWrangler'
     }
 
     /**
@@ -196,7 +197,7 @@ export namespace DataWranglerMessages {
             skipCodeExecution?: boolean;
         };
         // [Webview.UpdateGridCellEdits]: IGridCellEdit[];
-        [Webview.ExportData]: { format?: WranglerDataExportFormat };
+        [Webview.ExportData]: { format?: WranglerDataExportFormat; exportPreview?: boolean };
         // [Webview.ExportCodeToNotebook]: void;
         // [Webview.CopyCodeToClipboard]: void;
         // [Webview.ShowMessage]: {
@@ -240,6 +241,7 @@ export namespace DataWranglerMessages {
         [Webview.RevealColumn]: void;
         [Webview.RefreshData]: void;
         [Webview.ToggleSummary]: void;
+        [Webview.EditInDataWrangler]: void;
     }
 
     /**

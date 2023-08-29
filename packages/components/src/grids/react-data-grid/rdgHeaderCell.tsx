@@ -11,10 +11,10 @@ import {
     ISelection,
     PreviewAnnotationType,
     ITelemetryLogger,
-    WranglerTelemetryEvents,
+    // WranglerTelemetryEvents,
     IDataFrameHeader,
-    deepEqual,
-    PreviewStrategy
+    // deepEqual,
+    // PreviewStrategy
 } from "@dw/messaging";
 import { GridSelectionPlugin } from "../plugins/gridSelectionPlugin";
 import { GridContextMenuPlugin } from "../plugins/gridContextMenuPlugin";
@@ -139,20 +139,21 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
 
     private renderHeaderButton() {
         const {
-            columnAnnotations,
+            // columnAnnotations,
             dataFrameColumnIndex,
             gridContextMenuPlugin,
             gridSortPlugin,
             gridFilterPlugin,
             renderers,
-            disabled,
+            // disabled,
             disableInteractions,
-            disableCommitButton,
+            // disableCommitButton,
             onHeaderContextMenuShown,
-            activeHistoryIndex,
-            activeDataFrameHeader,
+            // activeHistoryIndex,
+            // activeDataFrameHeader,
             isEditingLastOperation,
-            activeHistoryDataFrameHeader
+            // activeHistoryDataFrameHeader,
+            dataFrameColumn
         } = this.props;
 
         // nothing to show for the index column
@@ -166,71 +167,73 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
         }
 
         // if the preview type is None, we shouldn't show anything here either
-        if (
-            !activeDataFrameHeader?.isPreviewUnchanged &&
-            activeDataFrameHeader?.previewStrategy === PreviewStrategy.None
-        ) {
-            return null;
-        }
+        // if (
+        //     !activeDataFrameHeader?.isPreviewUnchanged &&
+        //     activeDataFrameHeader?.previewStrategy === PreviewStrategy.None
+        // ) {
+        //     return null;
+        // }
 
-        if (
-            columnAnnotations?.annotationType === PreviewAnnotationType.Added ||
-            columnAnnotations?.annotationType === PreviewAnnotationType.Removed ||
-            columnAnnotations?.isTargeted
-        ) {
-            return renderCustom({
-                props: {
-                    // we disable in the following cases:
-                    disabled:
-                        // case 1: grid or commit button is disabled from the host
-                        disabled ||
-                        disableCommitButton ||
-                        // case 2: we're viewing a past step but it's not editable
-                        (activeHistoryIndex !== undefined && !isEditingLastOperation) ||
-                        // case 3: if the current data frame being shown is a result of a failed codegen/execute
-                        // we shouldn't be able to accept it
-                        !!activeDataFrameHeader?.displayedDueToError ||
-                        // case 4: make sure we actually have a preview to accept
-                        !activeDataFrameHeader?.isPreview ||
-                        // case 5: if the active arguments are the exact same as what was cached in a previous
-                        // history step, then we shouldn't be able to accept it either
-                        !!(
-                            activeHistoryDataFrameHeader &&
-                            deepEqual(
-                                activeHistoryDataFrameHeader.historyItem.operationArgs,
-                                activeDataFrameHeader.historyItem.operationArgs
-                            ) &&
-                            deepEqual(
-                                activeHistoryDataFrameHeader.historyItem.gridCellEdits ?? [],
-                                activeDataFrameHeader.historyItem.gridCellEdits ?? []
-                            )
-                        ),
-                    onClick: () => {
-                        void this.props.comms.operations.commitOperation();
-                        this.props.telemetryLogger?.logEvent(WranglerTelemetryEvents.ApplyButtonClicked, {
-                            properties: { how: "columnHeader" }
-                        });
-                    }
-                },
-                defaultRender: (props) => {
-                    return (
-                        <div
-                            className="wrangler-column-header-button wrangler-column-header-accept-preview"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                props.onClick();
-                            }}
-                        />
-                    );
-                },
-                customRender: renderers?.onRenderCommitButton
-            });
-        }
+        // if (
+        //     columnAnnotations?.annotationType === PreviewAnnotationType.Added ||
+        //     columnAnnotations?.annotationType === PreviewAnnotationType.Removed ||
+        //     columnAnnotations?.isTargeted
+        // ) {
+        //     return renderCustom({
+        //         props: {
+        //             // we disable in the following cases:
+        //             disabled:
+        //                 // case 1: grid or commit button is disabled from the host
+        //                 disabled ||
+        //                 disableCommitButton ||
+        //                 // case 2: we're viewing a past step but it's not editable
+        //                 (activeHistoryIndex !== undefined && !isEditingLastOperation) ||
+        //                 // case 3: if the current data frame being shown is a result of a failed codegen/execute
+        //                 // we shouldn't be able to accept it
+        //                 !!activeDataFrameHeader?.displayedDueToError ||
+        //                 // case 4: make sure we actually have a preview to accept
+        //                 !activeDataFrameHeader?.isPreview ||
+        //                 // case 5: if the active arguments are the exact same as what was cached in a previous
+        //                 // history step, then we shouldn't be able to accept it either
+        //                 !!(
+        //                     activeHistoryDataFrameHeader &&
+        //                     deepEqual(
+        //                         activeHistoryDataFrameHeader.historyItem.operationArgs,
+        //                         activeDataFrameHeader.historyItem.operationArgs
+        //                     ) &&
+        //                     deepEqual(
+        //                         activeHistoryDataFrameHeader.historyItem.gridCellEdits ?? [],
+        //                         activeDataFrameHeader.historyItem.gridCellEdits ?? []
+        //                     )
+        //                 ),
+        //             onClick: () => {
+        //                 void this.props.comms.operations.commitOperation();
+        //                 this.props.telemetryLogger?.logEvent(WranglerTelemetryEvents.ApplyButtonClicked, {
+        //                     properties: { how: "columnHeader" }
+        //                 });
+        //             }
+        //         },
+        //         defaultRender: (props) => {
+        //             return (
+        //                 <div
+        //                     className="wrangler-column-header-button wrangler-column-header-accept-preview"
+        //                     onClick={(e) => {
+        //                         e.stopPropagation();
+        //                         props.onClick();
+        //                     }}
+        //                 />
+        //             );
+        //         },
+        //         customRender: renderers?.onRenderCommitButton
+        //     });
+        // }
 
         // we can show commit button for editing last step, but don't show the regular context menu
         if (isEditingLastOperation) {
             return null;
         }
+
+        console.log("@@RENDER BUTTON!!");
 
         return renderCustom({
             props: {
@@ -239,7 +242,8 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
                     gridContextMenuPlugin.showHeaderContextMenu(target, dataFrameColumnIndex);
                 },
                 sortAsc: gridSortPlugin.getSortColumn()?.index === dataFrameColumnIndex ? gridSortPlugin.getSortColumn()?.sortOrder : undefined,
-                filter: gridFilterPlugin.getColumnFilter(dataFrameColumnIndex)
+                filter: gridFilterPlugin.getColumnFilter(dataFrameColumnIndex),
+                key: dataFrameColumn.key
             },
             defaultRender: (props) => {
                 const className = "wrangler-column-header-button wrangler-column-header-overflow-menu";

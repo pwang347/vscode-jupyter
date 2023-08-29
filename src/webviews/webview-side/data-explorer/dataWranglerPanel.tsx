@@ -41,7 +41,15 @@ initializeIcons(); // Register all FluentUI icons being used to prevent develope
 registerIcons({
     icons: {
         FilterAscending: <FilterAscendingIcon />,
-        FilterDescending: <FilterDescendingIcon />
+        FilterDescending: <FilterDescendingIcon />,
+        DataWrangler: <svg className='data-wrangler-icon' width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.5 3H3.75001L3.01501 3.585L2.01001 8.085L2.74501 9H8.07001L7.26001 12.585L7.99501 13.5H11.775L13.215 13.215L13.455 12H8.94001L9.60001 9H14.31L13.935 10.68C14.04 10.515 14.175 10.38 14.325 10.26C14.715 9.945 15.195 9.765 15.69 9.75L15.855 9H20.565L19.905 12H18.045L18.285 13.215L19.95 13.545C20.325 13.62 20.685 13.8 20.985 14.055L23.235 3.915L22.5 3ZM8.40001 7.5H3.69001L4.35001 4.5H9.06001L8.40001 7.5ZM14.655 7.5H9.93001L10.605 4.5H15.315L14.655 7.5ZM20.895 7.5H16.185L16.845 4.5H21.57L20.895 7.5Z" fill="#424242"/>
+        <path d="M5.18989 15L4.58989 17.67L4.52989 18H0.749893L0.0148926 17.085L0.479893 15H5.18989Z" fill="#424242"/>
+        <path d="M10.8451 17.67L10.7701 18H6.06006L6.72006 15H9.88506C9.79506 15.24 9.75006 15.48 9.75006 15.75C9.75006 16.275 9.93006 16.77 10.2601 17.175C10.4251 17.37 10.6201 17.55 10.8451 17.67Z" fill="#424242"/>
+        <path d="M6.19506 10.5L5.52006 13.5H0.810059L1.47006 10.5H6.19506Z" fill="#424242"/>
+        <path d="M20.25 15.75C20.25 15.923 20.19 16.09 20.081 16.224C19.972 16.358 19.819 16.45 19.65 16.485L17.681 16.879C17.484 16.918 17.303 17.015 17.161 17.157C17.019 17.299 16.922 17.48 16.883 17.677L16.486 19.649C16.452 19.819 16.36 19.971 16.226 20.08C16.092 20.189 15.924 20.249 15.751 20.249C15.578 20.249 15.41 20.189 15.276 20.08C15.142 19.971 15.05 19.818 15.016 19.649L14.622 17.677C14.583 17.48 14.486 17.299 14.344 17.157C14.202 17.015 14.021 16.918 13.824 16.879L11.852 16.485C11.682 16.451 11.53 16.359 11.421 16.225C11.312 16.091 11.252 15.923 11.252 15.75C11.252 15.577 11.312 15.409 11.421 15.275C11.53 15.141 11.683 15.049 11.852 15.015L13.821 14.621C14.018 14.582 14.199 14.485 14.341 14.343C14.483 14.201 14.58 14.02 14.619 13.823L15.016 11.851C15.05 11.681 15.142 11.529 15.276 11.42C15.41 11.311 15.578 11.251 15.751 11.251C15.924 11.251 16.092 11.311 16.226 11.42C16.36 11.529 16.452 11.682 16.486 11.851L16.88 13.82C16.919 14.017 17.016 14.198 17.158 14.34C17.3 14.482 17.481 14.579 17.678 14.618L19.65 15.015C19.819 15.05 19.972 15.142 20.081 15.276C20.19 15.41 20.25 15.577 20.25 15.75Z" fill="#424242"/>
+        <path d="M24 21C24 21.173 23.94 21.34 23.831 21.474C23.722 21.608 23.569 21.7 23.4 21.735L22.218 21.97C22.158 21.983 22.102 22.013 22.059 22.057C22.016 22.101 21.986 22.157 21.974 22.217L21.736 23.399C21.702 23.569 21.61 23.721 21.476 23.83C21.342 23.939 21.174 23.999 21.001 23.999C20.828 23.999 20.66 23.939 20.526 23.83C20.392 23.721 20.3 23.568 20.266 23.399L20.031 22.214C20.018 22.154 19.988 22.098 19.944 22.055C19.9 22.012 19.844 21.982 19.784 21.97L18.602 21.735C18.432 21.701 18.28 21.609 18.171 21.475C18.062 21.341 18.002 21.173 18.002 21C18.002 20.827 18.062 20.659 18.171 20.525C18.28 20.391 18.433 20.299 18.602 20.265L19.784 20.03C19.844 20.017 19.9 19.987 19.943 19.943C19.986 19.899 20.016 19.843 20.028 19.783L20.266 18.601C20.3 18.432 20.392 18.279 20.526 18.17C20.66 18.061 20.828 18.001 21.001 18.001C21.174 18.001 21.342 18.061 21.476 18.17C21.61 18.279 21.702 18.432 21.736 18.601L21.971 19.783C21.984 19.843 22.014 19.899 22.058 19.942C22.102 19.985 22.158 20.015 22.218 20.027L23.4 20.265C23.569 20.3 23.722 20.392 23.831 20.525C23.94 20.659 24 20.826 24 20.999V21Z" fill="#424242"/>
+        </svg>
     }
 })
 
@@ -193,20 +201,14 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     appearance="secondary"
                     className="gridPanel-toolbar-vscode-button"
                     onClick={() => {
-                        this.setState({
-                            sortArgs: undefined,
-                            filterArgs: undefined,
-                            sortVisible: false,
-                            filterVisible: false
-                        })
-                        this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RefreshData);
+                        this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RevealColumn);
                     }}
                     disabled={noDataFrame}
-                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Refresh data")}
+                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Find column")}
                 >
                     {/* TODO@DW:localize */}
-                    Refresh
-                    <span slot="start" className="codicon codicon-refresh" />
+                    Find column
+                    <span slot="start" className="codicon codicon-search" />
                 </VSCodeButton>
                 <VSCodeButton
                     id="filter-button"
@@ -265,7 +267,9 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                         appearance="secondary"
                         className="gridPanel-toolbar-vscode-button"
                         onClick={async () => {
-                            this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.ExportData);
+                            this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.ExportData, {
+                                exportPreview: this.state.dataFrame?.isPreview && !this.state.dataFrame.isPreviewUnchanged
+                            });
                         }}
                         disabled={noDataFrame}
                         title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Export data")}
@@ -278,14 +282,34 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     appearance="secondary"
                     className="gridPanel-toolbar-vscode-button"
                     onClick={() => {
-                        this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RevealColumn);
+                        this.setState({
+                            sortArgs: undefined,
+                            filterArgs: undefined,
+                            sortVisible: false,
+                            filterVisible: false
+                        })
+                        this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RefreshData);
                     }}
                     disabled={noDataFrame}
-                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Go to column")}
+                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Refresh data")}
                 >
                     {/* TODO@DW:localize */}
-                    Go to column
-                    <span slot="start" className="codicon codicon-search" />
+                    Refresh data
+                    <span slot="start" className="codicon codicon-refresh" />
+                </VSCodeButton>
+                <div style={{flexGrow: 1}}></div>
+                <VSCodeButton
+                    appearance="secondary"
+                    className="gridPanel-toolbar-vscode-button"
+                    onClick={() => {
+                        this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.EditInDataWrangler);
+                    }}
+                    disabled={noDataFrame}
+                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Edit in Data Wrangler")}
+                >
+                    {/* TODO@DW:localize */}
+                    Edit in Data Wrangler
+                    <span slot="start"><Icon className="data-wrangler-icon" iconName='DataWrangler'/></span>
                 </VSCodeButton>
             </div>
         );
@@ -305,7 +329,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             this.setState({
                 sortVisible: false
             })
-        }}><div style={{padding: 20}}><div style={{position: "absolute", right: 0, top: 0}}><VSCodeButton
+        }}><div style={{padding: 20, maxWidth: 500}}><div style={{position: "absolute", right: 0, top: 0}}><VSCodeButton
         id="filter-button"
         appearance="secondary"
         className="gridPanel-toolbar-vscode-button"
@@ -390,7 +414,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             this.setState({
                 filterVisible: false
             })
-        }}><div style={{padding: 20}}><div style={{position: "absolute", right: 0, top: 0}}><VSCodeButton
+        }}><div style={{padding: 20, maxWidth: 500}}><div style={{position: "absolute", right: 0, top: 0}}><VSCodeButton
         id="filter-button"
         appearance="secondary"
         className="gridPanel-toolbar-vscode-button"
@@ -493,7 +517,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
         dataFrame={this.state.dataFrame}
         historyItems={[]}
         activeHistoryDataFrame={this.state.dataFrame}
-        disableInteractions={true}
+        disableInteractions={false}
         disableFetching={false}
         disableCommitButton={true}
         enableEditLastAppliedOperation={false}
@@ -616,27 +640,64 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             onRenderOverflowMenuButton: (props) => {
                 let iconName = "More";
                 let className = "wrangler-column-header-button";
-                if (props.sortAsc === true) {
-                    if (props.filter) {
+                let sort = !!this.state.sortArgs?.TargetColumns.value.find((target) => target.key === props.key);
+                let sortAsc = false;
+                let sortOrder = -1;
+                if (sort) {
+                    sortAsc = this.state.sortArgs?.SortOrder.value === "ascending";
+                    sortOrder = 1;
+                }
+                const index = this.state.sortArgs?.AdditionalSortColumns.children.findIndex((sort) => sort.TargetColumns.value.find((target) => target.key === props.key));
+                if (index !== -1) {
+                    sort = true;
+                    sortAsc = this.state.sortArgs?.AdditionalSortColumns.children[index!].SortOrder.value === "ascending"
+                }
+                const uniqueSorts = Array.from(new Set(this.state.sortArgs?.AdditionalSortColumns.children.map((child) => child.TargetColumns.value[0]?.key)));
+                if (sortOrder === -1 && sort) {
+                    sortOrder = uniqueSorts.indexOf(props.key) + 2;
+                }
+                const filter = this.state.filterArgs?.TargetColumns.value.find((target) => target.key === props.key) ?? this.state.filterArgs?.AdditionalConditions.children.some((cond) => cond.TargetColumns.value.find((target) => target.key === props.key));
+                if (sort && sortAsc === true) {
+                    if (filter) {
                         iconName = "FilterAscending";
                     } else {
-                    iconName = "SortUp";
+                        iconName = "SortUp";
                     }
-                } else if (props.sortAsc === false) {
-                    if (props.filter) {
+                } else if (sort && sortAsc === false) {
+                    if (filter) {
                         iconName = "FilterDescending";
                     } else {
                         iconName = "SortDown";
                     }
                 } else {
-                    if (props.filter) {
+                    if (filter) {
                         iconName = "Filter";
                     } else {
-                    className += " wrangler-column-header-overflow-menu";
+                    // className += " wrangler-column-header-overflow-menu";
+                    return <div></div>
+                    }
+                }
+                console.log("@@@RENDER BUTTON", iconName, {key: props.key, sort, sortAsc, filter});
+                let tooltip = undefined;
+                const priority = this.countSortTargets() > 1 ? ` (priority ${sortOrder})` : "";
+                if (filter && sort) {
+                    if (sortAsc) {
+                        tooltip = `This column is filtered and sorted in ascending order${priority}.`
+                    } else {
+                        tooltip = `This column is filtered and sorted in descending order${priority}.`
+                    }
+                } else if (filter) {
+                    tooltip = "This column is filtered."
+                } else if (sort) {
+                    if (sortAsc) {
+                        tooltip = `This column is sorted in ascending order${priority}.`
+                    } else {
+                        tooltip = `This column is sorted in descending order${priority}.`
                     }
                 }
                 return (
-                    <IconButton
+                    <TooltipHost content={tooltip}>
+                        <IconButton
                         style={{ color: "unset" }}
                         className={className}
                         iconProps={{ iconName }}
@@ -646,6 +707,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                             props.showHeaderContextMenu(e.target as any);
                         }}
                     />
+                    </TooltipHost>
                 );
             },
             onRenderOperationContextMenuItem: (props) => {
@@ -787,8 +849,8 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
     private renderers: IOperationsPanelArgumentRenderers = {
         onRenderArgGroupField: (props) => {
             return (
-                <ArgFieldWithErrorLabel key={props.key} errorMessage={props.errorMessage}>
-                    <div style={{ minHeight: 10 }}>
+                <ArgFieldWithErrorLabel key={props.key} errorMessage={props.errorMessage} style={{width: "100%"}}>
+                    <div style={{ minHeight: 10, width: "fit-content" }}>
                         {props.subMenuArgs.map((subMenuArg, idx) => {
                             return (
                                 <div
@@ -1324,7 +1386,7 @@ function getStyleForLayoutHint(hint?: IArgLayoutHint): React.CSSProperties | und
         case IArgLayoutHint.Inline:
             return undefined;
         case IArgLayoutHint.InlineGrow:
-            return { flexGrow: 1, flexShrink: 0, marginTop: "auto" };
+            return { /*flexGrow: 1,*/ flexShrink: 0, marginTop: "auto" };
         case IArgLayoutHint.Block:
         default:
             return {};

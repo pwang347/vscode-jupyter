@@ -61,6 +61,6 @@ export interface IDataWranglerOrchestrator {
     setSelection: (selection: ISelection) => void;
     onSetDf: (listener: (df: IDataFrame) => void) => void;
     onSelectionChange: (listener: (selection: ISelection) => void) => void;
-    exportDataToFile: (format?: WranglerDataExportFormat) => Promise<void>;
+    exportDataToFile: (format?: WranglerDataExportFormat, exportPreview?: boolean) => Promise<void>;
     onOperationsChanged: (listener: (operations: IOperationView[]) => void) => void;
 }

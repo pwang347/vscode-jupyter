@@ -24,8 +24,8 @@ export class VSCJupyterKernelSession implements IKernelSession {
     private onStatusChangedEvent: vscode.EventEmitter<Kernel.Status> = new vscode.EventEmitter<Kernel.Status>();
 
     constructor(
-        private connectionInfo: IKernelConnectionInfo,
-        specs: KernelConnectionMetadataWithKernelSpecs
+        public connectionInfo: IKernelConnectionInfo,
+        public specs: KernelConnectionMetadataWithKernelSpecs
     ) {
         this.connectionInfo.connection.statusChanged.connect(this.onKernelStatus, this);
         this.onStatusChanged = this.onStatusChangedEvent.event;

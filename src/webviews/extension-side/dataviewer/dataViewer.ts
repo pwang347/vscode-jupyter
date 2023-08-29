@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { inject, injectable, named } from 'inversify';
-import { EventEmitter, Memento, Uri, ViewColumn } from 'vscode';
+import { EventEmitter, Memento, Uri, ViewColumn, extensions, commands, window, NotebookCell } from 'vscode';
 
 import { capturePerfTelemetry } from '../../../telemetry';
 import { DataViewerMessageListener } from './dataViewerMessageListener';
@@ -38,6 +38,7 @@ import { AsyncTask, ColumnType, DataImportOperationKey, IDataFrame, IOperationVi
 import { IVariableImportOperationArgs } from '@dw/engines/lib/core/operations/dataImport/variable';
 import { IDataWranglerOrchestrator } from '../variablesView/types';
 import { ContextKey } from '../../../platform/common/contextKey';
+import { IDataWranglerExtensionAPI } from './dataWrangler';
 
 /**
  * Grabs already-loaded rows from the given dataframe and attaches them so they can be serialized.
@@ -76,6 +77,10 @@ export class DataViewer
     private pendingRowsCount: number = 0;
     private dataFrame: IDataFrame | undefined;
     private summaryVisible: ContextKey = new ContextKey('jupyter.summaryPanel', this.commandManager);
+    private variableName = '';
+    private kernelSession: VSCJupyterKernelSession | undefined;
+    private notebookUri: Uri | undefined;
+    private notebookCell: NotebookCell | undefined;
 
     public setDataFrame(df: IDataFrame) {
         this.dataFrame = df;
@@ -140,10 +145,12 @@ export class DataViewer
         title: string
     ): Promise<void> {
         if (!this.isDisposed) {
+            this.notebookUri = window.activeNotebookEditor?.notebook.uri;
+            this.notebookCell = window.activeNotebookEditor?.notebook.cellAt(0);
             // Save the data provider
             this.dataProvider = dataProvider;
             const kernel = (this.dataProvider as IJupyterVariableDataProvider).kernel;
-            const kernelSession = new VSCJupyterKernelSession(
+            this.kernelSession = new VSCJupyterKernelSession(
                 {
                     connection: kernel?.session?.kernel!,
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -152,7 +159,7 @@ export class DataViewer
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 kernel?.kernelConnectionMetadata! as any
             );
-            this.dwOrchestrator.setKernel(kernelSession);
+            this.dwOrchestrator.setKernel(this.kernelSession);
 
             // Load the web panel using our current directory as we don't expect to load any other files
             await super.loadWebview(Uri.file(process.cwd())).catch(traceError);
@@ -161,6 +168,8 @@ export class DataViewer
 
             const dfInfo = await this.dataProvider.getDataFrameInfo();
             this.dwOrchestrator.setTitle(dfInfo.name ?? 'df');
+
+            this.variableName = dfInfo.name ?? 'df';
 
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             await this.dwOrchestrator.orchestrator.startWranglerSession(
@@ -320,7 +329,14 @@ export class DataViewer
                 break;
             case DataWranglerMessages.Webview.ExportData:
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
-                this.dwOrchestrator.exportDataToFile();
+                if (payload.exportPreview) {
+                    const exportData = await this.applicationShell.showQuickPick(['Previewed data', 'Original data'], {
+                        title: 'Choose data to export'
+                    });
+                    this.dwOrchestrator.exportDataToFile(undefined, exportData === 'Previewed data');
+                } else {
+                    this.dwOrchestrator.exportDataToFile();
+                }
                 break;
             case DataWranglerMessages.Webview.RevealColumn:
                 const columns = this.dataFrame?.columns;
@@ -411,6 +427,36 @@ export class DataViewer
                     this.dwOrchestrator.dataFrame!,
                     []
                 );
+                break;
+            case DataWranglerMessages.Webview.EditInDataWrangler:
+                const dataWranglerExtension = extensions.getExtension('ms-toolsai.datawrangler');
+                if (!dataWranglerExtension) {
+                    const result = await this.applicationShell.showInformationMessage(
+                        'This feature requires the Data Wrangler extension.',
+                        'Learn more'
+                    );
+                    if (result === 'Learn more') {
+                        commands.executeCommand('extension.open', 'ms-toolsai.datawrangler');
+                        return;
+                    }
+                } else {
+                    const api = dataWranglerExtension.exports as IDataWranglerExtensionAPI;
+                    api.launchDataWranglerUsingVariable({
+                        notebookUri: this.notebookUri!,
+                        session: {
+                            metadata: this.kernelSession?.specs,
+                            connection: this.kernelSession?.connectionInfo
+                        },
+                        variableConfig: {
+                            variableName: this.variableName,
+                            dataFrameType: DataFrameTypeIdentifier.Pandas
+                        },
+                        exportLocation: {
+                            cellUri: this.notebookCell?.document.uri!
+                        }
+                    });
+                    // this.webPanel?.close();
+                }
                 break;
             default:
                 break;

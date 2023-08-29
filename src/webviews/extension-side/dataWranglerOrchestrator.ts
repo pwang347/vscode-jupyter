@@ -128,7 +128,7 @@ export class DataWranglerOrchestrator implements IDataWranglerOrchestrator {
         this.setOperationsListeners.push(listener);
     }
 
-    public async exportDataToFile(format?: WranglerDataExportFormat) {
+    public async exportDataToFile(format?: WranglerDataExportFormat, exportPreview?: boolean) {
         const exportFormatToLabelMap: {
             [key in WranglerDataExportFormat]: {
                 label: string;
@@ -181,10 +181,15 @@ export class DataWranglerOrchestrator implements IDataWranglerOrchestrator {
         }
 
         const { label, fileExtension } = exportFormatToLabelMap[format];
-        await this.exportDataToFileHelper(format, fileExtension, label);
+        await this.exportDataToFileHelper(format, fileExtension, label, !!exportPreview);
     }
 
-    async exportDataToFileHelper(format: WranglerDataExportFormat, fileExtension: string, formatName: string) {
+    async exportDataToFileHelper(
+        format: WranglerDataExportFormat,
+        fileExtension: string,
+        formatName: string,
+        exportPreview: boolean
+    ) {
         return await this.applicationShell.withProgress(
             {
                 // TODO@DW: localize
@@ -193,7 +198,11 @@ export class DataWranglerOrchestrator implements IDataWranglerOrchestrator {
                 cancellable: true
             },
             async (_, token) => {
-                const exportDataTask = this.orchestrator.exportData(format);
+                console.log('@@@HISTORY', this.dataFrame?.historyItem.variableName);
+                const exportDataTask = this.orchestrator.exportData(
+                    format,
+                    exportPreview ? this.dataFrame?.historyItem.variableName : undefined
+                );
                 token.onCancellationRequested(() => exportDataTask.interrupt());
 
                 const data = await exportDataTask;

@@ -621,6 +621,7 @@ body {
 
 .wrangler-column-header-button {
     color: unset !important;
+    cursor: unset !important;
 }
 
 .wrangler-column-header-commit-button {
@@ -703,5 +704,20 @@ body {
     .wrangler-grid-toast-buttons {
         display: flex;
         gap: 16px;
+    }
+}
+
+.data-wrangler-icon {
+    width: 16px;
+    height: 16px;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    * {
+        width: 16px;
+        height: 16px;
     }
 }
