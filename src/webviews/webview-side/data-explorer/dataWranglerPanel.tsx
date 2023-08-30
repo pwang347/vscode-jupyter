@@ -373,10 +373,15 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
         return (
                 <CommandBar styles={{
                     root: {
-                    height: toolbarHeight
+                        flexGrow: 1,
+                    height: toolbarHeight,
+                    padding: 0,
                     }
                 }} items={[{
                     key: "findColumn",
+                    style: {
+                        marginLeft: 14
+                    },
                     onRenderIcon: () => <span className="codicon codicon-search" />,
                     text: "Find column",
                     tooltipHostProps: {
