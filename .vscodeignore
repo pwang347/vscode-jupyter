@@ -121,3 +121,13 @@ test-results*
 !**/*nls.*.json
 *.d.ts
 debugpy_logging.cmd
+packages/components/src/**
+packages/components/node_modules/**
+packages/messaging/src/**
+packages/messaging/node_modules/**
+packages/engines/src/**
+packages/engines/node_modules/**
+packages/orchestrator/src/**
+packages/orchestrator/node_modules/**
+packages/visualization-recharts/src/**
+packages/visualization-recharts/node_modules/**
