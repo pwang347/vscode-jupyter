@@ -46,7 +46,6 @@ export class GridSortPlugin<TCol>
             index: colIndex,
             sortOrder: sortAsc
         };
-        console.log('@@RENDER');
         setTimeout(() => {
             this.renderer.current?.forceUpdate();
         }, 0);
@@ -55,7 +54,6 @@ export class GridSortPlugin<TCol>
     public clearAllSortColumns() {
         this.setColumnDefinitions(this.getColumnDefinitions().map((def) => ({ ...def, sortAsc: undefined })));
         this.sortCol = undefined;
-        console.log('@@CLEAR');
         setTimeout(() => {
             this.renderer.current?.forceUpdate();
         }, 0);

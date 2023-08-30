@@ -233,8 +233,6 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
             return null;
         }
 
-        console.log("@@RENDER BUTTON!!");
-
         return renderCustom({
             props: {
                 showHeaderContextMenu: (target) => {

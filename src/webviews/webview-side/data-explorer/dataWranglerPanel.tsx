@@ -22,7 +22,7 @@ import { TooltipHost } from "@fluentui/react/lib/Tooltip";
 import { Shimmer, ShimmerElementType } from "@fluentui/react/lib/Shimmer";
 import { Icon } from "@fluentui/react/lib/Icon";
 import { ContextualMenu, DirectionalHint, ContextualMenuItemType } from "@fluentui/react/lib/ContextualMenu";
-import { IconButton, Label, Position, SelectableOptionMenuItemType, SpinButton, TextField, VirtualizedComboBox, initializeIcons } from '@fluentui/react';
+import { CommandBar, IconButton, Label, PartialTheme, Position, SelectableOptionMenuItemType, SpinButton, TextField, ThemeProvider, VirtualizedComboBox, initializeIcons } from '@fluentui/react';
 import { DataWranglerMessages } from '../../extension-side/dataviewer/dataWranglerMessages';
 import { WranglerPostOffice } from './wranglerPostOffice';
 import {FilterAscendingIcon, FilterDescendingIcon} from "@fluentui/react-icons-mdl2";
@@ -36,6 +36,9 @@ import { Callout } from "@fluentui/react/lib/Callout";
 import { IFloatFieldProps, IIntegerFieldProps, IOperationsPanelArgumentRenderers } from '@dw/components/dist/panels/operations/types';
 // eslint-disable-next-line no-restricted-imports
 import { debounce } from 'lodash';
+import { DateTimePicker } from './dateTimePicker';
+import { StringField } from './stringField';
+import { UpdateButton } from './updateButton';
 
 initializeIcons(); // Register all FluentUI icons being used to prevent developer console errors
 registerIcons({
@@ -52,6 +55,7 @@ registerIcons({
         </svg>
     }
 })
+const spinButtonInputProps = { size: 1 };
 
 const toolbarHeight = "31px";
 
@@ -60,6 +64,171 @@ const loadingShimmerColors = {
     shimmer: "var(--theme-wrangler-grid-header-cell-default-hover-bg)",
     shimmerWave: "var(--theme-wrangler-grid-cell-default-column-selected-hover-bg)"
 };
+
+/**
+ * Returns the current VS Code theme.
+ * See https://stackoverflow.com/questions/37257911/detect-light-dark-theme-programatically-in-visual-studio-code
+ */
+export function detectBaseTheme(): VSCodeTheme {
+    const body = document.body;
+    const className = body?.className.split(" ").find((c) => c.startsWith("vscode"));
+    if (className === "vscode-high-contrast") {
+        const themeName = body.getAttribute("data-vscode-theme-name");
+        if (themeName === "Dark High Contrast") {
+            return VSCodeTheme.HCDark;
+        } else if (themeName === "Light High Contrast") {
+            return VSCodeTheme.HCLight;
+        }
+    }
+    return (className as VSCodeTheme) ?? VSCodeTheme.Light;
+}
+
+/**
+ * VS Code themes.
+ */
+export enum VSCodeTheme {
+    Light = "vscode-light",
+    Dark = "vscode-dark",
+    HCDark = "vscode-high-contrast-dark",
+    HCLight = "vscode-high-contrast-light"
+}
+
+
+/**
+ * Light theme for fluent
+ * See: https://fabricweb.z5.web.core.windows.net/pr-deploy-site/refs/heads/master/theming-designer/
+ */
+export const fluentThemeLight: PartialTheme = {
+    palette: {
+        themeDarker: "#004578",
+        themeDark: "#005a9e",
+        themeDarkAlt: "#106ebe",
+        themePrimary: "#0078d4",
+        themeSecondary: "#2b88d8",
+        themeTertiary: "#71afe5",
+        themeLight: "#c7e0f4",
+        themeLighter: "#deecf9",
+        themeLighterAlt: "#eff6fc",
+        black: "#000000",
+        neutralDark: "#201f1e",
+        neutralPrimary: "#323130",
+        neutralPrimaryAlt: "#3b3a39",
+        neutralSecondary: "#605e5c",
+        neutralTertiary: "#a19f9d",
+        white: "#ffffff",
+        neutralTertiaryAlt: "#c8c6c4",
+        neutralQuaternaryAlt: "#e1dfdd",
+        neutralLight: "#edebe9",
+        neutralLighter: "#f3f2f1",
+        neutralLighterAlt: "#faf9f8"
+    }
+};
+
+/**
+ * Dark theme for fluent
+ * See: https://fabricweb.z5.web.core.windows.net/pr-deploy-site/refs/heads/master/theming-designer/
+ */
+export const fluentThemeDark: PartialTheme = {
+    palette: {
+        themeDarker: "#84c5f9",
+        themeDark: "#59b0f7",
+        themeDarkAlt: "#3ca2f6",
+        themePrimary: "#2899f5",
+        themeSecondary: "#2286d7",
+        themeTertiary: "#185b93",
+        themeLight: "#0c2e49",
+        themeLighter: "#061827",
+        themeLighterAlt: "#02060a",
+        black: "#fafafa",
+        neutralDark: "#f5f5f5",
+        neutralPrimary: "#d4d4d4",
+        neutralPrimaryAlt: "#ebebeb",
+        neutralSecondary: "#e7e7e7",
+        neutralTertiary: "#e2e2e2",
+        white: "#1e1e1e",
+        neutralTertiaryAlt: "#6d6d6d",
+        neutralQuaternaryAlt: "#484848",
+        neutralLight: "#3f3f3f",
+        neutralLighter: "#313131",
+        neutralLighterAlt: "#282828"
+    }
+};
+
+/**
+ * High contrast dark theme for fluent
+ * See: https://fabricweb.z5.web.core.windows.net/pr-deploy-site/refs/heads/master/theming-designer/
+ */
+export const fluentThemeHCDark: PartialTheme = {
+    palette: {
+        themeDarker: "#6fc3df",
+        themeDark: "#6fc3df",
+        themeDarkAlt: "#6fc3df",
+        themePrimary: "#6fc3df",
+        themeSecondary: "#6fc3df",
+        themeTertiary: "#6fc3df",
+        themeLight: "#6fc3df",
+        themeLighter: "#6fc3df",
+        themeLighterAlt: "#6fc3df",
+        black: "#ffffff",
+        neutralDark: "#ffffff",
+        neutralPrimary: "#ffffff",
+        neutralPrimaryAlt: "#ffffff",
+        neutralSecondary: "#ffffff",
+        neutralTertiary: "#ffffff",
+        white: "#000000",
+        neutralTertiaryAlt: "#000000",
+        neutralQuaternaryAlt: "#000000",
+        neutralLight: "#000000",
+        neutralLighter: "#000000",
+        neutralLighterAlt: "#000000"
+    }
+};
+
+/**
+ * High contrast light theme for fluent
+ * See: https://fabricweb.z5.web.core.windows.net/pr-deploy-site/refs/heads/master/theming-designer/
+ */
+export const fluentThemeHCLight: PartialTheme = {
+    palette: {
+        themeDarker: "#0f4a85",
+        themeDark: "#0f4a85",
+        themeDarkAlt: "#0f4a85",
+        themePrimary: "#0f4a85",
+        themeSecondary: "#0f4a85",
+        themeTertiary: "#0f4a85",
+        themeLight: "#0f4a85",
+        themeLighter: "#0f4a85",
+        themeLighterAlt: "#0f4a85",
+        black: "#000000",
+        neutralDark: "#000000",
+        neutralPrimary: "#000000",
+        neutralPrimaryAlt: "#000000",
+        neutralSecondary: "#000000",
+        neutralTertiary: "#000000",
+        white: "#ffffff",
+        neutralTertiaryAlt: "#ffffff",
+        neutralQuaternaryAlt: "#ffffff",
+        neutralLight: "#ffffff",
+        neutralLighter: "#ffffff",
+        neutralLighterAlt: "#ffffff"
+    }
+};
+
+
+
+/**
+ * Given the current VS Code theme, retrieves the corresponding fluent UI theme object.
+ */
+export function getFluentTheme(theme: VSCodeTheme): PartialTheme {
+    if (theme === VSCodeTheme.Dark) {
+        return fluentThemeDark;
+    } else if (theme === VSCodeTheme.HCDark) {
+        return fluentThemeHCDark;
+    } else if (theme === VSCodeTheme.HCLight) {
+        return fluentThemeHCLight;
+    }
+    return fluentThemeLight;
+}
 
 const visualizationStyle: IVisualizationStyle = {
     primaryColor: "var(--vscode-charts-blue)",
@@ -77,6 +246,7 @@ interface IGridPanelState {
     filterArgs: IFilterOperationArgs | undefined;
     sortArgs: ISortOperationArgs | undefined;
     operations: IOperationView[];
+    theme: VSCodeTheme;
 }
 
 /**
@@ -85,6 +255,7 @@ interface IGridPanelState {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class GridPanel extends React.PureComponent<any, IGridPanelState> implements IMessageHandler {
     private gridRef = React.createRef<ReactDataGrid>();
+    private updateButtonRef = React.createRef<UpdateButton>();
 
     countSortTargets = () => {
         let sortTargets = 0;
@@ -173,7 +344,8 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
         sortVisible: false,
         filterArgs: undefined,
         sortArgs: undefined,
-        operations: []
+        operations: [],
+        theme: detectBaseTheme()
     }
 
     override componentDidMount(): void {
@@ -191,30 +363,43 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             noDataFrame ? "Data must be loaded first" : message;
 
         return (
-            <div
-                style={{
-                    display: "flex",
+                <CommandBar styles={{
+                    root: {
                     height: toolbarHeight
-                }}
-            >
-                <VSCodeButton
-                    appearance="secondary"
-                    className="gridPanel-toolbar-vscode-button"
-                    onClick={() => {
+                    }
+                }} items={[{
+                    key: "findColumn",
+                    onRenderIcon: () => <span className="codicon codicon-search" />,
+                    text: "Find column",
+                    tooltipHostProps: {
+                        content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Find column")
+                    },
+                    onClick: () => {
                         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RevealColumn);
-                    }}
-                    disabled={noDataFrame}
-                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Find column")}
-                >
-                    {/* TODO@DW:localize */}
-                    Find column
-                    <span slot="start" className="codicon codicon-search" />
-                </VSCodeButton>
-                <VSCodeButton
-                    id="filter-button"
-                    appearance="secondary"
-                    className="gridPanel-toolbar-vscode-button"
-                    onClick={() => {
+                    },
+                    disabled: noDataFrame
+                //     onRender: () => <VSCodeButton
+                //     appearance="secondary"
+                //     className="gridPanel-toolbar-vscode-button"
+                //     onClick={() => {
+                //         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RevealColumn);
+                //     }}
+                //     disabled={noDataFrame}
+                //     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Find column")}
+                // >
+                //     {/* TODO@DW:localize */}
+                //     Find column
+                //     <span slot="start" className="codicon codicon-search" />
+                // </VSCodeButton>
+                }, {
+                    key: "filter",
+                    id: "filter-button",
+                    onRenderIcon: () => <span className="codicon codicon-filter" />,
+                    text: this.countFilterTargets() > 0 ? `Filter (${this.countFilterTargets()})` : "Filter",
+                    tooltipHostProps: {
+                        content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Filter")
+                    },
+                    onClick: () => {
                         if (this.state.filterVisible) {
                             return;
                         }
@@ -222,19 +407,37 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                             filterVisible: true,
                             sortVisible: false
                         })
-                    }}
-                    disabled={noDataFrame}
-                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Filter")}
-                >
-                    {/* TODO@DW:localize */}
-                    {this.countFilterTargets() > 0 ? `Filter (${this.countFilterTargets()})` : "Filter"}
-                    <span slot="start" className="codicon codicon-filter" />
-                </VSCodeButton>
-                <VSCodeButton
-                    id="sort-button"
-                    appearance="secondary"
-                    className="gridPanel-toolbar-vscode-button"
-                    onClick={() => {
+                    },
+                    disabled: noDataFrame
+                //     onRender: () =>                 <VSCodeButton
+                //     id="filter-button"
+                //     appearance="secondary"
+                //     className="gridPanel-toolbar-vscode-button"
+                //     onClick={() => {
+                //         if (this.state.filterVisible) {
+                //             return;
+                //         }
+                //         this.setState({
+                //             filterVisible: true,
+                //             sortVisible: false
+                //         })
+                //     }}
+                //     disabled={noDataFrame}
+                //     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Filter")}
+                // >
+                //     {/* TODO@DW:localize */}
+                //     {this.countFilterTargets() > 0 ? `Filter (${this.countFilterTargets()})` : "Filter"}
+                //     <span slot="start" className="codicon codicon-filter" />
+                // </VSCodeButton>
+                }, {
+                    key: "sort",
+                    id: "sort-button",
+                    onRenderIcon: () => <span className="codicon codicon-sort-precedence" />,
+                    text: this.countSortTargets() > 0 ? `Sort (${this.countSortTargets()})` : "Sort",
+                    tooltipHostProps: {
+                        content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Sort")
+                    },
+                    onClick: () => {
                         if (this.state.sortVisible) {
                             return;
                         }
@@ -242,76 +445,141 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                             sortVisible: true,
                             filterVisible: false
                         })
-                    }}
-                    disabled={noDataFrame}
-                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Sort")}
-                >
-                    {/* TODO@DW:localize */}
-                    {this.countSortTargets() > 0 ? `Sort (${this.countSortTargets()})` : "Sort"}
-                    <span slot="start" className="codicon codicon-sort-precedence" />
-                </VSCodeButton>
-                <VSCodeButton
-                    appearance="secondary"
-                    className="gridPanel-toolbar-vscode-button"
-                    onClick={() => {
+                    },
+                    disabled: noDataFrame
+                //     onRender: () =><VSCodeButton
+                //     id="sort-button"
+                //     appearance="secondary"
+                //     className="gridPanel-toolbar-vscode-button"
+                //     onClick={() => {
+                //         if (this.state.sortVisible) {
+                //             return;
+                //         }
+                //         this.setState({
+                //             sortVisible: true,
+                //             filterVisible: false
+                //         })
+                //     }}
+                //     disabled={noDataFrame}
+                //     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Sort")}
+                // >
+                //     {/* TODO@DW:localize */}
+                //     {this.countSortTargets() > 0 ? `Sort (${this.countSortTargets()})` : "Sort"}
+                //     <span slot="start" className="codicon codicon-sort-precedence" />
+                // </VSCodeButton>
+                }, {
+                    key: "summary",
+                    onRenderIcon: () => <span className="codicon codicon-list-flat" />,
+                    text: "Summary",
+                    tooltipHostProps: {
+                        content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Summary")
+                    },
+                    onClick: () => {
                         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.ToggleSummary);
-                    }}
-                    disabled={noDataFrame}
-                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Summary")}
-                >
-                    {/* TODO@DW:localize */}
-                    Summary
-                    <span slot="start" className="codicon codicon-list-flat" />
-                </VSCodeButton>
-                    <VSCodeButton
-                        appearance="secondary"
-                        className="gridPanel-toolbar-vscode-button"
-                        onClick={async () => {
-                            this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.ExportData, {
-                                exportPreview: this.state.dataFrame?.isPreview && !this.state.dataFrame.isPreviewUnchanged
-                            });
-                        }}
-                        disabled={noDataFrame}
-                        title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Export data")}
-                    >
-                        {/* TODO@DW:localize */}
-                        Export data
-                        <span slot="start" className="codicon codicon-table"></span>
-                    </VSCodeButton>
-                    <VSCodeButton
-                    appearance="secondary"
-                    className="gridPanel-toolbar-vscode-button"
-                    onClick={() => {
-                        this.setState({
-                            sortArgs: undefined,
-                            filterArgs: undefined,
-                            sortVisible: false,
-                            filterVisible: false
-                        })
-                        this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RefreshData);
-                    }}
-                    disabled={noDataFrame}
-                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Refresh data")}
-                >
-                    {/* TODO@DW:localize */}
-                    Refresh data
-                    <span slot="start" className="codicon codicon-refresh" />
-                </VSCodeButton>
-                <div style={{flexGrow: 1}}></div>
-                <VSCodeButton
-                    appearance="secondary"
-                    className="gridPanel-toolbar-vscode-button"
-                    onClick={() => {
+                    },
+                    disabled: noDataFrame
+                //     onRender: () => <VSCodeButton
+                //     appearance="secondary"
+                //     className="gridPanel-toolbar-vscode-button"
+                //     onClick={() => {
+                //         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.ToggleSummary);
+                //     }}
+                //     disabled={noDataFrame}
+                //     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Summary")}
+                // >
+                //     {/* TODO@DW:localize */}
+                //     Summary
+                //     <span slot="start" className="codicon codicon-list-flat" />
+                // </VSCodeButton>
+                }, {
+                    key: "export",
+                    onRenderIcon: () => <span className="codicon codicon-table" />,
+                    text: "Export data",
+                    tooltipHostProps: {
+                        content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Export data")
+                    },
+                    onClick: async () => {
+                        this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.ExportData, {
+                            exportPreview: this.state.dataFrame?.isPreview && !this.state.dataFrame.isPreviewUnchanged
+                        });
+                    },
+                    disabled: noDataFrame
+                //     onRender: () => <VSCodeButton
+                //     appearance="secondary"
+                //     className="gridPanel-toolbar-vscode-button"
+                //     onClick={async () => {
+                //         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.ExportData, {
+                //             exportPreview: this.state.dataFrame?.isPreview && !this.state.dataFrame.isPreviewUnchanged
+                //         });
+                //     }}
+                //     disabled={noDataFrame}
+                //     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Export data")}
+                // >
+                //     {/* TODO@DW:localize */}
+                //     Export data
+                //     <span slot="start" className="codicon codicon-table"></span>
+                // </VSCodeButton> 
+                }, {
+                    key: "refresh",
+                    onRenderIcon: () => <span className="codicon codicon-refresh" />,
+                    text: "Refresh data",
+                    tooltipHostProps: {
+                        content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Refresh data")
+                    },
+                    onClick: () => {
+                                this.setState({
+                                    sortArgs: undefined,
+                                    filterArgs: undefined,
+                                    sortVisible: false,
+                                    filterVisible: false
+                                })
+                                this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RefreshData);
+                            },
+                    disabled: noDataFrame
+                //     onRender: () => <VSCodeButton
+                //     appearance="secondary"
+                //     className="gridPanel-toolbar-vscode-button"
+                //     onClick={() => {
+                //         this.setState({
+                //             sortArgs: undefined,
+                //             filterArgs: undefined,
+                //             sortVisible: false,
+                //             filterVisible: false
+                //         })
+                //         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.RefreshData);
+                //     }}
+                //     disabled={noDataFrame}
+                //     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Refresh data")}
+                // >
+                //     {/* TODO@DW:localize */}
+                //     Refresh data
+                //     <span slot="start" className="codicon codicon-refresh" />
+                // </VSCodeButton>
+                }]} farItems={[{
+                    key: "dataWrangler",
+                    onRenderIcon: () => <Icon className="data-wrangler-icon" iconName='DataWrangler'/>,
+                    text: "Edit in Data Wrangler",
+                    tooltipHostProps: {
+                        content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Edit in Data Wrangler")
+                    },
+                    onClick: () => {
                         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.EditInDataWrangler);
-                    }}
-                    disabled={noDataFrame}
-                    title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Edit in Data Wrangler")}
-                >
-                    {/* TODO@DW:localize */}
-                    Edit in Data Wrangler
-                    <span slot="start"><Icon className="data-wrangler-icon" iconName='DataWrangler'/></span>
-                </VSCodeButton>
-            </div>
+                    },
+                    disabled: noDataFrame
+                //     onRender: () => <VSCodeButton
+                //     appearance="secondary"
+                //     className="gridPanel-toolbar-vscode-button"
+                //     onClick={() => {
+                //         this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.EditInDataWrangler);
+                //     }}
+                //     disabled={noDataFrame}
+                //     title={askToPerformOperationDataFrame(/* TODO@DW:localize */ "Edit in Data Wrangler")}
+                // >
+                //     {/* TODO@DW:localize */}
+                //     Edit in Data Wrangler
+                //     <span slot="start"><Icon className="data-wrangler-icon" iconName='DataWrangler'/></span>
+                // </VSCodeButton> 
+                }]} />
         );
     }
 
@@ -322,15 +590,15 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
 
         return <Callout target={'#sort-button'} role="dialog"
         preventDismissOnEvent={(e) => {
-            return e.type !== "click"}
-        }
+            return e.type !== "click" || (e.target as HTMLDivElement).id === "dismiss-button"
+        }}
         isBeakVisible={false}
         gapSpace={0} onDismiss={() => {
             this.setState({
                 sortVisible: false
             })
         }}><div style={{padding: 20, maxWidth: 500}}><div style={{position: "absolute", right: 0, top: 0}}><VSCodeButton
-        id="filter-button"
+        id="dismiss-button"
         appearance="secondary"
         className="gridPanel-toolbar-vscode-button"
         onClick={() => {
@@ -377,13 +645,6 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             this.setState({
                 sortArgs: newState.selectedArgs
             }, () => {
-                console.log("@@PREVIEW", {
-                    operationKey: OperationKey.FilterAndSort,
-                    args: {
-                        filter: this.state.filterArgs,
-                        sort: this.state.sortArgs
-                    }
-                } )
                 this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.PreviewOperation, {
                     operationKey: OperationKey.FilterAndSort,
                     args: {
@@ -407,15 +668,15 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
 
         return <Callout target={'#filter-button'} role="dialog"
         preventDismissOnEvent={(e) => {
-            return e.type !== "click"}
-        }
+            return e.type !== "click" || (e.target as HTMLDivElement).id === "dismiss-button"
+        }}
         isBeakVisible={false}
         gapSpace={0} onDismiss={() => {
             this.setState({
                 filterVisible: false
             })
         }}><div style={{padding: 20, maxWidth: 500}}><div style={{position: "absolute", right: 0, top: 0}}><VSCodeButton
-        id="filter-button"
+        id="dismiss-button"
         appearance="secondary"
         className="gridPanel-toolbar-vscode-button"
         onClick={() => {
@@ -462,13 +723,6 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             this.setState({
                 filterArgs: newState.selectedArgs
             }, () => {
-                console.log("@@PREVIEW", {
-                    operationKey: OperationKey.FilterAndSort,
-                    args: {
-                        filter: this.state.filterArgs,
-                        sort: this.state.sortArgs
-                    }
-                } )
                 this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.PreviewOperation, {
                     operationKey: OperationKey.FilterAndSort,
                     args: {
@@ -478,13 +732,14 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                 });
             })
         }, () => {
-            console.log("@@@PREVIEW");
         }, LocalizedStrings.Operations, this.renderers)}</div>
         </Callout>
     }
 
     override render() {
-        return                 <div
+        const fluentTheme = getFluentTheme(this.state.theme);
+        return <ThemeProvider theme={fluentTheme} style={{ background: "transparent", height: "100%" }}>
+         <div
         style={{
             display: "flex",
             flexDirection: "column"
@@ -677,7 +932,6 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     return <div></div>
                     }
                 }
-                console.log("@@@RENDER BUTTON", iconName, {key: props.key, sort, sortAsc, filter});
                 let tooltip = undefined;
                 const priority = this.countSortTargets() > 1 ? ` (priority ${sortOrder})` : "";
                 if (filter && sort) {
@@ -812,6 +1066,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
     />}
     </div>
     </div>
+    </ThemeProvider>
     }
 
     private getContextMenuIconName(key: string, menuId?: string) {
@@ -932,7 +1187,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                                     key: "all",
                                     // TODO@DW: localize
                                     text: "Select all",
-                                    // itemType: SelectableOptionMenuItemType.SelectAll,
+                                    itemType: SelectableOptionMenuItemType.SelectAll,
                                     disabled: props.disableSelectAll,
                                     // TODO@DW: localize
                                     title: props.disableSelectAll
@@ -952,7 +1207,6 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                                             text: c.label,
                                             disabled: c.disabledReason !== undefined,
                                             title: c.disabledReason ?? c.label
-                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                         } as any)
                                 )
                             )}
@@ -1001,21 +1255,21 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                                 root: {
                                     selectors: {
                                         "::after": {
-                                            borderColor: "var(--vscode-dropdown-border) !important"
+                                            borderColor: "var(--vscode-dropdown-border)"
                                         }
                                     }
                                 },
                                 rootHovered: {
                                     selectors: {
                                         "::after": {
-                                            borderColor: "var(--vscode-dropdown-border) !important"
+                                            borderColor: "var(--vscode-dropdown-border)"
                                         }
                                     }
                                 },
                                 rootFocused: {
                                     selectors: {
                                         "::after": {
-                                            // borderColor: fluentTheme.palette?.themePrimary
+                                            borderColor: getFluentTheme(this.state.theme).palette?.themePrimary
                                         }
                                     }
                                 }
@@ -1065,7 +1319,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                                 rootFocused: {
                                     selectors: {
                                         "::after": {
-                                            // borderColor: fluentTheme.palette?.themePrimary
+                                            borderColor: getFluentTheme(this.state.theme).palette?.themePrimary
                                         }
                                     }
                                 }
@@ -1140,7 +1394,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                             rootFocused: {
                                 selectors: {
                                     "::after": {
-                                        // borderColor: fluentTheme.palette?.themePrimary
+                                        borderColor: getFluentTheme(this.state.theme).palette?.themePrimary
                                     }
                                 }
                             }
@@ -1155,9 +1409,14 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     errorMessage={props.errorMessage}
                     style={getStyleForLayoutHint(props.layoutHint)}
                 >
-                    <TextField value={props.value} onChange={(e) => {
-                        props.onChange((e.target as HTMLInputElement).value);
-                    }} />
+                    <DateTimePicker
+                        {...props}
+                        // TODO@DW: localize
+                        locStrings={{
+                            dateTimePickerInvalidDateTimeFormatMessage:
+                                "{0} is not a valid date time value."
+                        }}
+                    />
                 </ArgFieldWithErrorLabel>
             );
         },
@@ -1175,39 +1434,34 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                         step={props.step || 0.1}
                         min={props.minValue}
                         max={props.maxValue}
-                        inputProps={{ size: 1 }}
+                        inputProps={spinButtonInputProps}
                         disabled={props.disabled}
                         // see https://github.com/microsoft/fluentui/issues/5326
                         onKeyDown={(e) => {
                             let target = e.target as HTMLInputElement;
                             this.handleFloatKeyDown(target, props);
                         }}
-                        onChange={(newValue) => {
+                        onChange={(_, newValue) => {
                             if (newValue !== undefined) {
-                                props.onChange(parseFloat((newValue.target as HTMLInputElement).value));
+                                props.onChange(parseFloat(newValue));
                             }
                         }}
-                        onIncrement={(value) => {
-                            if (value !== undefined) {
-                                props.onChange(parseFloat(value) + 1);
-                            }
-                        }}
-                        onDecrement={(value) => {
-                            if (value !== undefined) {
-                                props.onChange(parseFloat(value) - 1);
-                            }
-                        }}
-                        styles={{
-                            spinButtonWrapper: {
-                                selectors: {
-                                    "::after": {
-                                        borderColor: "var(--vscode-dropdown-border)"
-                                    },
-                                    ":hover::after": {
-                                        borderColor: "var(--vscode-dropdown-border)"
+                        styles={(props) => {
+                            if (!props.isFocused) {
+                                return {
+                                    spinButtonWrapper: {
+                                        selectors: {
+                                            "::after": {
+                                                borderColor: "var(--vscode-dropdown-border)"
+                                            },
+                                            ":hover::after": {
+                                                borderColor: "var(--vscode-dropdown-border)"
+                                            }
+                                        }
                                     }
-                                }
+                                };
                             }
+                            return {};
                         }}
                     />
                 </ArgFieldWithErrorLabel>
@@ -1227,39 +1481,34 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                         step={props.step}
                         min={props.minValue}
                         max={props.maxValue}
-                        inputProps={{ size: 1 }}
+                        inputProps={spinButtonInputProps}
                         disabled={props.disabled}
                         // see https://github.com/microsoft/fluentui/issues/5326
                         onKeyDown={(e) => {
                             let target = e.target as HTMLInputElement;
                             this.handleIntKeyDown(target, props);
                         }}
-                        onIncrement={(value) => {
-                            if (value !== undefined) {
-                                props.onChange(parseInt(value, 10) + 1);
-                            }
-                        }}
-                        onDecrement={(value) => {
-                            if (value !== undefined) {
-                                props.onChange(parseInt(value, 10) - 1);
-                            }
-                        }}
-                        onChange={(newValue) => {
+                        onChange={(_, newValue) => {
                             if (newValue !== undefined) {
-                                props.onChange(parseInt((newValue.target as HTMLInputElement).value, 10));
+                                props.onChange(parseInt(newValue, 10));
                             }
                         }}
-                        styles={{
-                            spinButtonWrapper: {
-                                selectors: {
-                                    "::after": {
-                                        borderColor: "var(--vscode-dropdown-border) !important"
-                                    },
-                                    ":hover::after": {
-                                        borderColor: "var(--vscode-dropdown-border) !important"
+                        styles={(props) => {
+                            if (!props.isFocused) {
+                                return {
+                                    spinButtonWrapper: {
+                                        selectors: {
+                                            "::after": {
+                                                borderColor: "var(--vscode-dropdown-border)"
+                                            },
+                                            ":hover::after": {
+                                                borderColor: "var(--vscode-dropdown-border)"
+                                            }
+                                        }
                                     }
-                                }
+                                };
                             }
+                            return {};
                         }}
                     />
                 </ArgFieldWithErrorLabel>
@@ -1272,9 +1521,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     errorMessage={props.errorMessage}
                     style={getStyleForLayoutHint(props.layoutHint)}
                 >
-                    <TextField value={props.value} onChange={(e) => {
-                        props.onChange((e.target as HTMLInputElement).value);
-                    }} />
+                    <StringField {...props} updateButtonRef={this.updateButtonRef} />
                 </ArgFieldWithErrorLabel>
             );
         },
@@ -1289,11 +1536,11 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                         label={props.label}
                         labelPosition={Position.top}
                         value={props.value.toString()}
-                        inputProps={{size: 1}}
+                        inputProps={spinButtonInputProps}
                         disabled={props.disabled}
-                        onChange={(newValue) => {
+                        onChange={(_, newValue) => {
                             if (newValue !== undefined) {
-                                props.onChange((newValue.target as HTMLInputElement).value);
+                                props.onChange(newValue);
                             }
                         }}
                     />

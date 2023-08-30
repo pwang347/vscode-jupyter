@@ -757,7 +757,6 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
 
     private getRowDataWithLoadingRows = memoize(
         (dataFrame: IDataFrame | undefined, rows: IDataFrameRow[], showLoadingRows: boolean, sortColumn: {index: number, sortOrder: boolean} | undefined, _: string) => {
-            console.log("@@@sortColumn2", sortColumn);
             const filteredRows = rows.filter((row) => this.gridFilterPlugin.filterData(row));
             const sortedRows = sortColumn ? filteredRows.sort((a, b) => {
                 if (typeof a.data[sortColumn.index] === 'number' && typeof b.data[sortColumn.index] === 'number') {
@@ -765,7 +764,6 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
                 }
                 return !sortColumn.sortOrder ? String(b.data[sortColumn.index]).localeCompare(String(a.data[sortColumn.index])) : String(a.data[sortColumn.index]).localeCompare(String(b.data[sortColumn.index]))
             }) : filteredRows;
-            console.log("@@sortedRows", sortedRows);
             if (dataFrame && showLoadingRows && rows.length < dataFrame.rowCount) {
                 const maxLoadingRows = Math.min(numLoadingRows, dataFrame.rowCount - rows.length);
                 const loadingRows = new Array<IDataFrameRow>(maxLoadingRows).fill({
@@ -788,7 +786,6 @@ export class ReactDataGrid extends React.PureComponent<IReactDataGridProps, IRea
             // force light theme in the base implementation
             "rdg-light": true
         });
-        console.log('@@RENDER RDG');
         const rows = this.getRowDataWithLoadingRows(
             this.state.activeDataFrame,
             this.state.rowData,

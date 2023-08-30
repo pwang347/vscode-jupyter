@@ -133,7 +133,6 @@ export abstract class WebviewHost<IMapping> implements IDisposable {
 
     protected postMessage<M extends IMapping, T extends keyof M>(type: T, payload?: M[T]): Promise<void> {
         // Then send it the message
-        console.log('@@@@ [' + this.title + ']', type, payload);
         return this.postMessageInternal(type.toString(), payload);
     }
 

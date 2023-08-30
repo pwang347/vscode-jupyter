@@ -220,7 +220,6 @@ export class GridContextMenuPlugin<TCol>
         selection: ISelection,
         activeDataFrame: IDataFrame | undefined
     ) {
-        console.log("@@RENDER1");
         const { renderers, disabled, disableInteractions, operationContextMenu } = props;
 
         // nothing to do if we don't have a target or are missing information to render the header context menu
@@ -232,13 +231,11 @@ export class GridContextMenuPlugin<TCol>
             // we shouldn't allow context menu
             (!activeDataFrame.isPreviewUnchanged && activeDataFrame.previewStrategy === PreviewStrategy.None)
         ) {
-            console.log("@@@?1");
             return;
         }
 
         if (disabled || disableInteractions) {
             this.setHeaderContextMenuTarget(undefined);
-            console.log("@@@?2");
             return;
         }
 
@@ -276,13 +273,6 @@ export class GridContextMenuPlugin<TCol>
         if (syntheticSelection.columns.length === 0) {
             return;
         }
-
-        console.log("@@@WE RENDERIN ", this.getMenuItemsRecursive(
-            props,
-            syntheticSelection,
-            operationContextMenu,
-            activeDataFrame
-        ));
         const headerContextMenu = renderCustom({
             props: {
                 selection: syntheticSelection,

@@ -36,7 +36,6 @@ export class SummaryViewPanel extends React.PureComponent<any, ISummaryPanelStat
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     handleMessage(type: string, payload?: any): boolean {
-        console.log("@@@@GOT MESSAGE", type);
         switch (type) {
             case DataWranglerMessages.Host.InitializeData:
                 const df1 = this.postOffice.linkDataFrame(payload)

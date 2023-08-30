@@ -17,7 +17,6 @@ export default {
             const sortCode = sort
                 ? SortOperation.Sort.generateCodeFromBaseProgram({ ...ctx, baseProgram: sort }).getCode('en')
                 : '';
-            console.log('@@CODE', filterCode + '\n' + sortCode);
             return {
                 getCode: () => filterCode + '\n' + sortCode
             };

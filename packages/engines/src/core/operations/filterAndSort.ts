@@ -33,7 +33,6 @@ export const FilterAndSortOperationBase: () => IGenericOperation<
     generateBaseProgram: async (ctx) => {
         const filter = await FilterOperationBase().generateBaseProgram({ ...ctx, args: ctx.args.filter });
         const sort = await SortOperationBase().generateBaseProgram({ ...ctx, args: ctx.args.sort });
-        console.log('@@@FILTERANDSORT', { filter, sort });
         // if (filter.result !== OperationCodeGenResultType.Success) {
         //     return {
         //         result: OperationCodeGenResultType.Failure

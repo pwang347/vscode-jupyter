@@ -64,11 +64,8 @@ export class SummaryView extends WebviewViewHost<DataWranglerMessages.IHostMappi
             [joinPath(variableViewDir, 'summaryView.js')]
         );
         this.dwOrchestrator.onSetDf((df) => {
-            console.log('@@@SUMMARY SET');
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             df.loadStats().then(() => {
-                console.log('@@@STATS', df.tryGetStats());
-
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 this.postMessage(
                     DataWranglerMessages.Host.SetDataFrame,
@@ -105,8 +102,6 @@ export class SummaryView extends WebviewViewHost<DataWranglerMessages.IHostMappi
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected override onMessage(message: string, payload: any) {
-        console.log('@@@SUMMARY GOT', message);
-
         switch (message) {
             case DataWranglerMessages.Webview.Started:
                 if (this.dwOrchestrator.dataFrame) {
@@ -133,7 +128,6 @@ export class SummaryView extends WebviewViewHost<DataWranglerMessages.IHostMappi
                 if (this.dwOrchestrator.dataFrame) {
                     // eslint-disable-next-line @typescript-eslint/no-floating-promises
                     this.dwOrchestrator.dataFrame.loadStats().then((stats) => {
-                        console.log('@@GOT DF STATS', stats);
                         if (stats) {
                             // Assume that if loading was interrupted, the webview no longer needs to know.
                             // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -149,7 +143,6 @@ export class SummaryView extends WebviewViewHost<DataWranglerMessages.IHostMappi
                 if (this.dwOrchestrator.dataFrame) {
                     let columnStats = this.dwOrchestrator.dataFrame.tryGetColumnStats(payload.columnIndex);
                     // let isFirstLoad = false;
-                    console.log('@@GOT STATS', columnStats);
 
                     if (!columnStats) {
                         // isFirstLoad = true;

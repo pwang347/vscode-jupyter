@@ -145,6 +145,10 @@ export class DataViewer
         title: string
     ): Promise<void> {
         if (!this.isDisposed) {
+            this._onDidDisposeDataViewer.event(() => {
+                this.summaryVisible.set(false);
+            });
+
             this.notebookUri = window.activeNotebookEditor?.notebook.uri;
             this.notebookCell = window.activeNotebookEditor?.notebook.cellAt(0);
             // Save the data provider
@@ -419,7 +423,6 @@ export class DataViewer
                 this.dwOrchestrator.setSelection(payload);
                 break;
             case DataWranglerMessages.Webview.PreviewOperation:
-                console.log('@@GOT THE PREVIEW', payload);
                 // eslint-disable-next-line @typescript-eslint/no-floating-promises
                 this.dwOrchestrator.orchestrator.startPreview(
                     payload.operationKey,

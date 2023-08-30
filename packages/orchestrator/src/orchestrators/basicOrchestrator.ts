@@ -1483,7 +1483,6 @@ export class BasicOrchestrator implements IDataWranglerOrchestrator {
 
             let variableName = undefined;
             try {
-                console.log('@@@VARIABLE', variableName, this.variableToWrangle);
                 this.telemetryClient?.logExportData(format);
                 if (!variable) {
                     variableName = await subtask(

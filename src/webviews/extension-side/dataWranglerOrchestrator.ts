@@ -198,7 +198,6 @@ export class DataWranglerOrchestrator implements IDataWranglerOrchestrator {
                 cancellable: true
             },
             async (_, token) => {
-                console.log('@@@HISTORY', this.dataFrame?.historyItem.variableName);
                 const exportDataTask = this.orchestrator.exportData(
                     format,
                     exportPreview ? this.dataFrame?.historyItem.variableName : undefined

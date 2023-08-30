@@ -1,0 +1,62 @@
+.wrangler-date-time-picker {
+    display: flex;
+    flex-direction: column;
+
+    .ms-DatePicker .ms-TextField-fieldGroup {
+        border-radius: 2px;
+        margin-left: 4px;
+        margin-right: 4px;
+        background-color: var(--vscode-dropdown-background);
+        color: var(--vscode-dropdown-foreground);
+
+        &:hover {
+            background-color: var(--vscode-list-hoverBackground);
+            color: var(--vscode-list-hoverForeground);
+        }
+
+        i {
+            user-select: none;
+        }
+    }
+
+    .ms-DatePicker .ms-TextField.is-disabled {
+        input {
+            display: none;
+        }
+    }
+
+    .ms-ComboBox-container .ms-ComboBox {
+        border: thin solid var(--vscode-dropdown-border);
+        border-radius: 2px;
+        background-color: var(--vscode-dropdown-background);
+        color: var(--vscode-dropdown-foreground);
+        padding-right: 28px;
+
+        button {
+            width: fit-content;
+
+            &:hover {
+                background-color: var(--vscode-list-hoverBackground);
+                color: var(--vscode-list-hoverForeground);
+            }
+        }
+
+        &::after {
+            border: none;
+        }
+    }
+}
+
+.timepicker {
+    width: unset !important;
+    max-width: unset !important;
+}
+.ms-ComboBox-optionsContainerWrapper {
+    width: unset !important;
+    max-width: unset !important;
+
+    .ms-ComboBox-optionsContainer {
+        width: unset !important;
+        max-width: unset !important;
+    }
+}
