@@ -620,11 +620,13 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
         className="gridPanel-toolbar-vscode-button"
         onClick={() => {
             this.setState({
+                sortErrors: undefined,
+                sortErrorsTop: undefined,
                 sortArgs: getDefaultArgs(
                     this.state.dataFrame!,
                     this.state.operations.find((operation) => operation.key === OperationKey.Sort)?.args ?? [],
                     []
-                ) as any
+                ) as any,
             }, () => {
                 this.postOffice.sendMessage<DataWranglerMessages.IWebviewMapping>(DataWranglerMessages.Webview.PreviewOperation, {
                     operationKey: OperationKey.FilterAndSort,
@@ -709,6 +711,8 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
         className="gridPanel-toolbar-vscode-button"
         onClick={() => {
             this.setState({
+                filterErrors: undefined,
+                filterErrorsTop: undefined,
                 filterArgs: getDefaultArgs(
                     this.state.dataFrame!,
                     this.state.operations.find((operation) => operation.key === OperationKey.Filter)?.args ?? [],
