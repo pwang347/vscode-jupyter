@@ -243,14 +243,14 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
                 filter: gridFilterPlugin.getColumnFilter(dataFrameColumnIndex),
                 key: dataFrameColumn.key
             },
-            defaultRender: (props) => {
+            defaultRender: () => {
                 const className = "wrangler-column-header-button wrangler-column-header-overflow-menu";
                 return (
                     <div
                         className={className}
                         onClick={(e) => {
                             e.stopPropagation();
-                            props.showHeaderContextMenu(e.target as any);
+                            // props.showHeaderContextMenu(e.target as any);
                         }}
                     />
                 );

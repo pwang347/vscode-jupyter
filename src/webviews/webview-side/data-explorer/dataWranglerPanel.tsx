@@ -244,7 +244,11 @@ interface IGridPanelState {
     filterVisible: boolean;
     sortVisible: boolean;
     filterArgs: IFilterOperationArgs | undefined;
+    filterErrors: string | undefined;
+    filterErrorsTop: string | undefined;
     sortArgs: ISortOperationArgs | undefined;
+    sortErrors: string | undefined;
+    sortErrorsTop: string | undefined;
     operations: IOperationView[];
     theme: VSCodeTheme;
 }
@@ -343,7 +347,11 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
         filterVisible: false,
         sortVisible: false,
         filterArgs: undefined,
+        filterErrors: undefined,
+        filterErrorsTop: undefined,
         sortArgs: undefined,
+        sortErrors: undefined,
+        sortErrorsTop: undefined,
         operations: [],
         theme: detectBaseTheme()
     }
@@ -395,7 +403,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     key: "filter",
                     id: "filter-button",
                     onRenderIcon: () => <span className="codicon codicon-filter" />,
-                    text: this.countFilterTargets() > 0 ? `Filter (${this.countFilterTargets()})` : "Filter",
+                    text: (this.state.filterErrors || this.state.filterErrorsTop) ? "Filter (⚠️)" : this.countFilterTargets() > 0 ? `Filter (${this.countFilterTargets()})` : "Filter",
                     tooltipHostProps: {
                         content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Filter")
                     },
@@ -433,7 +441,7 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                     key: "sort",
                     id: "sort-button",
                     onRenderIcon: () => <span className="codicon codicon-sort-precedence" />,
-                    text: this.countSortTargets() > 0 ? `Sort (${this.countSortTargets()})` : "Sort",
+                    text: (this.state.sortErrors || this.state.sortErrorsTop) ? "Sort (⚠️)" : this.countSortTargets() > 0 ? `Sort (${this.countSortTargets()})` : "Sort",
                     tooltipHostProps: {
                         content: askToPerformOperationDataFrame(/* TODO@DW:localize */ "Sort")
                     },
@@ -637,7 +645,12 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             enableEditLastAppliedOperation: false,
             renderers: this.renderers,
             dataFrameHeader: this.state.originalDataFrame,
-            activeHistoryDataFrameHeader: this.state.originalDataFrame
+            activeHistoryDataFrameHeader: this.state.originalDataFrame,
+            inputErrors: {...this.state.sortErrors ? {
+                AdditionalSortColumns: this.state.sortErrors
+            } : undefined, ...this.state.sortErrorsTop ? {
+                AdditionalSortColumns: this.state.sortErrorsTop
+            } : undefined}
         }, {
             searchValue: "",
             isWaitingForPreview: false,
@@ -656,6 +669,8 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                         sort: this.state.sortArgs
                     }
                 });
+                this.updateErrorState();
+
             })
 
         }, () => {
@@ -719,7 +734,12 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             enableEditLastAppliedOperation: false,
             renderers: this.renderers,
             dataFrameHeader: this.state.originalDataFrame,
-            activeHistoryDataFrameHeader: this.state.originalDataFrame
+            activeHistoryDataFrameHeader: this.state.originalDataFrame,
+            inputErrors: {...this.state.filterErrors ? {
+                AdditionalConditions: this.state.filterErrors
+            } : undefined, ...this.state.filterErrorsTop ? {
+                AdditionalConditions: this.state.filterErrorsTop
+            } : undefined}
         }, {
             searchValue: "",
             isWaitingForPreview: false,
@@ -738,12 +758,60 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                         sort: this.state.sortArgs
                     }
                 });
+                this.updateErrorState();
             })
         }, () => {
         }, LocalizedStrings.Operations, this.renderers)}</div>
         </Callout>
     }
 
+    private updateErrorState() {
+        if (this.state.filterErrors || this.state.filterErrorsTop) {
+            this.setState({
+                filterErrors: undefined,
+                filterErrorsTop: undefined
+            })
+        }
+
+        if (this.state.sortErrors || this.state.sortErrorsTop) {
+            this.setState({
+                sortErrors: undefined,
+                sortErrorsTop: undefined
+            })
+        }
+
+        if (this.state.filterArgs?.AdditionalConditions.children.some((child) => !child.TargetColumns.subMenu.TypedCondition.Condition?.value)) {
+            this.setState({
+                filterErrors: "⚠️ No filter applied because some conditions are missing"
+            })
+        }
+        if (this.state.filterArgs?.AdditionalConditions.children.some((child) => child.TargetColumns.value.length === 0)) {
+            this.setState({
+                filterErrors: "⚠️ No filter applied because some targets are missing"
+            })
+        }
+        if ((this.state.filterArgs?.TargetColumns.value.length ?? 0) > 0 && (!this.state.filterArgs?.TargetColumns.subMenu.TypedCondition.Condition?.value)) {
+            this.setState({
+                filterErrorsTop: "⚠️ No filter applied because some conditions are missing"
+            })
+        }
+        if ((this.state.filterArgs?.AdditionalConditions.children.length ?? 0) > 0 && (this.state.filterArgs?.TargetColumns.value.length ?? 0) === 0) {
+            this.setState({
+                filterErrorsTop: "⚠️ No filter applied because some targets are missing"
+            })
+        }
+        if (this.state.sortArgs?.AdditionalSortColumns.children.some((child) => child.TargetColumns.value.length === 0)) {
+            this.setState({
+                sortErrors: "⚠️ No sort applied because some targets are missing"
+            })
+        }
+        if ((this.state.sortArgs?.AdditionalSortColumns.children.length ?? 0) > 0 && (this.state.sortArgs?.TargetColumns.value.length ?? 0) === 0) {
+            this.setState({
+                sortErrorsTop: "⚠️ No sort applied because some targets are missing"
+            })
+        }
+    }
+    
     override render() {
         const fluentTheme = getFluentTheme(this.state.theme);
         return <ThemeProvider theme={fluentTheme} style={{ background: "transparent", height: "100%" }}>
