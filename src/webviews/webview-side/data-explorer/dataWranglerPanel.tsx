@@ -543,6 +543,10 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
                                 this.setState({
                                     sortArgs: undefined,
                                     filterArgs: undefined,
+                                    filterErrors: undefined,
+                                    filterErrorsTop: undefined,
+                                    sortErrors: undefined,
+                                    sortErrorsTop: undefined,
                                     sortVisible: false,
                                     filterVisible: false
                                 })
