@@ -588,8 +588,12 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             return null;
         }
 
-        return <Callout target={'#sort-button'} role="dialog"
+        return <Callout id="sort-callout" target={'#sort-button'} role="dialog"
         preventDismissOnEvent={(e) => {
+            const callout = document.querySelector("#sort-callout");
+            if (callout?.contains(e.target as HTMLElement)) {
+                return true;
+            }
             return e.type !== "click" || (e.target as HTMLDivElement).id === "dismiss-button"
         }}
         isBeakVisible={false}
@@ -666,8 +670,12 @@ export class GridPanel extends React.PureComponent<any, IGridPanelState> impleme
             return null;
         }
 
-        return <Callout target={'#filter-button'} role="dialog"
+        return <Callout id="filter-callout" target={'#filter-button'} role="dialog"
         preventDismissOnEvent={(e) => {
+            const callout = document.querySelector("#filter-callout");
+            if (callout?.contains(e.target as HTMLElement)) {
+                return true;
+            }
             return e.type !== "click" || (e.target as HTMLDivElement).id === "dismiss-button"
         }}
         isBeakVisible={false}
