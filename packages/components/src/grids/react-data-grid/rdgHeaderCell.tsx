@@ -62,7 +62,7 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
             columnAnnotations,
             selection,
             dataFrameColumnIndex,
-            gridContextMenuPlugin,
+            // gridContextMenuPlugin,
             gridSelectionPlugin,
             renderers,
             rootRef,
@@ -101,10 +101,10 @@ export class ReactDataGridHeaderCell extends React.PureComponent<IReactDataGridH
                         return;
                     }
                     onHeaderContextMenuShown?.("context");
-                    gridContextMenuPlugin.showHeaderContextMenu(
-                        { left: e.clientX, top: e.clientY },
-                        dataFrameColumnIndex
-                    );
+                    // gridContextMenuPlugin.showHeaderContextMenu(
+                    //     { left: e.clientX, top: e.clientY },
+                    //     dataFrameColumnIndex
+                    // );
                 }}
                 onClick={(e) => {
                     gridSelectionPlugin.selectColumn(dataFrameColumnIndex, e as any);
